@@ -1,0 +1,35 @@
+{
+  "machines": [
+    {
+      "id": 1,
+      "model": "DNA-SYNTH-96",
+      "location": "Paris"
+    },
+    {
+      "id": 2,
+      "model": "DNA-SYNTH-96",
+      "location": "Paris"
+    },
+    {
+      "id": 3,
+      "model": "DNA-SYNTH-96",
+      "location": "Nice"
+    },
+    {
+      "id": 4,
+      "model": "DNA-SYNTH-96",
+      "location": "Nice"
+    },
+    {
+      "id": 5,
+      "model": "DNA-SYNTH-96",
+      "location": "Nice"
+    }
+  ],
+  "models": [
+    {
+      "id": "DNA-SYNTH-96",
+      "wells": [12, 8]
+    }
+  ]
+}
