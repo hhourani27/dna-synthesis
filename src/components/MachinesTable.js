@@ -1,8 +1,6 @@
-import Table from "react-bootstrap/Table";
-
 export default function MachinesTable({ machines }) {
   return (
-    <Table hover>
+    <table>
       <thead>
         <tr>
           <th>ID</th>
@@ -19,6 +17,6 @@ export default function MachinesTable({ machines }) {
           </tr>
         ))}
       </tbody>
-    </Table>
+    </table>
   );
 }

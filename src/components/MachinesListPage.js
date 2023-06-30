@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 
-import Spinner from "react-bootstrap/Spinner";
-
 import MachinesTable from "./MachinesTable";
 
 export default function MachinesListPage() {
@@ -21,11 +19,7 @@ export default function MachinesListPage() {
 
   return (
     <div>
-      {isLoading ? (
-        <Spinner animation="border" role="status" />
-      ) : (
-        <MachinesTable machines={machines} />
-      )}
+      {isLoading ? "Loading..." : <MachinesTable machines={machines} />}
     </div>
   );
 }
