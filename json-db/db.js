@@ -1,3 +1,6 @@
+var Chance = require("chance");
+var chance = new Chance();
+
 const locations = ["Paris", "Nice"];
 
 function generateData({
@@ -12,7 +15,7 @@ function generateData({
   const machines = [...Array(machineCount).keys()].map((n) => ({
     id: n + 1,
     model: "DNA-SYNTH-96",
-    location: "Paris",
+    location: chance.string(),
     status: "IDLE",
   }));
 
