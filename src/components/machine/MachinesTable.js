@@ -22,7 +22,7 @@ export default function MachinesTable({ machines }) {
         </TableHead>
         <TableBody>
           {machines.map((m) => (
-            <TableRow key={m.id}>
+            <TableRow key={m.id} hover>
               <TableCell>{m.id}</TableCell>
               <TableCell>{m.model}</TableCell>
               <TableCell>{m.location}</TableCell>
