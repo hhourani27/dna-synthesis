@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Layout from "./Layout";
-import MachinesListPage from "./MachineListPage";
+import MachinesListPage from "./machine/MachineListPage";
 
 export default function MiniDrawer() {
   return (
