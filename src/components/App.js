@@ -9,20 +9,13 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import MicrowaveIcon from "@mui/icons-material/Microwave";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
-import InfoIcon from "@mui/icons-material/Info";
 
 import MachinesListPage from "./MachinesListPage";
+import DrawerMenu from "./DrawerMenu";
 
 const drawerWidth = 240;
 
@@ -97,25 +90,6 @@ export default function MiniDrawer() {
 
   const toggleDrawer = () => setOpen((open) => !open);
 
-  const drawerMenuItems = [
-    {
-      label: "Machines",
-      icon: <MicrowaveIcon />,
-    },
-    {
-      label: "Orders",
-      icon: <ReceiptLongIcon />,
-    },
-    {
-      label: "Dashboard",
-      icon: <AnalyticsIcon />,
-    },
-    {
-      label: "Onboarding",
-      icon: <InfoIcon />,
-    },
-  ];
-
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -150,31 +124,7 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          {drawerMenuItems.map((item, index) => (
-            <ListItem key={item.label} disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.label}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
+          <DrawerMenu open />
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
