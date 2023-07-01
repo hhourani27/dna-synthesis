@@ -15,6 +15,7 @@ export default function MachinesTable({ machines }) {
             <TableCell>ID</TableCell>
             <TableCell>Model</TableCell>
             <TableCell>Location</TableCell>
+            <TableCell>Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -23,6 +24,7 @@ export default function MachinesTable({ machines }) {
               <TableCell>{m.id}</TableCell>
               <TableCell>{m.model}</TableCell>
               <TableCell>{m.location}</TableCell>
+              <TableCell>{m.status}</TableCell>
             </TableRow>
           ))}
         </TableBody>
