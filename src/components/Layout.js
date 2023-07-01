@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { Outlet } from "react-router-dom";
+
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -15,7 +17,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-import MachinesListPage from "./MachinesListPage";
 import DrawerMenu from "./DrawerMenu";
 
 const drawerWidth = 240;
@@ -130,7 +131,7 @@ export default function Layout() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <MachinesListPage />
+        <Outlet />
       </Box>
     </Box>
   );
