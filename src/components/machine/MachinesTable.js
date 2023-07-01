@@ -6,6 +6,8 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import Paper from "@mui/material/Paper";
 
+import MachineStatus from "./MachineStatus";
+
 export default function MachinesTable({ machines }) {
   return (
     <TableContainer component={Paper}>
@@ -24,7 +26,9 @@ export default function MachinesTable({ machines }) {
               <TableCell>{m.id}</TableCell>
               <TableCell>{m.model}</TableCell>
               <TableCell>{m.location}</TableCell>
-              <TableCell>{m.status}</TableCell>
+              <TableCell>
+                <MachineStatus status={m.status} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
