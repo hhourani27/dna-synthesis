@@ -33,6 +33,8 @@ const generateData = ({
   SYNTHETIZING,
   WAITING_FOR_DISPATCH,
 }) => {
+  /* (1)  Generate machines */
+
   // Count total number of machines
   const machineCount =
     IDLE + IDLE_ASSIGNED_ORDER + SYNTHETIZING + WAITING_FOR_DISPATCH;
@@ -52,6 +54,15 @@ const generateData = ({
     status,
   }));
 
+  /* (2)  Generate orders for non-Idle machines */
+  const nonIdleMachineCount =
+    IDLE_ASSIGNED_ORDER + SYNTHETIZING + WAITING_FOR_DISPATCH;
+
+  const orders = [...Array(nonIdleMachineCount)].map((o, i) => ({
+    id: i + 1,
+    oligos: [...Array(96)].map(() => generateOligo(15, 120)),
+  }));
+
   // Generate the final database
   const data = {
     machines,
@@ -61,6 +72,7 @@ const generateData = ({
         wells: [12, 8],
       },
     ],
+    orders,
   };
 
   return data;
