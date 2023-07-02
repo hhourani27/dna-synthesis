@@ -63,6 +63,15 @@ const generateData = ({
     oligos: [...Array(96)].map(() => generateOligo(15, 120)),
   }));
 
+  /* (3) Assign orders to non-Idle machines */
+  let orderId = 1;
+  for (let machine of machines) {
+    if (machine.status !== "IDLE") {
+      machine.order = orderId;
+      orderId++;
+    }
+  }
+
   // Generate the final database
   const data = {
     machines,
@@ -83,10 +92,10 @@ const generateData = ({
  */
 const generateDb = () =>
   generateData({
-    IDLE: 1,
-    IDLE_ASSIGNED_ORDER: 1,
-    SYNTHETIZING: 2,
-    WAITING_FOR_DISPATCH: 1,
+    IDLE: 2,
+    IDLE_ASSIGNED_ORDER: 2,
+    SYNTHETIZING: 4,
+    WAITING_FOR_DISPATCH: 2,
   });
 
 module.exports = { generateDb, generateOligo };
