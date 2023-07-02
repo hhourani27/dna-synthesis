@@ -32,11 +32,12 @@ const generateData = ({
     id: i + 1,
     model: "DNA-SYNTH-96",
     location: chance.pickone(locations),
-    status: status,
+    status,
   }));
 
+  // Generate the final database
   const data = {
-    machines: machines,
+    machines,
     models: [
       {
         id: "DNA-SYNTH-96",
