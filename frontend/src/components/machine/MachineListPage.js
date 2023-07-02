@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+
 import MachinesTable from "./MachinesTable";
 
 export default function MachinesListPage() {
@@ -19,7 +22,13 @@ export default function MachinesListPage() {
 
   return (
     <div>
-      {isLoading ? "Loading..." : <MachinesTable machines={machines} />}
+      {isLoading ? (
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <CircularProgress />
+        </Box>
+      ) : (
+        <MachinesTable machines={machines} />
+      )}
     </div>
   );
 }
