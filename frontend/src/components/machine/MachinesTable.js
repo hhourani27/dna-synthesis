@@ -6,9 +6,13 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import Paper from "@mui/material/Paper";
 
+import { useNavigate } from "react-router-dom";
+
 import MachineStatus from "./MachineStatus";
 
 export default function MachinesTable({ machines }) {
+  let navigate = useNavigate();
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="machines table">
@@ -22,7 +26,18 @@ export default function MachinesTable({ machines }) {
         </TableHead>
         <TableBody>
           {machines.map((m) => (
-            <TableRow key={m.id} hover>
+            /* To make the row clickable, I Used this answer from StackOverflow https://stackoverflow.com/a/71600925/471461.
+            The disadvantage is that I don't have the same behavior as <a> (mouse hand, righ-click open in new tab).
+            I tried to use <Link> (https://stackoverflow.com/a/57155731/471461), but I had validation problems in the console.
+            In the future, investigate how to make <Link> work
+            */
+            <TableRow
+              key={m.id}
+              hover
+              onClick={() => {
+                navigate(`/machines/${m.id}`);
+              }}
+            >
               <TableCell>{m.id}</TableCell>
               <TableCell>{m.model}</TableCell>
               <TableCell>{m.location}</TableCell>
