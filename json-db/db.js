@@ -3,6 +3,8 @@ var chance = new Chance(27);
 
 const locations = ["Paris", "Nice"];
 
+const hello = () => "hello";
+
 /**
  * Generate the whole database containing machines & orders given the machine count per status as a paramater
  * @param {int} IDLE : Number of machines having the state IDLE
