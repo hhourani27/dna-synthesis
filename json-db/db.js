@@ -98,4 +98,4 @@ const generateDb = () =>
     WAITING_FOR_DISPATCH: 2,
   });
 
-module.exports = { generateDb, generateOligo };
+module.exports = { generateDb, generateData, generateOligo };

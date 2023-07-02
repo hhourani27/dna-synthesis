@@ -14,3 +14,17 @@ test("Test Oligos generation", () => {
   expect(oligo50_100.length).toBeLessThanOrEqual(100);
   [...oligo50_100].forEach((n) => expect(["A", "T", "C", "G"]).toContain(n));
 });
+
+test("No orders generated if there's only Idle machines", () => {
+  const data = db.generateData({
+    IDLE: 10,
+    IDLE_ASSIGNED_ORDER: 0,
+    SYNTHETIZING: 0,
+    WAITING_FOR_DISPATCH: 0,
+  });
+
+  expect(data.orders).toHaveLength(0);
+  data.machines.forEach((m) =>
+    expect.not.objectContaining({ order: expect.anything() })
+  );
+});
