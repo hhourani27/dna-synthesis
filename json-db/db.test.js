@@ -58,3 +58,33 @@ test("Test that current step is correct when the machine is synthetizing", () =>
     .filter((m) => m.status !== "SYNTHETIZING")
     .forEach((m) => expect(m?.synthesis?.currentStep).toBeFalsy());
 });
+
+test("Test that for idle machines, the number of wells is correct", () => {
+  const data = db.generateData({
+    IDLE: 1,
+    IDLE_ASSIGNED_ORDER: 0,
+    SYNTHETIZING: 0,
+    WAITING_FOR_DISPATCH: 0,
+  });
+
+  expect(data.machines[0].wells.length).toBe(8);
+  data.machines[0].wells.forEach((row) => expect(row.length).toBe(12));
+});
+
+test("Test that IDs are correctly assigned to wells", () => {
+  const data = db.generateData({
+    IDLE: 1,
+    IDLE_ASSIGNED_ORDER: 0,
+    SYNTHETIZING: 0,
+    WAITING_FOR_DISPATCH: 0,
+  });
+
+  const wells = data.machines[0].wells;
+  let id = 0;
+  for (let row of wells) {
+    for (let col of row) {
+      expect(col.id).toBe(id);
+      id++;
+    }
+  }
+});

@@ -2,6 +2,12 @@ var Chance = require("chance");
 var chance = new Chance(27);
 
 const locations = ["Paris", "Nice"];
+const models = [
+  {
+    id: "DNA-SYNTH-96",
+    wells: [8, 12],
+  },
+];
 
 /**
  * Generate Oligonucleotide of given length
@@ -26,6 +32,60 @@ const generateOligo = (minSize, maxSize) => {
  * @returns the max number of cycles to synthethize these oligos, i.e. the largest oligo in the array
  */
 const requiredCycleCount = (oligos) => Math.max(...oligos.map((o) => o.length));
+
+/**
+ * Generate a 2D wells array [rows][cols]
+ *
+ * @param {int} rows
+ * @param {int} cols
+ * @param {string} machineStatus
+ * @param {[string]} orderedOligos Required if machineStatus !== "IDLE"
+ * @param {int} completedCycles Required if machineStatus !== "IDLE"
+ * @returns
+ */
+const generateWells = (
+  rows,
+  cols,
+  machineStatus,
+  orderedOligos,
+  completedCycles
+) => {
+  // Create a 2D wells array [rows][cols]
+  const wells = Array.from(Array(rows), () => new Array(cols));
+
+  for (let x = 0; x < rows; x++) {
+    for (let y = 0; y < cols; y++) {
+      const i = x * cols + y;
+      if (machineStatus === "IDLE") {
+        wells[x][y] = {
+          id: i,
+          row: x,
+          col: y,
+          status: "IDLE",
+        };
+      } else {
+        oligo = orderedOligos[i];
+
+        wells[x][y] = {
+          id: i,
+          row: x,
+          col: y,
+          oligo,
+          totalCycles: oligo.length,
+          status:
+            machineStatus === "IDLE_ASSIGNED_ORDER"
+              ? "IDLE_ASSIGNED_OLIGO"
+              : completedCycles < oligo.length
+              ? "SYNTHETIZING_OLIGO"
+              : "COMPLETED_OLIGO",
+          synthetizedNucleotideCount: Math.min(oligo.length, completedCycles),
+        };
+      }
+    }
+  }
+
+  return wells;
+};
 
 /**
  * Generate the whole database containing machines & orders given the machine count per status as a paramater
@@ -100,15 +160,25 @@ const generateData = ({
     }
   }
 
+  /* (5) Generate Wells status  */
+  for (let machine of machines) {
+    const [rows, cols] = models.find((m) => m.id === machine.model).wells;
+    machine.wells =
+      machine.status === "IDLE"
+        ? generateWells(rows, cols, machine.status)
+        : generateWells(
+            rows,
+            cols,
+            machine.status,
+            orders.find((o) => o.id === machine.order).oligos,
+            machine.synthesis.completedCycles
+          );
+  }
+
   // Generate the final database
   const data = {
     machines,
-    models: [
-      {
-        id: "DNA-SYNTH-96",
-        wells: [12, 8],
-      },
-    ],
+    models,
     orders,
   };
 
