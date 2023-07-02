@@ -3,6 +3,12 @@ var chance = new Chance(27);
 
 const locations = ["Paris", "Nice"];
 
+/**
+ * Generate Oligonucleotide of given length
+ * @param {int} minSize
+ * @param {int} maxSize
+ * @returns an oligo of length between minSize and maxSize, or of length minSize if maxSize is not provided
+ */
 const generateOligo = (minSize, maxSize) => {
   const oligoSize =
     maxSize === undefined
