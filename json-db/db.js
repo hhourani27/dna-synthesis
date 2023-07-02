@@ -21,6 +21,13 @@ const generateOligo = (minSize, maxSize) => {
 };
 
 /**
+ *
+ * @param {[string]} oligos
+ * @returns the max number of cycles to synthethize these oligos, i.e. the largest oligo in the array
+ */
+const requiredCycleCount = (oligos) => Math.max(...oligos.map((o) => o.length));
+
+/**
  * Generate the whole database containing machines & orders given the machine count per status as a paramater
  * @param {int} IDLE : Number of machines having the state IDLE
  * @param {int} IDLE_ASSIGNED_ORDER : Number of machines having the state IDLE_ASSIGNED_ORDER
@@ -34,10 +41,6 @@ const generateData = ({
   WAITING_FOR_DISPATCH,
 }) => {
   /* (1)  Generate machines */
-
-  // Count total number of machines
-  const machineCount =
-    IDLE + IDLE_ASSIGNED_ORDER + SYNTHETIZING + WAITING_FOR_DISPATCH;
 
   // An array of size machineCount, containing the machine statuses
   const machineStatuses = chance.shuffle([
@@ -72,6 +75,31 @@ const generateData = ({
     }
   }
 
+  /* (4) Generate Synthesis statuses for non-idle machines */
+  for (let machine of machines) {
+    if (machine.status !== "IDLE") {
+      const orderedOligos = orders.find((o) => o.id === machine.order).oligos;
+      const totalCycles = requiredCycleCount(orderedOligos);
+
+      machine.synthesis = {
+        totalCycles: totalCycles,
+        completedCycles:
+          machine.status === "IDLE_ASSIGNED_ORDER"
+            ? 0
+            : machine.status === "WAITING_FOR_DISPATCH"
+            ? totalCycles
+            : chance.integer({
+                min: 0,
+                max: totalCycles,
+              }),
+        currentStep:
+          machine.status === "SYNTHETIZING"
+            ? chance.pickone(["ELONGATION", "DEPROTECTION", "WASH"])
+            : null,
+      };
+    }
+  }
+
   // Generate the final database
   const data = {
     machines,
@@ -94,8 +122,13 @@ const generateDb = () =>
   generateData({
     IDLE: 2,
     IDLE_ASSIGNED_ORDER: 2,
-    SYNTHETIZING: 4,
+    SYNTHETIZING: 10,
     WAITING_FOR_DISPATCH: 2,
   });
 
-module.exports = { generateDb, generateData, generateOligo };
+module.exports = {
+  generateDb,
+  generateData,
+  generateOligo,
+  requiredCycleCount,
+};
