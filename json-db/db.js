@@ -3,7 +3,16 @@ var chance = new Chance(27);
 
 const locations = ["Paris", "Nice"];
 
-const hello = () => "hello";
+const generateOligo = (minSize, maxSize) => {
+  const oligoSize =
+    maxSize === undefined
+      ? minSize
+      : chance.integer({ min: minSize, max: maxSize });
+
+  return [...Array(oligoSize)]
+    .map(() => chance.pickone(["A", "T", "C", "G"]))
+    .join("");
+};
 
 /**
  * Generate the whole database containing machines & orders given the machine count per status as a paramater
@@ -62,4 +71,4 @@ const generateDb = () =>
     WAITING_FOR_DISPATCH: 1,
   });
 
-module.exports = { generateDb: generateDb, hello: hello };
+module.exports = { generateDb, generateOligo };
