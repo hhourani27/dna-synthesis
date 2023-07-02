@@ -9,31 +9,42 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 import InfoIcon from "@mui/icons-material/Info";
 
+import { useNavigate } from "react-router-dom";
+
 export default function DrawerMenu({ open }) {
   const drawerMenuItems = [
     {
       label: "Machines",
       icon: <MicrowaveIcon />,
+      link: "/machines",
     },
     {
       label: "Orders",
       icon: <ReceiptLongIcon />,
+      link: "/orders",
     },
     {
       label: "Dashboard",
       icon: <AnalyticsIcon />,
+      link: "/analytics",
     },
     {
       label: "Onboarding",
       icon: <InfoIcon />,
+      link: "/onboarding",
     },
   ];
 
+  let navigate = useNavigate();
+
   return (
     <List>
-      {drawerMenuItems.map((item, index) => (
+      {drawerMenuItems.map((item) => (
         <ListItem key={item.label} disablePadding sx={{ display: "block" }}>
           <ListItemButton
+            onClick={() => {
+              navigate(item.link);
+            }}
             sx={{
               minHeight: 48,
               justifyContent: open ? "initial" : "center",
