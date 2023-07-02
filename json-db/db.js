@@ -62,4 +62,4 @@ const generateDb = () =>
     WAITING_FOR_DISPATCH: 1,
   });
 
-module.exports = generateDb;
+module.exports = { generateDb: generateDb, hello: hello };

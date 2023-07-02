@@ -1,3 +1,3 @@
-const generateDb = require("./db");
+const { generateDb } = require("./db");
 
 module.exports = generateDb;
