@@ -56,6 +56,7 @@ export default function WellArray({ rowSize, colSize, wells }) {
                 <Well idle />
               ) : (
                 <Well
+                  status={wells[row - 1][col - 1].status}
                   completedCycles={
                     wells[row - 1][col - 1].synthetizedNucleotideCount
                   }
