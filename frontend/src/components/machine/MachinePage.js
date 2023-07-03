@@ -20,16 +20,23 @@ export default function MachinePage() {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [machine, setMachine] = useState(null);
+  const [model, setModel] = useState(null);
 
   useEffect(() => {
-    setIsLoading(true);
-    fetch(`http://localhost:3001/machines/${id}`)
-      .then((resp) => resp.json())
-      .then((data) => {
-        console.log(`Fetched Machine ${data.id}`);
-        setMachine(data);
-        setIsLoading(false);
-      });
+    async function getData() {
+      const machineResp = await fetch(`http://localhost:3001/machines/${id}`);
+      const machine = await machineResp.json();
+      const modelResp = await fetch(
+        `http://localhost:3001/models/${machine.model}`
+      );
+      const model = await modelResp.json();
+
+      setMachine(machine);
+      setModel(model);
+      setIsLoading(false);
+    }
+
+    getData();
   }, []);
 
   return (
@@ -43,7 +50,11 @@ export default function MachinePage() {
             <CircularProgress />
           </Box>
         ) : (
-          <WellArray rowSize={8} colSize={12} wells={machine.wells} />
+          <WellArray
+            rowSize={model.wellArraySize[0]}
+            colSize={model.wellArraySize[1]}
+            wells={machine.wells}
+          />
         )}
       </Paper>
     </Box>

@@ -5,7 +5,7 @@ const locations = ["Paris", "Nice"];
 const models = [
   {
     id: "DNA-SYNTH-96",
-    wells: [8, 12],
+    wellArraySize: [8, 12],
   },
 ];
 
@@ -162,7 +162,9 @@ const generateData = ({
 
   /* (5) Generate Wells status  */
   for (let machine of machines) {
-    const [rows, cols] = models.find((m) => m.id === machine.model).wells;
+    const [rows, cols] = models.find(
+      (m) => m.id === machine.model
+    ).wellArraySize;
     machine.wells =
       machine.status === "IDLE"
         ? generateWells(rows, cols, machine.status)
