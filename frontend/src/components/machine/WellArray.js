@@ -12,8 +12,8 @@ export default function WellArray({ rowSize, colSize, wells }) {
     <Box
       sx={{
         display: "grid",
-        gridTemplateRows: "repeat(9,1fr)",
-        gridTemplateColumns: "repeat(13,1fr)",
+        gridTemplateRows: `repeat(${rowSize + 1},1fr)`,
+        gridTemplateColumns: `repeat(${colSize + 1},1fr)`,
         alignItems: "center",
         justifyItems: "center",
         gap: "10px",

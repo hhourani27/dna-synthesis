@@ -32,8 +32,6 @@ export default function MachinePage() {
       });
   }, []);
 
-  const [rowSize, colSize] = [8, 12];
-
   return (
     <Box display="flex" flexDirection="column" gap={2}>
       <Paper elevation={1}>
@@ -45,11 +43,7 @@ export default function MachinePage() {
             <CircularProgress />
           </Box>
         ) : (
-          <WellArray
-            rowSize={rowSize}
-            colSize={colSize}
-            wells={machine.wells}
-          />
+          <WellArray rowSize={8} colSize={12} wells={machine.wells} />
         )}
       </Paper>
     </Box>
