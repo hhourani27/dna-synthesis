@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import PaperMUI from "@mui/material/Paper";
@@ -21,23 +23,8 @@ export default function MachinePage() {
   const { id } = useParams();
 
   const [rowSize, colSize] = [8, 12];
-  const cols = [
-    " ",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-  ];
-
-  const rows = ["1", "2", "3", "4", "5", "6", "7", "8"];
+  const cols = [...Array(colSize).keys()].map((c) => c + 1);
+  const rows = [...Array(rowSize).keys()].map((r) => r + 1);
 
   return (
     <Box display="flex" flexDirection="column" gap={2}>
@@ -51,29 +38,48 @@ export default function MachinePage() {
             display: "grid",
             gridTemplateRows: "repeat(9,1fr)",
             gridTemplateColumns: "repeat(13,1fr)",
+            alignItems: "center",
+            justifyItems: "center",
+            gap: "10px",
           }}
         >
           {/* First row : column numbers */}
-          {cols.map((col, ic) => (
-            <Box key={col} sx={{ gridRow: "1", gridColumn: `${ic + 1}` }}>
-              c{col}
+          <Box key={`r${1}c${1}`} sx={{ gridRow: "1", gridColumn: "1" }}>
+            {" "}
+          </Box>
+
+          {cols.map((col) => (
+            <Box
+              key={`r${1}c${col + 1}`}
+              sx={{ gridRow: "1", gridColumn: `${col + 1}` }}
+            >
+              {col}
             </Box>
           ))}
           {/* Row for each well array row */}
-          {rows.map((row, ir) => (
-            <>
+          {rows.map((row) => (
+            <Fragment key={`r${row + 1}`}>
               {/* Row number */}
-              <Box sx={{ gridRow: `${ir + 2}`, gridColumn: "1" }}>r{row}</Box>
+              <Box
+                key={`r${row + 1}c${1}`}
+                sx={{ gridRow: `${row + 1}`, gridColumn: "1" }}
+              >
+                {row}
+              </Box>
               {/* Wells */}
-              {cols.map((col, ic) => (
+              {cols.map((col) => (
                 <Box
-                  key={col}
-                  sx={{ gridRow: `${ir + 2}`, gridColumn: `${ic + 2}` }}
+                  key={`r${row + 1}c${col + 1}`}
+                  sx={{
+                    gridRow: `${row + 1}`,
+                    gridColumn: `${col + 1}`,
+                    lineHeight: "0",
+                  }}
                 >
                   <Well />
                 </Box>
               ))}
-            </>
+            </Fragment>
           ))}
         </Box>
       </Paper>
