@@ -9,7 +9,7 @@ export default function Well({
   totalCycles = 0,
   idle = false,
 }) {
-  const thickness = 4;
+  const thickness = 8;
 
   return (
     <Box sx={{ position: "relative" }}>
