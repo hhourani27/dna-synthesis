@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 
 import Well from "./Well";
 
-export default function WellArray({ rowSize, colSize }) {
+export default function WellArray({ rowSize, colSize, wells }) {
   const cols = [...Array(colSize).keys()].map((c) => c + 1);
   const rows = [...Array(rowSize).keys()].map((r) => r + 1);
 
@@ -52,7 +52,16 @@ export default function WellArray({ rowSize, colSize }) {
                 lineHeight: "0",
               }}
             >
-              <Well />
+              {wells[row - 1][col - 1].status === "IDLE" ? (
+                <Well idle />
+              ) : (
+                <Well
+                  completedCycles={
+                    wells[row - 1][col - 1].synthetizedNucleotideCount
+                  }
+                  totalCycles={wells[row - 1][col - 1].totalCycles}
+                />
+              )}
             </Box>
           ))}
         </Fragment>
