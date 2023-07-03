@@ -20,6 +20,7 @@ const Paper = styled(PaperMUI)(({ theme }) => ({
 export default function MachinePage() {
   const { id } = useParams();
 
+  const [rowSize, colSize] = [8, 12];
   const cols = [
     " ",
     "1",
@@ -44,66 +45,35 @@ export default function MachinePage() {
         <h2>Machine card {id}</h2>
       </Paper>
       <Paper elevation={1}>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
+        {/* The grid */}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateRows: "repeat(9,1fr)",
+            gridTemplateColumns: "repeat(13,1fr)",
+          }}
+        >
           {/* First row : column numbers */}
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            {cols.map((col) => (
-              <Box
-                key={col}
-                sx={{
-                  display: "block",
-                  //   height: "30px",
-                  /* set values of flexGrow, flexShrink & flexBasis so that flex-items have always the same width (see https://stackoverflow.com/a/29503264/471461)*/
-                  flexGrow: "1",
-                  flexShrink: "1",
-                  flexBasis: "0px",
-                  textAlign: "center",
-                }}
-              >
-                {col}
-              </Box>
-            ))}
-          </Box>
+          {cols.map((col, ic) => (
+            <Box key={col} sx={{ gridRow: "1", gridColumn: `${ic + 1}` }}>
+              c{col}
+            </Box>
+          ))}
           {/* Row for each well array row */}
-          {rows.map((row) => (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "stretch",
-              }}
-            >
+          {rows.map((row, ir) => (
+            <>
               {/* Row number */}
-              <Box
-                sx={{
-                  display: "block",
-                  //   height: "30px",
-                  /* set values of flexGrow, flexShrink & flexBasis so that flex-items have always the same width (see https://stackoverflow.com/a/29503264/471461)*/
-                  flexGrow: "1",
-                  flexShrink: "1",
-                  flexBasis: "0px",
-                  textAlign: "center",
-                }}
-              >
-                {row}
-              </Box>
+              <Box sx={{ gridRow: `${ir + 2}`, gridColumn: "1" }}>r{row}</Box>
               {/* Wells */}
-              {cols.map((col) => (
+              {cols.map((col, ic) => (
                 <Box
                   key={col}
-                  sx={{
-                    display: "block",
-                    /* set values of flexGrow, flexShrink & flexBasis so that flex-items have always the same width (see https://stackoverflow.com/a/29503264/471461)*/
-                    flexGrow: "1",
-                    flexShrink: "1",
-                    flexBasis: "0px",
-                    textAlign: "center",
-                  }}
+                  sx={{ gridRow: `${ir + 2}`, gridColumn: `${ic + 2}` }}
                 >
                   <Well />
                 </Box>
               ))}
-            </Box>
+            </>
           ))}
         </Box>
       </Paper>
