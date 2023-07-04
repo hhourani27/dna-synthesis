@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import PaperMUI from "@mui/material/Paper";
 
 import WellArray from "./WellArray";
+import MachineCard from "./MachineCard";
 import { CircularProgress } from "@mui/material";
 
 const Paper = styled(PaperMUI)(({ theme }) => ({
@@ -42,7 +43,13 @@ export default function MachinePage() {
   return (
     <Box display="flex" flexDirection="column" gap={2}>
       <Paper elevation={1}>
-        <h2>Machine card {id}</h2>
+        {isLoading ? (
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <CircularProgress />
+          </Box>
+        ) : (
+          <MachineCard machine={machine} />
+        )}
       </Paper>
       <Paper elevation={1}>
         {isLoading ? (
