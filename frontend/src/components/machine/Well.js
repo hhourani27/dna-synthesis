@@ -11,6 +11,9 @@ export default function Well({
   displayCount = false,
   size = 40,
   thickness = 8,
+  onMouseEnter = null,
+  onMouseLeave = null,
+  onClick = null,
 }) {
   return (
     <Box sx={{ position: "relative" }}>
@@ -39,6 +42,8 @@ export default function Well({
           thickness={thickness}
           size={size}
           value={(100 * completedCycles) / totalCycles}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
         />
       )}
       {displayCount && (

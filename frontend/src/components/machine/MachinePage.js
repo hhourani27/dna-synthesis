@@ -82,8 +82,8 @@ export default function MachinePage() {
           </Box>
         ) : (
           <WellArray
-            rowSize={model.wellArraySize[0]}
-            colSize={model.wellArraySize[1]}
+            wellArrayRowSize={model.wellArraySize[0]}
+            wellArrayColSize={model.wellArraySize[1]}
             wells={machine.wells}
           />
         )}

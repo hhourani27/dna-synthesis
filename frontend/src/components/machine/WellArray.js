@@ -1,19 +1,33 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 
 import Box from "@mui/material/Box";
 
 import Well from "./Well";
 
-export default function WellArray({ rowSize, colSize, wells }) {
-  const cols = [...Array(colSize).keys()].map((c) => c + 1);
-  const rows = [...Array(rowSize).keys()].map((r) => r + 1);
+export default function WellArray({
+  wellArrayRowSize,
+  wellArrayColSize,
+  wells,
+}) {
+  const [selection, setSelection] = useState({ event: null, well: [-1, -1] });
+
+  const handleMouseEnter = (wellArrayRow, wellArrayCol) => {
+    setSelection({ event: "HOVER", well: [wellArrayRow, wellArrayCol] });
+  };
+
+  const handleMouseLeave = () => {
+    setSelection({ event: null, well: [-1, -1] });
+  };
+
+  const gridCols = [...Array(wellArrayColSize).keys()].map((c) => c + 1);
+  const gridRows = [...Array(wellArrayRowSize).keys()].map((r) => r + 1);
 
   return (
     <Box
       sx={{
         display: "grid",
-        gridTemplateRows: `repeat(${rowSize + 1},1fr)`,
-        gridTemplateColumns: `repeat(${colSize + 1},1fr)`,
+        gridTemplateRows: `repeat(${wellArrayRowSize + 1},1fr)`,
+        gridTemplateColumns: `repeat(${wellArrayColSize + 1},1fr)`,
         alignItems: "center",
         justifyItems: "center",
         gap: "10px",
@@ -24,7 +38,7 @@ export default function WellArray({ rowSize, colSize, wells }) {
         {" "}
       </Box>
 
-      {cols.map((col) => (
+      {gridCols.map((col) => (
         <Box
           key={`r${1}c${col + 1}`}
           sx={{ gridRow: "1", gridColumn: `${col + 1}` }}
@@ -33,7 +47,7 @@ export default function WellArray({ rowSize, colSize, wells }) {
         </Box>
       ))}
       {/* Row for each well array row */}
-      {rows.map((row) => (
+      {gridRows.map((row) => (
         <Fragment key={`r${row + 1}`}>
           {/* Row number */}
           <Box
@@ -43,13 +57,19 @@ export default function WellArray({ rowSize, colSize, wells }) {
             {row}
           </Box>
           {/* Wells */}
-          {cols.map((col) => (
+          {gridCols.map((col) => (
             <Box
               key={`r${row + 1}c${col + 1}`}
               sx={{
                 gridRow: `${row + 1}`,
                 gridColumn: `${col + 1}`,
                 lineHeight: "0",
+                outline:
+                  selection.event != null &&
+                  selection.well[0] === row - 1 &&
+                  selection.well[1] === col - 1
+                    ? "solid black 1px"
+                    : 0,
               }}
             >
               {wells[row - 1][col - 1].status === "IDLE" ? (
@@ -61,6 +81,8 @@ export default function WellArray({ rowSize, colSize, wells }) {
                     wells[row - 1][col - 1].synthetizedNucleotideCount
                   }
                   totalCycles={wells[row - 1][col - 1].totalCycles}
+                  onMouseEnter={() => handleMouseEnter(row - 1, col - 1)}
+                  onMouseLeave={() => handleMouseLeave()}
                 />
               )}
             </Box>
