@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 import MachineImage from "./models/DNA-SYNTH-96.svg";
-import MachineStatus from "./MachineStatus";
+import MachineStatus from "./MachineStatusChip";
 
 export default function MachineCard({ machine }) {
   return (

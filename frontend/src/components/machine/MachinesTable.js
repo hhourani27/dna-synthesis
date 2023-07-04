@@ -8,7 +8,7 @@ import Paper from "@mui/material/Paper";
 
 import { useNavigate } from "react-router-dom";
 
-import MachineStatus from "./MachineStatus";
+import MachineStatus from "./MachineStatusChip";
 
 export default function MachinesTable({ machines }) {
   let navigate = useNavigate();
