@@ -71,6 +71,9 @@ export default function WellArray({
                     ? "solid black 1px"
                     : 0,
               }}
+              onMouseEnter={() => handleMouseEnter(row - 1, col - 1)}
+              onMouseLeave={() => handleMouseLeave()}
+              onClick={() => console.log(`Clicked r${row - 1}c${col - 1}`)}
             >
               {wells[row - 1][col - 1].status === "IDLE" ? (
                 <Well idle />
@@ -81,8 +84,6 @@ export default function WellArray({
                     wells[row - 1][col - 1].synthetizedNucleotideCount
                   }
                   totalCycles={wells[row - 1][col - 1].totalCycles}
-                  onMouseEnter={() => handleMouseEnter(row - 1, col - 1)}
-                  onMouseLeave={() => handleMouseLeave()}
                 />
               )}
             </Box>
