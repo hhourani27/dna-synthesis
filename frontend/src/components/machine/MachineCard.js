@@ -37,7 +37,14 @@ export default function MachineCard({ machine }) {
             ID: {machine.id}
           </Typography>
         </Box>
-        <MachineStatus status={machine.status} />
+        <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
+          <MachineStatus status={machine.status} />
+          {machine.status !== "IDLE" && (
+            <Typography component="div" color="text.secondary">
+              Order {machine.order}
+            </Typography>
+          )}
+        </Box>
       </Box>
     </Box>
   );
