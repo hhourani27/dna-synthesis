@@ -12,6 +12,7 @@ export default function MachineProgress({
   currentStep,
 }) {
   const size = 175;
+  const thickness = 6;
 
   return (
     <Box display="flex" flexDirection="column" gap={1}>
@@ -22,7 +23,9 @@ export default function MachineProgress({
           alignItems: "center",
         }}
       >
-        <RemoveModeratorIcon />
+        <RemoveModeratorIcon
+          color={currentStep === "DEPROTECTION" ? "primary" : "gray"}
+        />
       </Box>
       <Box display="flex" flexDirection="row" gap={1}>
         <Box
@@ -32,14 +35,17 @@ export default function MachineProgress({
             alignItems: "center",
           }}
         >
-          <SwitchAccessShortcutAddIcon />
+          <SwitchAccessShortcutAddIcon
+            color={currentStep === "ELONGATION" ? "primary" : "gray"}
+          />
         </Box>
         <Box>
           {status === "IDLE" ? (
-            <Well idle size={size} />
+            <Well idle size={size} thickness={thickness} />
           ) : (
             <Well
               size={size}
+              thickness={thickness}
               status={status}
               completedCycles={completedCycles}
               totalCycles={totalCycles}
@@ -55,7 +61,7 @@ export default function MachineProgress({
             alignItems: "center",
           }}
         >
-          <ShowerIcon />
+          <ShowerIcon color={currentStep === "WASH" ? "primary" : "gray"} />
         </Box>
       </Box>
     </Box>

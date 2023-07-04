@@ -10,9 +10,8 @@ export default function Well({
   totalCycles = 0,
   displayCount = false,
   size = 40,
+  thickness = 8,
 }) {
-  const thickness = 8;
-
   return (
     <Box sx={{ position: "relative" }}>
       <CircularProgress
