@@ -1,33 +1,43 @@
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+
 import MachineImage from "./models/DNA-SYNTH-96.svg";
+import MachineStatus from "./MachineStatus";
 
 export default function MachineCard({ machine }) {
   return (
     <Box
       display="flex"
       flexDirection="row"
+      alignItems="center"
+      gap={3}
       sx={{
         p: 2,
       }}
     >
       <img src={MachineImage} alt="image" width="200" />
       <Box>
-        <Box component="h2">{machine.model}</Box>
-        <Box sx={{ color: "text.secondary" }}>Sessions</Box>
-        <Box
-          sx={{
-            color: "success.dark",
-            display: "inline",
-            fontWeight: "bold",
-            mx: 0.5,
-            fontSize: 14,
-          }}
-        >
-          +18.77%
+        <Typography variant="h4" component="div">
+          {machine.model}
+        </Typography>
+        <Box display="flex" flexDirection="row" gap={2}>
+          <Typography
+            component="div"
+            sx={{ fontSize: 14 }}
+            color="text.secondary"
+            gutterBottom
+          >
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <LocationOnIcon color="text.secondary" />
+              {machine.location}
+            </Box>
+          </Typography>
+          <Typography component="div" color="text.secondary">
+            ID: {machine.id}
+          </Typography>
         </Box>
-        <Box sx={{ color: "text.secondary", display: "inline", fontSize: 14 }}>
-          vs. last week
-        </Box>
+        <MachineStatus status={machine.status} />
       </Box>
     </Box>
   );
