@@ -7,6 +7,7 @@ import PaperMUI from "@mui/material/Paper";
 
 import WellArray from "./WellArray";
 import MachineCard from "./MachineCard";
+import MachineProgress from "./MachineProgress";
 import { CircularProgress } from "@mui/material";
 
 const Paper = styled(PaperMUI)(({ theme }) => ({
@@ -42,15 +43,38 @@ export default function MachinePage() {
 
   return (
     <Box display="flex" flexDirection="column" gap={2}>
-      <Paper elevation={1}>
-        {isLoading ? (
-          <Box display="flex" justifyContent="center" alignItems="center">
+      <Box display="flex" flexDirection="row" gap={2}>
+        <Paper elevation={1} sx={{ flexGrow: "1" }}>
+          {isLoading ? (
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <CircularProgress />
+            </Box>
+          ) : (
+            <MachineCard machine={machine} />
+          )}
+        </Paper>
+        <Paper
+          elevation={1}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {isLoading ? (
             <CircularProgress />
-          </Box>
-        ) : (
-          <MachineCard machine={machine} />
-        )}
-      </Paper>
+          ) : machine.status === "IDLE" ? (
+            <MachineProgress status={machine.status} />
+          ) : (
+            <MachineProgress
+              status={machine.status}
+              completedCycles={machine.synthesis.completedCycles}
+              totalCycles={machine.synthesis.totalCycles}
+              currentStep={machine.synthesis.currentStep}
+            />
+          )}
+        </Paper>
+      </Box>
       <Paper elevation={1}>
         {isLoading ? (
           <Box display="flex" justifyContent="center" alignItems="center">

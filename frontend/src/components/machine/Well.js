@@ -4,10 +4,10 @@ import CircularProgress, {
 import Box from "@mui/material/Box";
 
 export default function Well({
-  status = "IDLE",
+  idle = false,
   completedCycles = 0,
   totalCycles = 0,
-  idle = false,
+  size = 40,
 }) {
   const thickness = 8;
 
@@ -20,13 +20,14 @@ export default function Well({
             theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
         }}
         thickness={thickness}
+        size={size}
         value={100}
       />
       {!idle && (
         <CircularProgress
           variant="determinate"
           sx={{
-            color: status === "COMPLETED_OLIGO" ? "#66bb6a" : "#1a90ff",
+            color: completedCycles === totalCycles ? "#66bb6a" : "#1a90ff",
             animationDuration: "550ms",
             position: "absolute",
             left: 0,
@@ -35,6 +36,7 @@ export default function Well({
             },
           }}
           thickness={thickness}
+          size={size}
           value={(100 * completedCycles) / totalCycles}
         />
       )}
