@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -130,8 +131,10 @@ export default function Layout() {
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        <Outlet />
+        <Container maxWidth={false} sx={{ maxWidth: "1300px" }}>
+          <DrawerHeader />
+          <Outlet />
+        </Container>
       </Box>
     </Box>
   );
