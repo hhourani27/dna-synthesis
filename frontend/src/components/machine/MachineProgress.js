@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Well from "./Well";
+import Tooltip from "@mui/material/Tooltip";
 
 import SwitchAccessShortcutAddIcon from "@mui/icons-material/SwitchAccessShortcutAdd";
 import RemoveModeratorIcon from "@mui/icons-material/RemoveModerator";
@@ -23,9 +24,11 @@ export default function MachineProgress({
           alignItems: "center",
         }}
       >
-        <RemoveModeratorIcon
-          color={currentStep === "DEPROTECTION" ? "primary" : "gray"}
-        />
+        <Tooltip title="2. De-protection" placement="top" arrow>
+          <RemoveModeratorIcon
+            color={currentStep === "DEPROTECTION" ? "primary" : "gray"}
+          />
+        </Tooltip>
       </Box>
       <Box display="flex" flexDirection="row" gap={1}>
         <Box
@@ -35,9 +38,11 @@ export default function MachineProgress({
             alignItems: "center",
           }}
         >
-          <SwitchAccessShortcutAddIcon
-            color={currentStep === "ELONGATION" ? "primary" : "gray"}
-          />
+          <Tooltip title="1. Elongation" placement="top" arrow>
+            <SwitchAccessShortcutAddIcon
+              color={currentStep === "ELONGATION" ? "primary" : "gray"}
+            />
+          </Tooltip>
         </Box>
         <Box>
           {status === "IDLE" ? (
@@ -61,7 +66,9 @@ export default function MachineProgress({
             alignItems: "center",
           }}
         >
-          <ShowerIcon color={currentStep === "WASH" ? "primary" : "gray"} />
+          <Tooltip title="3. Wash" placement="top" arrow>
+            <ShowerIcon color={currentStep === "WASH" ? "primary" : "gray"} />
+          </Tooltip>
         </Box>
       </Box>
     </Box>
