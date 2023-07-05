@@ -11,28 +11,31 @@ export default function WellArray({
   onWellSelection,
   onWellDeselection,
 }) {
-  const selectionModes = {
-    NONE: "NONE",
+  const SELECTION_MODES = {
     HOVER: "HOVER",
     CLICK: "CLICK",
   };
 
-  const [selectionMode, setSelectionMode] = useState(selectionModes.NONE);
+  const [selectionMode, setSelectionMode] = useState(SELECTION_MODES.HOVER);
 
   const handleMouseEnter = (wellArrayRow, wellArrayCol) => {
-    if (selectionMode !== selectionModes.CLICK) {
+    if (selectionMode === SELECTION_MODES.HOVER) {
       onWellSelection(wellArrayRow, wellArrayCol);
     }
   };
 
   const handleMouseLeave = () => {
-    if (selectionMode !== selectionModes.CLICK) {
+    if (selectionMode === SELECTION_MODES.HOVER) {
       onWellDeselection();
     }
   };
 
   const handleMouseClick = (wellArrayRow, wellArrayCol) => {
-    setSelectionMode(selectionModes.CLICK);
+    if (selectionMode === SELECTION_MODES.HOVER) {
+      setSelectionMode(SELECTION_MODES.CLICK);
+    } else {
+      setSelectionMode(SELECTION_MODES.HOVER);
+    }
   };
 
   const [wellArrayRowSize, wellArrayColSize] = wellArraySize;
