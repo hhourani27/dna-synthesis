@@ -5,20 +5,21 @@ import Box from "@mui/material/Box";
 import Well from "./Well";
 
 export default function WellArray({
-  wellArrayRowSize,
-  wellArrayColSize,
+  wellArraySize,
   wells,
+  selectedWell,
+  onWellSelection,
+  onWellDeselection,
 }) {
-  const [selection, setSelection] = useState({ event: null, well: [-1, -1] });
-
   const handleMouseEnter = (wellArrayRow, wellArrayCol) => {
-    setSelection({ event: "HOVER", well: [wellArrayRow, wellArrayCol] });
+    onWellSelection(wellArrayRow, wellArrayCol);
   };
 
   const handleMouseLeave = () => {
-    setSelection({ event: null, well: [-1, -1] });
+    onWellDeselection();
   };
 
+  const [wellArrayRowSize, wellArrayColSize] = wellArraySize;
   const gridCols = [...Array(wellArrayColSize).keys()].map((c) => c + 1);
   const gridRows = [...Array(wellArrayRowSize).keys()].map((r) => r + 1);
 
@@ -65,9 +66,9 @@ export default function WellArray({
                 gridColumn: `${col + 1}`,
                 lineHeight: "0",
                 outline:
-                  selection.event != null &&
-                  selection.well[0] === row - 1 &&
-                  selection.well[1] === col - 1
+                  selectedWell != null &&
+                  selectedWell[0] === row - 1 &&
+                  selectedWell[1] === col - 1
                     ? "solid black 1px"
                     : 0,
               }}

@@ -23,6 +23,7 @@ export default function MachinePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [machine, setMachine] = useState(null);
   const [model, setModel] = useState(null);
+  const [selectedWell, setSelectedWell] = useState(null);
 
   useEffect(() => {
     async function getData() {
@@ -82,9 +83,13 @@ export default function MachinePage() {
           </Box>
         ) : (
           <WellArray
-            wellArrayRowSize={model.wellArraySize[0]}
-            wellArrayColSize={model.wellArraySize[1]}
+            wellArraySize={model.wellArraySize}
             wells={machine.wells}
+            selectedWell={selectedWell}
+            onWellSelection={(r, c) => {
+              setSelectedWell([r, c]);
+            }}
+            onWellDeselection={() => setSelectedWell(null)}
           />
         )}
       </Paper>
