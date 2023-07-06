@@ -64,14 +64,37 @@ export default function MachinePage() {
         >
           {isLoading ? (
             <CircularProgress />
-          ) : machine.status === "IDLE" ? (
-            <MachineProgress status={machine.status} />
+          ) : selectedWell ? (
+            <MachineProgress
+              status={machine.wells[selectedWell[0]][selectedWell[1]].status}
+              {
+                // Nice technique to conditionally include props: https://stackoverflow.com/a/51404352/471461
+                ...(machine.status !== "IDLE"
+                  ? {
+                      completedCycles:
+                        machine.wells[selectedWell[0]][selectedWell[1]]
+                          .synthetizedNucleotideCount,
+                      totalCycles:
+                        machine.wells[selectedWell[0]][selectedWell[1]]
+                          .totalCycles,
+                      currentStep: machine.synthesis.currentStep,
+                    }
+                  : {})
+              }
+            />
           ) : (
             <MachineProgress
               status={machine.status}
-              completedCycles={machine.synthesis.completedCycles}
-              totalCycles={machine.synthesis.totalCycles}
-              currentStep={machine.synthesis.currentStep}
+              {
+                // Nice technique to conditionally include props: https://stackoverflow.com/a/51404352/471461
+                ...(machine.status !== "IDLE"
+                  ? {
+                      completedCycles: machine.synthesis.completedCycles,
+                      totalCycles: machine.synthesis.totalCycles,
+                      currentStep: machine.synthesis.currentStep,
+                    }
+                  : {})
+              }
             />
           )}
         </Paper>
