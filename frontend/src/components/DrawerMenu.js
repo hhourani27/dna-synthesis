@@ -4,10 +4,10 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
-import MicrowaveIcon from "@mui/icons-material/Microwave";
-import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
-import InfoIcon from "@mui/icons-material/Info";
+import MicrowaveOutlinedIcon from "@mui/icons-material/MicrowaveOutlined";
+import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import { useNavigate } from "react-router-dom";
 
@@ -15,22 +15,22 @@ export default function DrawerMenu({ open }) {
   const drawerMenuItems = [
     {
       label: "Machines",
-      icon: <MicrowaveIcon />,
+      icon: <MicrowaveOutlinedIcon />,
       link: "/machines",
     },
     {
       label: "Orders",
-      icon: <ReceiptLongIcon />,
+      icon: <ReceiptLongOutlinedIcon />,
       link: "/orders",
     },
     {
       label: "Dashboard",
-      icon: <AnalyticsIcon />,
+      icon: <AssessmentOutlinedIcon />,
       link: "/analytics",
     },
     {
       label: "Onboarding",
-      icon: <InfoIcon />,
+      icon: <InfoOutlinedIcon />,
       link: "/onboarding",
     },
   ];
@@ -38,17 +38,17 @@ export default function DrawerMenu({ open }) {
   let navigate = useNavigate();
 
   return (
-    <List>
+    <List sx={{ bgcolor: "transparent" }}>
       {drawerMenuItems.map((item) => (
         <ListItem key={item.label} disablePadding sx={{ display: "block" }}>
           <ListItemButton
+            disableGutters
             onClick={() => {
               navigate(item.link);
             }}
             sx={{
               minHeight: 48,
               justifyContent: open ? "initial" : "center",
-              px: 2.5,
             }}
           >
             <ListItemIcon
@@ -56,6 +56,7 @@ export default function DrawerMenu({ open }) {
                 minWidth: 0,
                 mr: open ? 3 : "auto",
                 justifyContent: "center",
+                color: "primary.contrastText",
               }}
             >
               {item.icon}
