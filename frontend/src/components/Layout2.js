@@ -22,6 +22,7 @@ import DrawerMenu from "./DrawerMenu";
 import Logo from "./Logo";
 
 const drawerWidth = 240;
+const headerHeight = { xs: 56, sm: 64 };
 
 export default function Layout2() {
   return (
@@ -43,7 +44,7 @@ export default function Layout2() {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              minHeight: theme.mixins.toolbar.minHeight,
+              minHeight: headerHeight,
             }}
           >
             <Logo open />

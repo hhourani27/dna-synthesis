@@ -38,17 +38,17 @@ export default function DrawerMenu({ open }) {
   let navigate = useNavigate();
 
   return (
-    <List sx={{ bgcolor: "transparent" }}>
+    <List>
       {drawerMenuItems.map((item) => (
-        <ListItem key={item.label} disablePadding sx={{ display: "block" }}>
+        <ListItem key={item.label}>
           <ListItemButton
-            disableGutters
             onClick={() => {
               navigate(item.link);
             }}
             sx={{
               minHeight: 48,
               justifyContent: open ? "initial" : "center",
+              "&:hover, &:focus": { bgcolor: "primary.light" },
             }}
           >
             <ListItemIcon
@@ -56,7 +56,7 @@ export default function DrawerMenu({ open }) {
                 minWidth: 0,
                 mr: open ? 3 : "auto",
                 justifyContent: "center",
-                color: "primary.contrastText",
+                color: "inherit",
               }}
             >
               {item.icon}
