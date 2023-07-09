@@ -18,5 +18,13 @@ export const theme = createTheme({
     header: {
       height: "56px",
     },
+    drawer: {
+      opened: {
+        width: "240px",
+      },
+      closed: {
+        width: "72px",
+      },
+    },
   },
 });

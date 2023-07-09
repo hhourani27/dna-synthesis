@@ -7,21 +7,39 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import DrawerMenu from "./DrawerMenu";
 import Logo from "./logo/Logo";
 
-const drawerWidth = 240;
-
-const StyledDrawer = styled("aside")(({ theme }) => ({
+const StyledDrawer = styled("aside")(({ theme, open }) => ({
   display: "flex",
   flexDirection: "column",
   flexGrow: 0,
   flexShrink: 0,
-  //   flexBasis: drawerWidth,
 
   position: "relative",
+  /* Had to add width so that transition animation works.
+  In CSS transition do not apply to auto properties
+  */
+  width: theme.layout.drawer.opened.width,
 
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.contrastText,
-
   padding: 0,
+
+  ...(open && {
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+
+  ...(!open && {
+    /* Had to add width so that transition animation works.
+     In CSS transition do not apply to auto properties
+  */
+    width: theme.layout.drawer.closed.width,
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  }),
 }));
 
 const DrawerLogoContainer = styled("div")(({ theme }) => ({
@@ -48,7 +66,7 @@ export default function Drawer() {
   const toggleDrawer = () => setOpen((open) => !open);
 
   return (
-    <StyledDrawer>
+    <StyledDrawer open={open}>
       <DrawerLogoContainer>
         <Logo open={open} />
       </DrawerLogoContainer>

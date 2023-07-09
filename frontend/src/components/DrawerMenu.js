@@ -1,11 +1,5 @@
 import { styled } from "@mui/material/styles";
 
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-
 import MicrowaveOutlinedIcon from "@mui/icons-material/MicrowaveOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
@@ -25,8 +19,6 @@ const DrawerMenuList = styled("ul")(({ theme, open }) => ({
 const DrawerMenuListItem = styled("li")(({ theme, open }) => ({
   minHeight: 48,
   padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
-
-  ...(open && { marginRight: theme.spacing(2) }),
 
   display: "flex",
   flexDirection: "row",
