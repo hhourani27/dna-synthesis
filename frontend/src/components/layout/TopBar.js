@@ -13,7 +13,7 @@ const Header = styled("header")(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing(3),
 
-  backgroundColor: theme.palette.background.background,
+  backgroundColor: theme.palette.background.default,
   height: theme.layout.header.height,
   padding: theme.spacing(3),
 }));
