@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -13,7 +12,7 @@ import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 
-import { ThemeProvider } from "@mui/material/styles";
+import { styled, ThemeProvider } from "@mui/material/styles";
 
 import { Outlet } from "react-router-dom";
 
@@ -24,21 +23,36 @@ import Logo from "./Logo";
 const drawerWidth = 240;
 const headerHeight = { xs: 56, sm: 64 };
 
+const Drawer = styled("aside")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  flexGrow: 0,
+  flexShrink: 0,
+  flexBasis: drawerWidth,
+  // width: drawerWidth,
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+  // paddingX: 3,
+}));
+
+const Container = styled("div")(({ theme }) => ({
+  flex: 1,
+  overflow: "auto",
+}));
+
+const TopBar = styled("header")(({ theme }) => ({
+  position: "sticky",
+  top: 0,
+  backgroundColor: "white",
+  height: "56px",
+}));
+
 export default function Layout2() {
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", height: "100%", margin: "0" }}>
         <CssBaseline />
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: drawerWidth,
-            bgcolor: "primary.main",
-            color: "primary.contrastText",
-            px: 3,
-          }}
-        >
+        <Drawer>
           <Box
             sx={{
               display: "flex",
@@ -51,9 +65,10 @@ export default function Layout2() {
           </Box>
           <Divider />
           <DrawerMenu open />
-        </Box>
-        <Box>
-          <AppBar
+        </Drawer>
+        <Container>
+          <TopBar>Header content</TopBar>
+          {/* <AppBar
             position="fixed"
             sx={{
               width: `calc(100% - ${drawerWidth}px)`,
@@ -65,7 +80,7 @@ export default function Layout2() {
                 Permanent drawer
               </Typography>
             </Toolbar>
-          </AppBar>
+          </AppBar> */}
           <Box
             component="main"
             sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
@@ -73,7 +88,7 @@ export default function Layout2() {
             <Toolbar />
             <Outlet />
           </Box>
-        </Box>
+        </Container>
       </Box>
     </ThemeProvider>
   );
