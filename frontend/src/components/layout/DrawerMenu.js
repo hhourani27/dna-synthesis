@@ -1,4 +1,5 @@
 import { styled } from "@mui/material/styles";
+import { NavLink } from "react-router-dom";
 
 import MicrowaveOutlinedIcon from "@mui/icons-material/MicrowaveOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
@@ -16,7 +17,7 @@ const DrawerMenuList = styled("ul")(({ theme, open }) => ({
   listStyleType: "none",
 }));
 
-const DrawerMenuListItem = styled("li")(({ theme, open }) => ({
+const DrawerMenuListItem = styled("div")(({ theme, open }) => ({
   minHeight: 48,
   padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
 
@@ -25,7 +26,8 @@ const DrawerMenuListItem = styled("li")(({ theme, open }) => ({
   alignItems: "center",
   flexWrap: "nowrap",
 
-  ":hover, :focus": { backgroundColor: theme.palette.primary.light },
+  "&:hover, &:focus": { backgroundColor: theme.palette.primary.light },
+  ".active &": { color: theme.palette.secondary.main },
 }));
 
 const DrawerMenuItemIcon = styled("span")(({ theme, open }) => ({
@@ -64,16 +66,14 @@ export default function DrawerMenu({ open }) {
     <nav>
       <DrawerMenuList>
         {drawerMenuItems.map((item) => (
-          <DrawerMenuListItem
-            key={item.label}
-            onClick={() => {
-              navigate(item.link);
-            }}
-            open={open}
-          >
-            <DrawerMenuItemIcon open={open}>{item.icon}</DrawerMenuItemIcon>
-            {open && <DrawerMenuItemText>{item.label}</DrawerMenuItemText>}
-          </DrawerMenuListItem>
+          <li key={item.label}>
+            <NavLink to={item.link}>
+              <DrawerMenuListItem key={item.label} open={open}>
+                <DrawerMenuItemIcon open={open}>{item.icon}</DrawerMenuItemIcon>
+                {open && <DrawerMenuItemText>{item.label}</DrawerMenuItemText>}
+              </DrawerMenuListItem>
+            </NavLink>
+          </li>
         ))}
       </DrawerMenuList>
     </nav>
