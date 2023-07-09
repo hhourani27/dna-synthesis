@@ -14,4 +14,9 @@ export const theme = createTheme({
       default: "#f8f8f8",
     },
   },
+  layout: {
+    header: {
+      height: "56px",
+    },
+  },
 });

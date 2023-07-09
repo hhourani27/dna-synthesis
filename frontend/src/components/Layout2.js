@@ -35,8 +35,9 @@ const Drawer = styled("aside")(({ theme }) => ({
   // paddingX: 3,
 }));
 
-const Container = styled("div")(({ theme }) => ({
+const MainContainer = styled("div")(({ theme }) => ({
   flex: 1,
+  flexGrow: 1,
   overflow: "auto",
 }));
 
@@ -44,7 +45,11 @@ const TopBar = styled("header")(({ theme }) => ({
   position: "sticky",
   top: 0,
   backgroundColor: "white",
-  height: "56px",
+  height: theme.layout.header.height,
+}));
+
+const MainContent = styled("main")(({ theme }) => ({
+  backgroundColor: theme.palette.background.default,
 }));
 
 export default function Layout2() {
@@ -66,29 +71,12 @@ export default function Layout2() {
           <Divider />
           <DrawerMenu open />
         </Drawer>
-        <Container>
+        <MainContainer>
           <TopBar>Header content</TopBar>
-          {/* <AppBar
-            position="fixed"
-            sx={{
-              width: `calc(100% - ${drawerWidth}px)`,
-              ml: `${drawerWidth}px`,
-            }}
-          >
-            <Toolbar>
-              <Typography variant="h6" noWrap component="div">
-                Permanent drawer
-              </Typography>
-            </Toolbar>
-          </AppBar> */}
-          <Box
-            component="main"
-            sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
-          >
-            <Toolbar />
+          <MainContent>
             <Outlet />
-          </Box>
-        </Container>
+          </MainContent>
+        </MainContainer>
       </Box>
     </ThemeProvider>
   );
