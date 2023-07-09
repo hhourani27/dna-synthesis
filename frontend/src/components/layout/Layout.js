@@ -21,6 +21,8 @@ const MainContainer = styled("div")(({ theme }) => ({
 }));
 
 const MainContent = styled("main")(({ theme }) => ({
+  maxWidth: 1500,
+  margin: "auto",
   backgroundColor: theme.palette.background.default,
   padding: theme.spacing(3),
 }));
