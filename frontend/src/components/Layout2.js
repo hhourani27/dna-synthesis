@@ -18,7 +18,7 @@ import { Outlet } from "react-router-dom";
 
 import { theme } from "../style/Theme";
 import DrawerMenu from "./DrawerMenu";
-import Logo from "./Logo";
+import Logo from "./logo/Logo";
 
 const drawerWidth = 240;
 const headerHeight = { xs: 56, sm: 64 };
@@ -34,8 +34,11 @@ const Drawer = styled("aside")(({ theme }) => ({
   flexGrow: 0,
   flexShrink: 0,
   flexBasis: drawerWidth,
+
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.contrastText,
+
+  padding: theme.spacing(1),
 }));
 
 const MainContainer = styled("div")(({ theme }) => ({
@@ -47,12 +50,13 @@ const MainContainer = styled("div")(({ theme }) => ({
 const TopBar = styled("header")(({ theme }) => ({
   position: "sticky",
   top: 0,
-  backgroundColor: "white",
+  backgroundColor: theme.palette.background.paper,
   height: theme.layout.header.height,
 }));
 
 const MainContent = styled("main")(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
+  padding: theme.spacing(3),
 }));
 
 export default function Layout2() {
