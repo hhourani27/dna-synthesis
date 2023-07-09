@@ -60,8 +60,6 @@ const drawerMenuItems = [
 ];
 
 export default function DrawerMenu({ open }) {
-  let navigate = useNavigate();
-
   return (
     <nav>
       <DrawerMenuList>
