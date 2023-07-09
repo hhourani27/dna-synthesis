@@ -7,6 +7,7 @@ import { Outlet } from "react-router-dom";
 import { theme } from "../../style/Theme";
 
 import Drawer from "./Drawer";
+import TopBar from "./TopBar";
 
 const RootContainer = styled("div")(({ theme }) => ({
   display: "flex",
@@ -17,13 +18,6 @@ const MainContainer = styled("div")(({ theme }) => ({
   flex: 1,
   flexGrow: 1,
   overflow: "auto",
-}));
-
-const TopBar = styled("header")(({ theme }) => ({
-  position: "sticky",
-  top: 0,
-  backgroundColor: theme.palette.background.paper,
-  height: theme.layout.header.height,
 }));
 
 const MainContent = styled("main")(({ theme }) => ({
@@ -38,7 +32,7 @@ export default function Layout2() {
         <CssBaseline />
         <Drawer />
         <MainContainer>
-          <TopBar>Header content</TopBar>
+          <TopBar />
           <MainContent>
             <Outlet />
           </MainContent>
