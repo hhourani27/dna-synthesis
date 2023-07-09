@@ -14,6 +14,10 @@ export const theme = createTheme({
       default: "#f8f8f8",
     },
   },
+  typography: {
+    fontFamily: "Quicksand, Roboto, Helvetica, sans-serif",
+  },
+
   layout: {
     header: {
       height: "56px",
