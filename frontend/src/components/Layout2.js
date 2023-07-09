@@ -17,28 +17,12 @@ import { styled, ThemeProvider } from "@mui/material/styles";
 import { Outlet } from "react-router-dom";
 
 import { theme } from "../style/Theme";
-import DrawerMenu from "./DrawerMenu";
-import Logo from "./logo/Logo";
 
-const drawerWidth = 240;
-const headerHeight = { xs: 56, sm: 64 };
+import Drawer from "./Drawer";
 
 const RootContainer = styled("div")(({ theme }) => ({
   display: "flex",
   height: "100%",
-}));
-
-const Drawer = styled("aside")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  flexGrow: 0,
-  flexShrink: 0,
-  flexBasis: drawerWidth,
-
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.primary.contrastText,
-
-  padding: theme.spacing(1),
 }));
 
 const MainContainer = styled("div")(({ theme }) => ({
@@ -64,20 +48,7 @@ export default function Layout2() {
     <ThemeProvider theme={theme}>
       <RootContainer>
         <CssBaseline />
-        <Drawer>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              minHeight: headerHeight,
-            }}
-          >
-            <Logo open />
-          </Box>
-          <Divider />
-          <DrawerMenu open />
-        </Drawer>
+        <Drawer />
         <MainContainer>
           <TopBar>Header content</TopBar>
           <MainContent>
