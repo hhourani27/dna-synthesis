@@ -14,14 +14,14 @@ const StyledDrawer = styled("aside")(({ theme }) => ({
   flexDirection: "column",
   flexGrow: 0,
   flexShrink: 0,
-  flexBasis: drawerWidth,
+  //   flexBasis: drawerWidth,
 
   position: "relative",
 
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.contrastText,
 
-  padding: `0 ${theme.spacing(1)}`,
+  padding: 0,
 }));
 
 const DrawerLogoContainer = styled("div")(({ theme }) => ({
@@ -29,6 +29,8 @@ const DrawerLogoContainer = styled("div")(({ theme }) => ({
   alignItems: "center",
 
   height: theme.layout.header.height,
+  // TODO : review the logo padding
+  padding: `${theme.spacing(2)} ${theme.spacing(1)}`,
 }));
 
 const DrawerToggleFab = styled(Fab)(({ theme }) => ({
@@ -41,7 +43,9 @@ const DrawerToggleFab = styled(Fab)(({ theme }) => ({
 }));
 
 export default function Drawer() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
+
+  const toggleDrawer = () => setOpen((open) => !open);
 
   return (
     <StyledDrawer>
@@ -49,7 +53,7 @@ export default function Drawer() {
         <Logo open={open} />
       </DrawerLogoContainer>
       <DrawerMenu open={open} />
-      <DrawerToggleFab size="small">
+      <DrawerToggleFab size="small" onClick={toggleDrawer}>
         <ArrowBackIosNewIcon />
       </DrawerToggleFab>
     </StyledDrawer>

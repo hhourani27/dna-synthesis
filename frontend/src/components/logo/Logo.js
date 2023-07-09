@@ -17,7 +17,7 @@ export default function Logo({ open }) {
   return (
     <LogoAndText>
       <BlackLogo src={dnaLogo} alt="Logo" width="40" />
-      <div>DNA SYNTHESIS</div>
+      {open && <div>DNA SYNTHESIS</div>}
     </LogoAndText>
   );
 }
