@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Layout from "./Layout";
-import Layout2 from "./Layout2";
+import Layout from "./layout/Layout";
+import Layout2 from "./layout/Layout2";
 import MachinesListPage from "./machine/MachineListPage";
 import MachinePage from "./machine/MachinePage";
 

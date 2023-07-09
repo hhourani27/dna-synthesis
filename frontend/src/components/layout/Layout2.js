@@ -4,7 +4,7 @@ import { styled, ThemeProvider } from "@mui/material/styles";
 
 import { Outlet } from "react-router-dom";
 
-import { theme } from "../style/Theme";
+import { theme } from "../../style/Theme";
 
 import Drawer from "./Drawer";
 

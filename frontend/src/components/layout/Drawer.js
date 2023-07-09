@@ -5,7 +5,7 @@ import Fab from "@mui/material/Fab";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 import DrawerMenu from "./DrawerMenu";
-import Logo from "./logo/Logo";
+import Logo from "../logo/Logo";
 
 const StyledDrawer = styled("aside")(({ theme, open }) => ({
   display: "flex",
