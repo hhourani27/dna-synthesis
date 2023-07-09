@@ -23,16 +23,19 @@ import Logo from "./Logo";
 const drawerWidth = 240;
 const headerHeight = { xs: 56, sm: 64 };
 
+const RootContainer = styled("div")(({ theme }) => ({
+  display: "flex",
+  height: "100%",
+}));
+
 const Drawer = styled("aside")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   flexGrow: 0,
   flexShrink: 0,
   flexBasis: drawerWidth,
-  // width: drawerWidth,
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.contrastText,
-  // paddingX: 3,
 }));
 
 const MainContainer = styled("div")(({ theme }) => ({
@@ -55,7 +58,7 @@ const MainContent = styled("main")(({ theme }) => ({
 export default function Layout2() {
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ display: "flex", height: "100%", margin: "0" }}>
+      <RootContainer>
         <CssBaseline />
         <Drawer>
           <Box
@@ -77,7 +80,7 @@ export default function Layout2() {
             <Outlet />
           </MainContent>
         </MainContainer>
-      </Box>
+      </RootContainer>
     </ThemeProvider>
   );
 }
