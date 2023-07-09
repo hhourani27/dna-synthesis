@@ -51,13 +51,21 @@ const DrawerLogoContainer = styled("div")(({ theme }) => ({
   padding: `${theme.spacing(2)} ${theme.spacing(1)}`,
 }));
 
-const DrawerToggleFab = styled(Fab)(({ theme }) => ({
+const DrawerToggleFab = styled(Fab)(({ theme, open }) => ({
   position: "absolute",
   left: "100%",
-  transform: `translateX(-50%) translateY(${theme.layout.header.height}) translateY(-50%)`,
+  transform: `translateX(-50%) translateY(${
+    theme.layout.header.height
+  }) translateY(-50%) rotate(${open ? 0 : 180}deg)`,
   zIndex: 1,
+
   backgroundColor: theme.palette.background.paper,
   boxShadow: "none",
+
+  transition: theme.transitions.create("transform", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.complex,
+  }),
 }));
 
 export default function Drawer() {
@@ -71,7 +79,7 @@ export default function Drawer() {
         <Logo open={open} />
       </DrawerLogoContainer>
       <DrawerMenu open={open} />
-      <DrawerToggleFab size="small" onClick={toggleDrawer}>
+      <DrawerToggleFab size="small" open={open} onClick={toggleDrawer}>
         <ArrowBackIosNewIcon />
       </DrawerToggleFab>
     </StyledDrawer>
