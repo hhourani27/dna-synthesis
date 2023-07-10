@@ -14,6 +14,10 @@ export default function MachineProgress({
 }) {
   const size = 175;
   const thickness = 6;
+  const stepColor = {
+    current: "primary",
+    other: "disabled",
+  };
 
   return (
     <Box display="flex" flexDirection="column" gap={1}>
@@ -26,7 +30,11 @@ export default function MachineProgress({
       >
         <Tooltip title="2. De-protection" placement="top" arrow>
           <RemoveModeratorIcon
-            color={currentStep === "DEPROTECTION" ? "primary" : "gray"}
+            color={
+              currentStep === "DEPROTECTION"
+                ? stepColor.current
+                : stepColor.other
+            }
           />
         </Tooltip>
       </Box>
@@ -40,7 +48,11 @@ export default function MachineProgress({
         >
           <Tooltip title="1. Elongation" placement="top" arrow>
             <SwitchAccessShortcutAddIcon
-              color={currentStep === "ELONGATION" ? "primary" : "gray"}
+              color={
+                currentStep === "ELONGATION"
+                  ? stepColor.current
+                  : stepColor.other
+              }
             />
           </Tooltip>
         </Box>
@@ -67,7 +79,11 @@ export default function MachineProgress({
           }}
         >
           <Tooltip title="3. Wash" placement="top" arrow>
-            <ShowerIcon color={currentStep === "WASH" ? "primary" : "gray"} />
+            <ShowerIcon
+              color={
+                currentStep === "WASH" ? stepColor.current : stepColor.other
+              }
+            />
           </Tooltip>
         </Box>
       </Box>
