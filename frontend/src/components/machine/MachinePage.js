@@ -44,8 +44,12 @@ export default function MachinePage() {
   }, []);
 
   return (
-    <Box display="flex" flexDirection="column" gap={2}>
-      <Box display="flex" flexDirection="row" gap={2}>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}
+    >
+      <Box
+        sx={{ display: "flex", flexDirection: "row", gap: 2, width: "100%" }}
+      >
         <Paper elevation={1} sx={{ flexGrow: "1" }}>
           {isLoading ? (
             <Box display="flex" justifyContent="center" alignItems="center">
@@ -105,8 +109,8 @@ export default function MachinePage() {
           )}
         </Paper>
       </Box>
-      <Box display="flex" flexDirection="row" gap={2}>
-        <Paper elevation={1} sx={{ flexGrow: "1" }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
+        <Paper elevation={1}>
           {isLoading ? (
             <Box display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />
@@ -123,7 +127,7 @@ export default function MachinePage() {
             />
           )}
         </Paper>
-        <Paper elevation={1} sx={{ flexGrow: "1" }}>
+        <Paper elevation={1} sx={{ overflow: "auto", contain: "size" }}>
           {isLoading ? (
             <Box display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />
