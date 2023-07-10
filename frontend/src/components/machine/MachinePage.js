@@ -133,7 +133,7 @@ export default function MachinePage() {
             flexGrow: "1",
             flexBasis: "0",
             overflow: "auto",
-            contain: "size",
+            contain: "size", // To make sur that it's height will not be greater than the Well Array's height. see https://stackoverflow.com/a/48943583/471461
           }}
         >
           {isLoading ? (
