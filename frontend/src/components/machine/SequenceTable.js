@@ -1,9 +1,19 @@
-import Box from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
 import Well from "./Well";
 
+const Table = styled("table")(({ theme }) => ({
+  "& td, & th": {
+    padding: `${theme.spacing(1)} 0`,
+    textAlign: "center",
+  },
+
+  "& th": {
+    paddingRight: theme.spacing(2),
+  },
+}));
+
 const Nucleotide = styled("td")(
-  ({ theme, n, nucleotideIsSynthetized, oligoIsCompleted = false }) => ({
+  ({ theme, nucleotideIsSynthetized, oligoIsCompleted = false }) => ({
     color: oligoIsCompleted
       ? theme.palette.success.main
       : nucleotideIsSynthetized
@@ -20,19 +30,11 @@ export default function SequenceTable({ wellArraySize, wells }) {
   );
 
   return (
-    <Box
-      component="table"
-      // sx={{
-      //   border: "1px solid",
-      //   "& td": {
-      //     border: "1px solid",
-      //   },
-      // }}
-    >
+    <Table>
       <tbody>
         {wells.map((w, widx) => (
           <tr key={w.id}>
-            <td>
+            <th>
               {w.status === "IDLE" ? (
                 <Well idle />
               ) : (
@@ -42,7 +44,7 @@ export default function SequenceTable({ wellArraySize, wells }) {
                   totalCycles={w.totalCycles}
                 />
               )}
-            </td>
+            </th>
             {[...Array(maxLenghtOligo).keys()].map((n) => (
               <Nucleotide
                 key={n}
@@ -55,6 +57,6 @@ export default function SequenceTable({ wellArraySize, wells }) {
           </tr>
         ))}
       </tbody>
-    </Box>
+    </Table>
   );
 }
