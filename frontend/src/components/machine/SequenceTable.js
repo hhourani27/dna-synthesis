@@ -1,15 +1,23 @@
 import Box from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
+import Well from "./Well";
 
-const Nucleotide = styled("td")(({ theme, n, synthetized }) => ({
-  color: synthetized
-    ? theme.palette.success.main
-    : theme.palette.text.secondary,
-  fontWeight: synthetized ? 600 : 400,
-}));
+const Nucleotide = styled("td")(
+  ({ theme, n, nucleotideIsSynthetized, oligoIsCompleted = false }) => ({
+    color: oligoIsCompleted
+      ? theme.palette.success.main
+      : nucleotideIsSynthetized
+      ? theme.palette.secondary.main
+      : theme.palette.text.secondary,
+    fontWeight: nucleotideIsSynthetized ? 600 : 400,
+  })
+);
 
 export default function SequenceTable({ wellArraySize, wells }) {
   const maxLenghtOligo = Math.max(...wells.map((w) => w.totalCycles));
+  const oligoIsCompleted = wells.map(
+    (w) => w.synthetizedNucleotideCount === w.totalCycles
+  );
 
   return (
     <Box
@@ -22,12 +30,24 @@ export default function SequenceTable({ wellArraySize, wells }) {
       // }}
     >
       <tbody>
-        {wells.map((w) => (
+        {wells.map((w, widx) => (
           <tr key={w.id}>
+            <td>
+              {w.status === "IDLE" ? (
+                <Well idle />
+              ) : (
+                <Well
+                  status={w.status}
+                  completedCycles={w.synthetizedNucleotideCount}
+                  totalCycles={w.totalCycles}
+                />
+              )}
+            </td>
             {[...Array(maxLenghtOligo).keys()].map((n) => (
               <Nucleotide
                 key={n}
-                synthetized={n < w.synthetizedNucleotideCount}
+                nucleotideIsSynthetized={n < w.synthetizedNucleotideCount}
+                oligoIsCompleted={oligoIsCompleted[widx]}
               >
                 {n < w.oligo.length ? w.oligo.charAt(n) : " "}
               </Nucleotide>
