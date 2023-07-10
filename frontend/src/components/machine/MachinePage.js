@@ -19,6 +19,20 @@ const Paper = styled(PaperMUI)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+const PageContainer = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(2),
+  width: "100%",
+}));
+
+const FlexRow = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  gap: theme.spacing(2),
+  width: "100%",
+}));
+
 export default function MachinePage() {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
@@ -44,12 +58,8 @@ export default function MachinePage() {
   }, []);
 
   return (
-    <Box
-      sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}
-    >
-      <Box
-        sx={{ display: "flex", flexDirection: "row", gap: 2, width: "100%" }}
-      >
+    <PageContainer>
+      <FlexRow>
         <Paper elevation={1} sx={{ flexGrow: "1" }}>
           {isLoading ? (
             <Box display="flex" justifyContent="center" alignItems="center">
@@ -108,9 +118,9 @@ export default function MachinePage() {
             />
           )}
         </Paper>
-      </Box>
-      <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-        <Paper elevation={1}>
+      </FlexRow>
+      <FlexRow>
+        <Paper elevation={1} sx={{ flexGrow: "1", flexBasis: "0" }}>
           {isLoading ? (
             <Box display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />
@@ -127,7 +137,15 @@ export default function MachinePage() {
             />
           )}
         </Paper>
-        <Paper elevation={1} sx={{ overflow: "auto", contain: "size" }}>
+        <Paper
+          elevation={1}
+          sx={{
+            flexGrow: "1",
+            flexBasis: "0",
+            overflow: "auto",
+            contain: "size",
+          }}
+        >
           {isLoading ? (
             <Box display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />
@@ -139,7 +157,7 @@ export default function MachinePage() {
             />
           )}
         </Paper>
-      </Box>
-    </Box>
+      </FlexRow>
+    </PageContainer>
   );
 }
