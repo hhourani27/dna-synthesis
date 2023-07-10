@@ -8,6 +8,7 @@ import PaperMUI from "@mui/material/Paper";
 import WellArray from "./WellArray";
 import MachineCard from "./MachineCard";
 import MachineProgress from "./MachineProgress";
+import SequenceTable from "./SequenceTable";
 import { CircularProgress } from "@mui/material";
 
 const Paper = styled(PaperMUI)(({ theme }) => ({
@@ -99,23 +100,37 @@ export default function MachinePage() {
           )}
         </Paper>
       </Box>
-      <Paper elevation={1}>
-        {isLoading ? (
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <CircularProgress />
-          </Box>
-        ) : (
-          <WellArray
-            wellArraySize={model.wellArraySize}
-            wells={machine.wells}
-            selectedWell={selectedWell}
-            onWellSelection={(r, c) => {
-              setSelectedWell([r, c]);
-            }}
-            onWellDeselection={() => setSelectedWell(null)}
-          />
-        )}
-      </Paper>
+      <Box display="flex" flexDirection="row" gap={2}>
+        <Paper elevation={1} sx={{ flexGrow: "1" }}>
+          {isLoading ? (
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <CircularProgress />
+            </Box>
+          ) : (
+            <WellArray
+              wellArraySize={model.wellArraySize}
+              wells={machine.wells}
+              selectedWell={selectedWell}
+              onWellSelection={(r, c) => {
+                setSelectedWell([r, c]);
+              }}
+              onWellDeselection={() => setSelectedWell(null)}
+            />
+          )}
+        </Paper>
+        <Paper elevation={1} sx={{ flexGrow: "1" }}>
+          {isLoading ? (
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <CircularProgress />
+            </Box>
+          ) : (
+            <SequenceTable
+              wellArraySize={model.wellArraySize}
+              wells={machine.wells}
+            />
+          )}
+        </Paper>
+      </Box>
     </Box>
   );
 }
