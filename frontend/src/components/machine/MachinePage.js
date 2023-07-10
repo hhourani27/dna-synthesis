@@ -3,21 +3,13 @@ import { useParams } from "react-router-dom";
 
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import PaperMUI from "@mui/material/Paper";
+import Card from "../layout/Card";
 
 import WellArray from "./WellArray";
 import MachineCard from "./MachineCard";
 import MachineProgress from "./MachineProgress";
 import SequenceTable from "./SequenceTable";
 import { CircularProgress } from "@mui/material";
-
-const Paper = styled(PaperMUI)(({ theme }) => ({
-  //   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  //   ...theme.typography.body2,
-  padding: theme.spacing(1),
-  //   textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
 
 const PageContainer = styled("div")(({ theme }) => ({
   display: "flex",
@@ -60,7 +52,7 @@ export default function MachinePage() {
   return (
     <PageContainer>
       <FlexRow>
-        <Paper elevation={1} sx={{ flexGrow: "1" }}>
+        <Card sx={{ flexGrow: "1" }}>
           {isLoading ? (
             <Box display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />
@@ -68,9 +60,8 @@ export default function MachinePage() {
           ) : (
             <MachineCard machine={machine} />
           )}
-        </Paper>
-        <Paper
-          elevation={1}
+        </Card>
+        <Card
           sx={{
             display: "flex",
             justifyContent: "center",
@@ -117,10 +108,10 @@ export default function MachinePage() {
               }
             />
           )}
-        </Paper>
+        </Card>
       </FlexRow>
       <FlexRow>
-        <Paper elevation={1} sx={{ flexGrow: "1", flexBasis: "0" }}>
+        <Card sx={{ flexGrow: "1", flexBasis: "0" }}>
           {isLoading ? (
             <Box display="flex" justifyContent="center" alignItems="center">
               <CircularProgress />
@@ -136,9 +127,8 @@ export default function MachinePage() {
               onWellDeselection={() => setSelectedWellId(null)}
             />
           )}
-        </Paper>
-        <Paper
-          elevation={1}
+        </Card>
+        <Card
           sx={{
             flexGrow: "1",
             flexBasis: "0",
@@ -156,7 +146,7 @@ export default function MachinePage() {
               wells={machine.wells}
             />
           )}
-        </Paper>
+        </Card>
       </FlexRow>
     </PageContainer>
   );
