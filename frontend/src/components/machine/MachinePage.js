@@ -52,14 +52,8 @@ export default function MachinePage() {
   return (
     <PageContainer>
       <FlexRow>
-        <Card sx={{ flexGrow: "1" }}>
-          {isLoading ? (
-            <Box display="flex" justifyContent="center" alignItems="center">
-              <CircularProgress />
-            </Box>
-          ) : (
-            <MachineCard machine={machine} />
-          )}
+        <Card sx={{ flexGrow: "1" }} isLoading={isLoading}>
+          <MachineCard machine={machine} />
         </Card>
         <Card
           sx={{
@@ -67,56 +61,53 @@ export default function MachinePage() {
             justifyContent: "center",
             alignItems: "center",
           }}
+          isLoading={isLoading}
         >
-          {isLoading ? (
-            <CircularProgress />
-          ) : selectedWellId !== null ? (
-            (() => {
-              const selectedWell = machine.wells.find(
-                (w) => w.id === selectedWellId
-              );
+          {machine &&
+            model &&
+            (selectedWellId !== null ? (
+              (() => {
+                const selectedWell = machine.wells.find(
+                  (w) => w.id === selectedWellId
+                );
 
-              return (
-                <MachineProgress
-                  status={selectedWell.status}
-                  {
-                    // Nice technique to conditionally include props: https://stackoverflow.com/a/51404352/471461
-                    ...(machine.status !== "IDLE"
-                      ? {
-                          completedCycles:
-                            selectedWell.synthetizedNucleotideCount,
-                          totalCycles: selectedWell.totalCycles,
-                          currentStep: machine.synthesis.currentStep,
-                        }
-                      : {})
-                  }
-                />
-              );
-            })()
-          ) : (
-            <MachineProgress
-              status={machine.status}
-              {
-                // Nice technique to conditionally include props: https://stackoverflow.com/a/51404352/471461
-                ...(machine.status !== "IDLE"
-                  ? {
-                      completedCycles: machine.synthesis.completedCycles,
-                      totalCycles: machine.synthesis.totalCycles,
-                      currentStep: machine.synthesis.currentStep,
+                return (
+                  <MachineProgress
+                    status={selectedWell.status}
+                    {
+                      // Nice technique to conditionally include props: https://stackoverflow.com/a/51404352/471461
+                      ...(machine.status !== "IDLE"
+                        ? {
+                            completedCycles:
+                              selectedWell.synthetizedNucleotideCount,
+                            totalCycles: selectedWell.totalCycles,
+                            currentStep: machine.synthesis.currentStep,
+                          }
+                        : {})
                     }
-                  : {})
-              }
-            />
-          )}
+                  />
+                );
+              })()
+            ) : (
+              <MachineProgress
+                status={machine.status}
+                {
+                  // Nice technique to conditionally include props: https://stackoverflow.com/a/51404352/471461
+                  ...(machine.status !== "IDLE"
+                    ? {
+                        completedCycles: machine.synthesis.completedCycles,
+                        totalCycles: machine.synthesis.totalCycles,
+                        currentStep: machine.synthesis.currentStep,
+                      }
+                    : {})
+                }
+              />
+            ))}
         </Card>
       </FlexRow>
       <FlexRow>
-        <Card sx={{ flexGrow: "1", flexBasis: "0" }}>
-          {isLoading ? (
-            <Box display="flex" justifyContent="center" alignItems="center">
-              <CircularProgress />
-            </Box>
-          ) : (
+        <Card sx={{ flexGrow: "1", flexBasis: "0" }} isLoading={isLoading}>
+          {machine && model && (
             <WellArray
               wellArraySize={model.wellArraySize}
               wells={machine.wells}
@@ -135,12 +126,9 @@ export default function MachinePage() {
             overflow: "auto",
             contain: "size", // To make sur that it's height will not be greater than the Well Array's height. see https://stackoverflow.com/a/48943583/471461
           }}
+          isLoading={isLoading}
         >
-          {isLoading ? (
-            <Box display="flex" justifyContent="center" alignItems="center">
-              <CircularProgress />
-            </Box>
-          ) : (
+          {machine && model && (
             <SequenceTable
               wellArraySize={model.wellArraySize}
               wells={machine.wells}
