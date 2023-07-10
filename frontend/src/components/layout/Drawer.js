@@ -57,7 +57,7 @@ const DrawerToggleFab = styled(Fab)(({ theme, open }) => ({
   transform: `translateX(-50%) translateY(${
     theme.layout.header.height
   }) translateY(-50%) rotate(${open ? 0 : 180}deg)`,
-  zIndex: 1,
+  zIndex: theme.zIndex.drawer,
 
   backgroundColor: theme.palette.background.paper,
   boxShadow: "none",

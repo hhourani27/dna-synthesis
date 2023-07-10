@@ -16,6 +16,7 @@ const Header = styled("header")(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   height: theme.layout.header.height,
   padding: theme.spacing(3),
+  zIndex: theme.zIndex.appBar,
 }));
 
 export default function TopBar() {
