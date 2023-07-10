@@ -10,18 +10,22 @@ const Table = styled("table")(({ theme }) => ({
   "& th": {
     paddingRight: theme.spacing(2),
   },
-}));
 
-const Nucleotide = styled("td")(
-  ({ theme, nucleotideIsSynthetized, oligoIsCompleted = false }) => ({
-    color: oligoIsCompleted
-      ? theme.palette.success.main
-      : nucleotideIsSynthetized
-      ? theme.palette.secondary.main
-      : theme.palette.text.secondary,
-    fontWeight: nucleotideIsSynthetized ? 600 : 400,
-  })
-);
+  "& td.nucleotide": {
+    color: theme.palette.text.secondary,
+    fontWeight: 400,
+  },
+
+  "& td.nucleotide.synthetized": {
+    color: theme.palette.secondary.main,
+    fontWeight: 600,
+  },
+
+  "& td.nucleotide.completed": {
+    color: theme.palette.success.main,
+    fontWeight: 600,
+  },
+}));
 
 export default function SequenceTable({ wellArraySize, wells }) {
   const maxLenghtOligo = Math.max(...wells.map((w) => w.totalCycles));
@@ -46,13 +50,18 @@ export default function SequenceTable({ wellArraySize, wells }) {
               )}
             </th>
             {[...Array(maxLenghtOligo).keys()].map((n) => (
-              <Nucleotide
+              <td
                 key={n}
-                nucleotideIsSynthetized={n < w.synthetizedNucleotideCount}
-                oligoIsCompleted={oligoIsCompleted[widx]}
+                className={`nucleotide ${
+                  oligoIsCompleted[widx]
+                    ? "completed"
+                    : n < w.synthetizedNucleotideCount
+                    ? "synthetized"
+                    : ""
+                }`}
               >
                 {n < w.oligo.length ? w.oligo.charAt(n) : " "}
-              </Nucleotide>
+              </td>
             ))}
           </tr>
         ))}
