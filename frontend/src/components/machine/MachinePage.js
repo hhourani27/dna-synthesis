@@ -2,14 +2,12 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
 import Card from "../layout/Card";
 
 import WellArray from "./WellArray";
 import MachineCard from "./MachineCard";
 import MachineProgress from "./MachineProgress";
 import SequenceTable from "./SequenceTable";
-import { CircularProgress } from "@mui/material";
 
 const PageContainer = styled("div")(({ theme }) => ({
   display: "flex",
