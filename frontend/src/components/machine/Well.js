@@ -24,24 +24,26 @@ export default function Well({
         size={size}
         value={100}
       />
+
       {!idle && (
         <CircularProgress
           variant="determinate"
+          color={completedCycles === totalCycles ? "success" : "secondary"}
+          thickness={thickness}
+          size={size}
+          value={(100 * completedCycles) / totalCycles}
           sx={{
-            color: (theme) =>
-              completedCycles === totalCycles
-                ? theme.palette.success.main
-                : theme.palette.secondary.main,
-            animationDuration: "550ms",
             position: "absolute",
             left: 0,
             [`& .${circularProgressClasses.circle}`]: {
               strokeLinecap: "round",
+              transition: (theme) =>
+                theme.transitions.create(["stroke-dashoffset", "color"], {
+                  easing: theme.transitions.easing.sharp,
+                  duration: theme.transitions.duration.shortest,
+                }),
             },
           }}
-          thickness={thickness}
-          size={size}
-          value={(100 * completedCycles) / totalCycles}
         />
       )}
       {displayCount && (
