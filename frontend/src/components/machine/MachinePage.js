@@ -126,7 +126,7 @@ export default function MachinePage() {
           }}
           isLoading={isLoading}
         >
-          {machine && model && (
+          {machine && model && machine.status !== "IDLE" && (
             <SequenceTable
               wellArraySize={model.wellArraySize}
               wells={machine.wells}
