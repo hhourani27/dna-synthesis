@@ -24,7 +24,7 @@ export default function MachinePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [machine, setMachine] = useState(null);
   const [model, setModel] = useState(null);
-  const [selectedWell, setSelectedWell] = useState(null);
+  const [selectedWellId, setSelectedWellId] = useState(null);
 
   useEffect(() => {
     async function getData() {
@@ -65,24 +65,29 @@ export default function MachinePage() {
         >
           {isLoading ? (
             <CircularProgress />
-          ) : selectedWell ? (
-            <MachineProgress
-              status={machine.wells[selectedWell[0]][selectedWell[1]].status}
-              {
-                // Nice technique to conditionally include props: https://stackoverflow.com/a/51404352/471461
-                ...(machine.status !== "IDLE"
-                  ? {
-                      completedCycles:
-                        machine.wells[selectedWell[0]][selectedWell[1]]
-                          .synthetizedNucleotideCount,
-                      totalCycles:
-                        machine.wells[selectedWell[0]][selectedWell[1]]
-                          .totalCycles,
-                      currentStep: machine.synthesis.currentStep,
-                    }
-                  : {})
-              }
-            />
+          ) : selectedWellId !== null ? (
+            (() => {
+              const selectedWell = machine.wells.find(
+                (w) => w.id === selectedWellId
+              );
+
+              return (
+                <MachineProgress
+                  status={selectedWell.status}
+                  {
+                    // Nice technique to conditionally include props: https://stackoverflow.com/a/51404352/471461
+                    ...(machine.status !== "IDLE"
+                      ? {
+                          completedCycles:
+                            selectedWell.synthetizedNucleotideCount,
+                          totalCycles: selectedWell.totalCycles,
+                          currentStep: machine.synthesis.currentStep,
+                        }
+                      : {})
+                  }
+                />
+              );
+            })()
           ) : (
             <MachineProgress
               status={machine.status}
@@ -110,11 +115,11 @@ export default function MachinePage() {
             <WellArray
               wellArraySize={model.wellArraySize}
               wells={machine.wells}
-              selectedWell={selectedWell}
-              onWellSelection={(r, c) => {
-                setSelectedWell([r, c]);
+              selectedWellId={selectedWellId}
+              onWellSelection={(id) => {
+                setSelectedWellId(id);
               }}
-              onWellDeselection={() => setSelectedWell(null)}
+              onWellDeselection={() => setSelectedWellId(null)}
             />
           )}
         </Paper>

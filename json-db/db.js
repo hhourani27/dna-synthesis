@@ -34,7 +34,7 @@ const generateOligo = (minSize, maxSize) => {
 const requiredCycleCount = (oligos) => Math.max(...oligos.map((o) => o.length));
 
 /**
- * Generate a 2D wells array [rows][cols]
+ * Generate a flat array of wells of size rows * cols
  *
  * @param {int} rows
  * @param {int} cols
@@ -50,14 +50,14 @@ const generateWells = (
   orderedOligos,
   completedCycles
 ) => {
-  // Create a 2D wells array [rows][cols]
-  const wells = Array.from(Array(rows), () => new Array(cols));
+  // Create a flat array of wells of size rows * cols
+  const wells = Array(rows * cols);
 
   for (let x = 0; x < rows; x++) {
     for (let y = 0; y < cols; y++) {
       const i = x * cols + y;
       if (machineStatus === "IDLE") {
-        wells[x][y] = {
+        wells[i] = {
           id: i,
           row: x,
           col: y,
@@ -66,7 +66,7 @@ const generateWells = (
       } else {
         oligo = orderedOligos[i];
 
-        wells[x][y] = {
+        wells[i] = {
           id: i,
           row: x,
           col: y,
