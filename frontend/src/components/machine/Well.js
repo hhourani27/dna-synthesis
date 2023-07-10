@@ -28,7 +28,10 @@ export default function Well({
         <CircularProgress
           variant="determinate"
           sx={{
-            color: completedCycles === totalCycles ? "#66bb6a" : "#1a90ff",
+            color: (theme) =>
+              completedCycles === totalCycles
+                ? theme.palette.success.main
+                : theme.palette.secondary.main,
             animationDuration: "550ms",
             position: "absolute",
             left: 0,

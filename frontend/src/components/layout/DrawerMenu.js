@@ -1,12 +1,11 @@
 import { styled } from "@mui/material/styles";
 import { NavLink } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
 
 import MicrowaveOutlinedIcon from "@mui/icons-material/MicrowaveOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-
-import { useNavigate } from "react-router-dom";
 
 const DrawerMenuList = styled("ul")(({ theme, open }) => ({
   display: "flex",

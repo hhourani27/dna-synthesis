@@ -10,6 +10,18 @@ export const theme = createTheme({
     secondary: {
       main: "#c4c7fa",
     },
+    info: {
+      main: "#c4c7fa",
+    },
+    success: {
+      main: "#B6EEBD",
+    },
+    warning: {
+      main: "#F3F4B4",
+    },
+    error: {
+      main: "#f5b5b5",
+    },
     background: {
       default: "#f8f8f8",
     },
