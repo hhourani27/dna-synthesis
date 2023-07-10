@@ -7,12 +7,26 @@ import Well from "./Well";
 const GridSequenceTable = styled("div")(({ theme, wellArraySize }) => ({
   display: "grid",
   gridTemplateRows: `repeat(${wellArraySize},1fr)`,
-  alignItems: "center",
+  alignItems: "stretch",
+  // gap: `8px 0px`,
 
+  position: "relative",
   letterSpacing: 7,
+
+  "& > div": {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+  },
+
+  "& > .sequence-text-container": {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
 
   "& .progress": {
     paddingRight: 16,
+    lineHeight: 0,
   },
 
   "& .completed": {
@@ -28,6 +42,10 @@ const GridSequenceTable = styled("div")(({ theme, wellArraySize }) => ({
   "& .non-synthetized": {
     color: theme.palette.text.secondary,
     fontWeight: 400,
+  },
+
+  "& > div:nth-of-type(3n)": {
+    borderLeft: `2px solid ${theme.palette.success.main}`,
   },
 }));
 
@@ -54,13 +72,19 @@ export default function SequenceTable({ wellArraySize, wells }) {
   });
 
   return (
-    <GridSequenceTable>
+    <GridSequenceTable wellArraySize={wellArraySize[0] * wellArraySize[1]}>
       {wellsDisplay.map((w) => {
         const gRow = w.id + 1;
 
         return (
           <Fragment key={w.id}>
-            <Box sx={{ gridRow: gRow, gridColumn: 1 }} className="progress">
+            <Box
+              sx={{
+                gridRow: gRow,
+                gridColumn: 1,
+              }}
+              className="progress"
+            >
               {w.status === "IDLE" ? (
                 <Well idle />
               ) : (
@@ -73,15 +97,21 @@ export default function SequenceTable({ wellArraySize, wells }) {
             </Box>
             <Box
               sx={{ gridRow: gRow, gridColumn: 2 }}
-              className={w.oligoIsCompleted ? "completed" : "synthetized"}
+              className="sequence-text-container"
             >
-              {w.synthethizedNucleotides}
+              <div className={w.oligoIsCompleted ? "completed" : "synthetized"}>
+                {w.synthethizedNucleotides ? w.synthethizedNucleotides : " "}
+              </div>
             </Box>
             <Box
               sx={{ gridRow: gRow, gridColumn: 3 }}
-              className="non-synthetized"
+              className="sequence-text-container"
             >
-              {w.nonSynthethizedNucleotides}
+              <div className="non-synthetized">
+                {w.nonSynthethizedNucleotides
+                  ? w.nonSynthethizedNucleotides
+                  : " "}
+              </div>
             </Box>
           </Fragment>
         );
