@@ -126,11 +126,8 @@ export default function MachinePage() {
           }}
           isLoading={isLoading}
         >
-          {machine && model && machine.status !== "IDLE" && (
-            <SequenceTable
-              wellArraySize={model.wellArraySize}
-              wells={machine.wells}
-            />
+          {machine && machine.status !== "IDLE" && (
+            <SequenceTable wells={machine.wells} />
           )}
         </Card>
       </FlexRow>

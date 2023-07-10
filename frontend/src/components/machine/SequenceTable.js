@@ -4,11 +4,9 @@ import Box from "@mui/material/Box";
 
 import Well from "./Well";
 
-const GridSequenceTable = styled("div")(({ theme, wellArraySize }) => ({
+const GridSequenceTable = styled("div")(({ theme }) => ({
   display: "grid",
-  gridTemplateRows: `repeat(${wellArraySize},1fr)`,
   alignItems: "stretch",
-  // gap: `8px 0px`,
 
   position: "relative",
   letterSpacing: 7,
@@ -54,7 +52,7 @@ const splitOligo = (oligo, completedCycles) => ({
   nonSynthethizedNucleotides: oligo.substring(completedCycles),
 });
 
-export default function SequenceTable({ wellArraySize, wells }) {
+export default function SequenceTable({ wells }) {
   const wellsDisplay = wells.map((w) => {
     const { synthethizedNucleotides, nonSynthethizedNucleotides } = splitOligo(
       w.oligo,
@@ -72,7 +70,7 @@ export default function SequenceTable({ wellArraySize, wells }) {
   });
 
   return (
-    <GridSequenceTable wellArraySize={wellArraySize[0] * wellArraySize[1]}>
+    <GridSequenceTable>
       {wellsDisplay.map((w) => {
         const gRow = w.id + 1;
 
