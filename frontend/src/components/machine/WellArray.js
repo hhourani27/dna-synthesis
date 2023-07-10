@@ -1,6 +1,7 @@
 import { Fragment, useState } from "react";
 
 import Box from "@mui/material/Box";
+import { useTheme } from "@mui/material/styles";
 
 import Well from "./Well";
 
@@ -41,6 +42,9 @@ export default function WellArray({
   const [wellArrayRowSize, wellArrayColSize] = wellArraySize;
   const gridCols = [...Array(wellArrayColSize).keys()].map((c) => c + 1);
   const gridRows = [...Array(wellArrayRowSize).keys()].map((r) => r + 1);
+
+  const theme = useTheme();
+  const selectionColor = theme.palette.success.main;
 
   return (
     <Box
@@ -88,7 +92,9 @@ export default function WellArray({
                   selectedWell != null &&
                   selectedWell[0] === row - 1 &&
                   selectedWell[1] === col - 1
-                    ? "solid black 1px"
+                    ? selectionMode === SELECTION_MODES.HOVER
+                      ? `dotted ${selectionColor} 4px`
+                      : `solid ${selectionColor} 4px`
                     : 0,
               }}
               onMouseEnter={() => handleMouseEnter(row - 1, col - 1)}
