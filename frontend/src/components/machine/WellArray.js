@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
@@ -8,7 +8,7 @@ import Well from "./Well";
 export default function WellArray({
   wellArraySize,
   wells,
-  selectedWell,
+  selectedWellId,
   onWellSelection,
   onWellDeselection,
 }) {
@@ -19,9 +19,9 @@ export default function WellArray({
 
   const [selectionMode, setSelectionMode] = useState(SELECTION_MODES.HOVER);
 
-  const handleMouseEnter = (wellArrayRow, wellArrayCol) => {
+  const handleMouseEnter = (wellId) => {
     if (selectionMode === SELECTION_MODES.HOVER) {
-      onWellSelection(wellArrayRow, wellArrayCol);
+      onWellSelection(wellId);
     }
   };
 
@@ -31,7 +31,7 @@ export default function WellArray({
     }
   };
 
-  const handleMouseClick = (wellArrayRow, wellArrayCol) => {
+  const handleMouseClick = () => {
     if (selectionMode === SELECTION_MODES.HOVER) {
       setSelectionMode(SELECTION_MODES.CLICK);
     } else {
@@ -57,7 +57,7 @@ export default function WellArray({
         gap: "10px",
       }}
     >
-      {/* First row : column numbers */}
+      {/* (1) First row : column numbers */}
       <Box key={`r${1}c${1}`} sx={{ gridRow: "1", gridColumn: "1" }}>
         {" "}
       </Box>
@@ -70,52 +70,51 @@ export default function WellArray({
           {col}
         </Box>
       ))}
-      {/* Row for each well array row */}
+
+      {/* (2) First column : row numbers*/}
       {gridRows.map((row) => (
-        <Fragment key={`r${row + 1}`}>
-          {/* Row number */}
-          <Box
-            key={`r${row + 1}c${1}`}
-            sx={{ gridRow: `${row + 1}`, gridColumn: "1" }}
-          >
-            {row}
-          </Box>
-          {/* Wells */}
-          {gridCols.map((col) => (
-            <Box
-              key={`r${row + 1}c${col + 1}`}
-              sx={{
-                gridRow: `${row + 1}`,
-                gridColumn: `${col + 1}`,
-                lineHeight: "0",
-                outline:
-                  selectedWell != null &&
-                  selectedWell[0] === row - 1 &&
-                  selectedWell[1] === col - 1
-                    ? selectionMode === SELECTION_MODES.HOVER
-                      ? `dotted ${selectionColor} 4px`
-                      : `solid ${selectionColor} 4px`
-                    : 0,
-              }}
-              onMouseEnter={() => handleMouseEnter(row - 1, col - 1)}
-              onMouseLeave={() => handleMouseLeave()}
-              onClick={() => handleMouseClick(row - 1, col - 1)}
-            >
-              {wells[row - 1][col - 1].status === "IDLE" ? (
-                <Well idle />
-              ) : (
-                <Well
-                  status={wells[row - 1][col - 1].status}
-                  completedCycles={
-                    wells[row - 1][col - 1].synthetizedNucleotideCount
-                  }
-                  totalCycles={wells[row - 1][col - 1].totalCycles}
-                />
-              )}
-            </Box>
-          ))}
-        </Fragment>
+        <Box
+          key={`r${row + 1}c${1}`}
+          sx={{ gridRow: `${row + 1}`, gridColumn: "1" }}
+        >
+          {row}
+        </Box>
       ))}
+
+      {/* (3) Display wells on the grid*/}
+      {wells.map((w) => {
+        const [gRow, gCol] = [w.row + 2, w.col + 2]; //The row & col number on the grid
+
+        return (
+          <Box
+            key={`r${gRow}c${gCol}`}
+            sx={{
+              gridRow: `${gRow}`,
+              gridColumn: `${gCol}`,
+              lineHeight: "0",
+              outline:
+                selectedWellId != null && selectedWellId === w.id
+                  ? selectionMode === SELECTION_MODES.HOVER
+                    ? `dotted ${selectionColor} 4px`
+                    : `solid ${selectionColor} 4px`
+                  : 0,
+            }}
+            onMouseEnter={() => handleMouseEnter(w.id)}
+            onMouseLeave={() => handleMouseLeave()}
+            onClick={() => handleMouseClick()}
+          >
+            {w.status === "IDLE" ? (
+              <Well idle />
+            ) : (
+              <Well
+                status={w.status}
+                completedCycles={w.synthetizedNucleotideCount}
+                totalCycles={w.totalCycles}
+              />
+            )}
+          </Box>
+        );
+      })}
     </Box>
   );
 }
