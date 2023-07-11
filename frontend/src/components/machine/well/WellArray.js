@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
 
@@ -12,11 +10,6 @@ export default function WellArray({
   onWellSelection,
   onWellDeselection,
 }) {
-  const SELECTION_MODES = {
-    HOVER: "HOVER",
-    CLICK: "CLICK",
-  };
-
   const handleMouseClick = (wellId) => {
     if (selectedWellId === wellId) {
       onWellDeselection();
