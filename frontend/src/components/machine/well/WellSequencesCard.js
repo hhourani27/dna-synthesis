@@ -1,8 +1,12 @@
-import WellSequences from "./WellSequenceList";
+import { useState } from "react";
+
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import SortIcon from "@mui/icons-material/Sort";
+import Tooltip from "@mui/material/Tooltip";
+
+import WellSequences from "./WellSequenceList";
 
 const WellSequencesContainer = styled("div")(({ theme }) => ({
   display: "flex",
@@ -15,9 +19,12 @@ const WellSequencesBar = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   justifyContent: "space-between",
+  alignItems: "center",
 
   backgroundColor: theme.palette.background.paper,
   zIndex: theme.zIndex.appBar,
+  padding: `0 ${theme.spacing(2)}`,
+
   position: "sticky",
   top: 0,
 }));
@@ -28,6 +35,8 @@ const WellSequencesListContainer = styled("div")(({ theme }) => ({
 }));
 
 export default function WellSequencesCard({ wells, selectedWellId }) {
+  const [sorted, setSorted] = useState(false);
+
   return (
     <WellSequencesContainer>
       <WellSequencesBar>
@@ -35,16 +44,27 @@ export default function WellSequencesCard({ wells, selectedWellId }) {
         <ToggleButton
           value="check"
           size="small"
-          //   selected={selected}
-          //   onChange={() => {
-          //     setSelected(!selected);
-          //   }}
+          selected={sorted}
+          onChange={() => {
+            setSorted((sorted) => !sorted);
+          }}
         >
-          <SortIcon />
+          <Tooltip title="Sort by oligo length" placement="top" arrow>
+            <SortIcon
+              sx={{
+                // Flip the icon so that it appears in ascending order
+                transform: "scaleY(-1)",
+              }}
+            />
+          </Tooltip>
         </ToggleButton>
       </WellSequencesBar>
       <WellSequencesListContainer>
-        <WellSequences wells={wells} selectedWellId={selectedWellId} />
+        <WellSequences
+          wells={wells}
+          selectedWellId={selectedWellId}
+          sorted={sorted}
+        />
       </WellSequencesListContainer>
     </WellSequencesContainer>
   );

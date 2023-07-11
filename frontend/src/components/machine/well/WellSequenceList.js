@@ -53,7 +53,7 @@ const splitOligo = (oligo, completedCycles) => ({
   nonSynthethizedNucleotides: oligo.substring(completedCycles),
 });
 
-export default function WellSequences({ wells, selectedWellId }) {
+export default function WellSequenceList({ wells, selectedWellId, sorted }) {
   const wellsDisplayObjects = wells.map((w) => {
     const { synthethizedNucleotides, nonSynthethizedNucleotides } = splitOligo(
       w.oligo,
@@ -70,6 +70,10 @@ export default function WellSequences({ wells, selectedWellId }) {
     };
   });
 
+  if (sorted === true) {
+    wellsDisplayObjects.sort((a, b) => a.oligo.length - b.oligo.length);
+  }
+
   const wellsRefs = useRef({});
   useEffect(() => {
     if (selectedWellId !== null) {
@@ -85,8 +89,8 @@ export default function WellSequences({ wells, selectedWellId }) {
 
   return (
     <GridSequenceTable>
-      {wellsDisplayObjects.map((w) => {
-        const gRow = w.id + 1;
+      {wellsDisplayObjects.map((w, widx) => {
+        const gRow = widx + 1;
 
         return (
           <Fragment key={w.id}>
