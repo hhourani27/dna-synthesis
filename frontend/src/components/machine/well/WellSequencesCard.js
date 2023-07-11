@@ -6,7 +6,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import SortIcon from "@mui/icons-material/Sort";
 import Tooltip from "@mui/material/Tooltip";
 
-import WellSequences from "./WellSequenceList";
+import WellSequenceList from "./WellSequenceList";
 
 const WellSequencesContainer = styled("div")(({ theme }) => ({
   display: "flex",
@@ -36,11 +36,27 @@ const WellSequencesListContainer = styled("div")(({ theme }) => ({
 
 export default function WellSequencesCard({ wells, selectedWellId }) {
   const [sorted, setSorted] = useState(false);
+  const [searchSequence, setSearchSequence] = useState("");
+
+  const handleSearchInputChange = (value) => {
+    const valueUpperCase = value.toUpperCase();
+
+    if ([...valueUpperCase].every((c) => ["A", "T", "C", "G"].includes(c))) {
+      setSearchSequence(valueUpperCase);
+    }
+  };
 
   return (
     <WellSequencesContainer>
       <WellSequencesBar>
-        <TextField id="sequence-search" label="ATCG..." variant="standard" />
+        <TextField
+          id="sequence-search"
+          label="Search sequence"
+          variant="standard"
+          InputLabelProps={{ shrink: true }}
+          value={searchSequence}
+          onChange={(e) => handleSearchInputChange(e.target.value)}
+        />
         <ToggleButton
           value="check"
           size="small"
@@ -60,10 +76,11 @@ export default function WellSequencesCard({ wells, selectedWellId }) {
         </ToggleButton>
       </WellSequencesBar>
       <WellSequencesListContainer>
-        <WellSequences
+        <WellSequenceList
           wells={wells}
           selectedWellId={selectedWellId}
           sorted={sorted}
+          filterSequence={searchSequence.length >= 3 ? searchSequence : null}
         />
       </WellSequencesListContainer>
     </WellSequencesContainer>

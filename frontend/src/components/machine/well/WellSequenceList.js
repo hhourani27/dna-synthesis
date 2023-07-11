@@ -53,8 +53,13 @@ const splitOligo = (oligo, completedCycles) => ({
   nonSynthethizedNucleotides: oligo.substring(completedCycles),
 });
 
-export default function WellSequenceList({ wells, selectedWellId, sorted }) {
-  const wellsDisplayObjects = wells.map((w) => {
+export default function WellSequenceList({
+  wells,
+  selectedWellId,
+  sorted,
+  filterSequence = null,
+}) {
+  let wellsDisplayObjects = wells.map((w) => {
     const { synthethizedNucleotides, nonSynthethizedNucleotides } = splitOligo(
       w.oligo,
       w.synthetizedNucleotideCount
@@ -72,6 +77,12 @@ export default function WellSequenceList({ wells, selectedWellId, sorted }) {
 
   if (sorted === true) {
     wellsDisplayObjects.sort((a, b) => a.oligo.length - b.oligo.length);
+  }
+
+  if (filterSequence !== null) {
+    wellsDisplayObjects = wellsDisplayObjects.filter((w) =>
+      w.oligo.includes(filterSequence)
+    );
   }
 
   const wellsRefs = useRef({});
