@@ -1,4 +1,4 @@
-import WellSequences from "./WellSequences";
+import WellSequences from "./WellSequenceList";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
