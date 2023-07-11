@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import Well from "./Well";
+import Well from "./well/Well";
 import Tooltip from "@mui/material/Tooltip";
 
 import SwitchAccessShortcutAddIcon from "@mui/icons-material/SwitchAccessShortcutAdd";

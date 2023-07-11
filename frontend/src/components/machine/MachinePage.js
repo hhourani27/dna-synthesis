@@ -4,10 +4,10 @@ import { useParams } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Card from "../layout/Card";
 
-import WellArray from "./WellArray";
+import WellArray from "./well/WellArray";
 import MachineCard from "./MachineCard";
 import MachineProgress from "./MachineProgress";
-import WellSequencesCard from "./WellSequencesCard";
+import WellSequencesCard from "./well/WellSequencesCard";
 
 const PageContainer = styled("div")(({ theme }) => ({
   display: "flex",
