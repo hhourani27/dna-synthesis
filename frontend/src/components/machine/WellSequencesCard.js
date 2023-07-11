@@ -8,6 +8,7 @@ const WellSequencesContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing(2),
+  height: "100%",
 }));
 
 const WellSequencesBar = styled("div")(({ theme }) => ({
@@ -19,6 +20,11 @@ const WellSequencesBar = styled("div")(({ theme }) => ({
   zIndex: theme.zIndex.appBar,
   position: "sticky",
   top: 0,
+}));
+
+const WellSequencesListContainer = styled("div")(({ theme }) => ({
+  height: "100%",
+  overflow: "auto",
 }));
 
 export default function WellSequencesCard({ wells, selectedWellId }) {
@@ -37,7 +43,9 @@ export default function WellSequencesCard({ wells, selectedWellId }) {
           <SortIcon />
         </ToggleButton>
       </WellSequencesBar>
-      <WellSequences wells={wells} selectedWellId={selectedWellId} />
+      <WellSequencesListContainer>
+        <WellSequences wells={wells} selectedWellId={selectedWellId} />
+      </WellSequencesListContainer>
     </WellSequencesContainer>
   );
 }

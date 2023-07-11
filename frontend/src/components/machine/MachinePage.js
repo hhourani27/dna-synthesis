@@ -121,8 +121,12 @@ export default function MachinePage() {
           sx={{
             flexGrow: "1",
             flexBasis: "0",
-            overflow: "auto",
-            contain: "size", // To make sur that it's height will not be greater than the Well Array's height. see https://stackoverflow.com/a/48943583/471461
+            /* To make sure that it's height will not be greater than the Well Array's height
+               see https://stackoverflow.com/a/48943583/471461  
+               For my understanding, it makes sure that this Card's height is not dependent on its content
+               Thus its height is automatically to the adjacent flex item (as align-itmes: stretch by default)
+            */
+            contain: "size", //
           }}
           isLoading={isLoading}
         >
