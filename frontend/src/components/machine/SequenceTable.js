@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 
@@ -52,8 +52,8 @@ const splitOligo = (oligo, completedCycles) => ({
   nonSynthethizedNucleotides: oligo.substring(completedCycles),
 });
 
-export default function SequenceTable({ wells }) {
-  const wellsDisplay = wells.map((w) => {
+export default function SequenceTable({ wells, selectedWellId }) {
+  const wellsDisplayObjects = wells.map((w) => {
     const { synthethizedNucleotides, nonSynthethizedNucleotides } = splitOligo(
       w.oligo,
       w.synthetizedNucleotideCount
@@ -69,9 +69,17 @@ export default function SequenceTable({ wells }) {
     };
   });
 
+  const wellsRefs = useRef({});
+
+  useEffect(() => {
+    if (selectedWellId !== null) {
+      wellsRefs.current[selectedWellId].scrollIntoView();
+    }
+  });
+
   return (
     <GridSequenceTable>
-      {wellsDisplay.map((w) => {
+      {wellsDisplayObjects.map((w) => {
         const gRow = w.id + 1;
 
         return (
@@ -82,6 +90,7 @@ export default function SequenceTable({ wells }) {
                 gridColumn: 1,
               }}
               className="progress"
+              ref={(el) => (wellsRefs.current[w.id] = el)}
             >
               {w.status === "IDLE" ? (
                 <Well idle />
