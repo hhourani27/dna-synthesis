@@ -73,7 +73,10 @@ export default function SequenceTable({ wells, selectedWellId }) {
   const wellsRefs = useRef({});
   useEffect(() => {
     if (selectedWellId !== null) {
-      wellsRefs.current[selectedWellId].scrollIntoView();
+      wellsRefs.current[selectedWellId].scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     }
   });
 
