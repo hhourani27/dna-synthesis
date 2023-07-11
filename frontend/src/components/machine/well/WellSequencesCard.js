@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import SortIcon from "@mui/icons-material/Sort";
@@ -46,6 +46,8 @@ export default function WellSequencesCard({ wells, selectedWellId }) {
     }
   };
 
+  const theme = useTheme();
+
   return (
     <WellSequencesContainer>
       <WellSequencesBar>
@@ -56,6 +58,9 @@ export default function WellSequencesCard({ wells, selectedWellId }) {
           InputLabelProps={{ shrink: true }}
           value={searchSequence}
           onChange={(e) => handleSearchInputChange(e.target.value)}
+          InputProps={{
+            sx: { letterSpacing: theme.typography.sequence.letterSpacing },
+          }}
         />
         <ToggleButton
           value="check"

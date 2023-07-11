@@ -28,6 +28,9 @@ export const theme = createTheme({
   },
   typography: {
     fontFamily: "Quicksand, Roboto, Helvetica, sans-serif",
+    sequence: {
+      letterSpacing: 6,
+    },
   },
 
   layout: {

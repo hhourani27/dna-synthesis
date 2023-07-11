@@ -11,7 +11,7 @@ const GridSequenceTable = styled("div")(({ theme }) => ({
   alignItems: "stretch",
 
   position: "relative",
-  letterSpacing: 7,
+  letterSpacing: theme.typography.sequence.letterSpacing,
 
   "& > div": {
     paddingTop: theme.spacing(1),
