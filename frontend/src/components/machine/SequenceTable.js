@@ -1,4 +1,6 @@
 import { Fragment, useEffect, useRef } from "react";
+import { useTheme } from "@mui/material/styles";
+
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 
@@ -23,18 +25,17 @@ const GridSequenceTable = styled("div")(({ theme }) => ({
   },
 
   "& .progress": {
-    paddingRight: 16,
     lineHeight: 0,
-  },
-
-  "& .completed": {
-    color: theme.palette.success.main,
-    fontWeight: 600,
   },
 
   "& .synthetized": {
     color: theme.palette.secondary.main,
     fontWeight: 600,
+    paddingLeft: 16,
+  },
+
+  "& .synthetized.completed": {
+    color: theme.palette.success.main,
   },
 
   "& .non-synthetized": {
@@ -70,12 +71,14 @@ export default function SequenceTable({ wells, selectedWellId }) {
   });
 
   const wellsRefs = useRef({});
-
   useEffect(() => {
     if (selectedWellId !== null) {
       wellsRefs.current[selectedWellId].scrollIntoView();
     }
   });
+
+  const theme = useTheme();
+  const selectionColor = theme.palette.success.main;
 
   return (
     <GridSequenceTable>
@@ -88,6 +91,10 @@ export default function SequenceTable({ wells, selectedWellId }) {
               sx={{
                 gridRow: gRow,
                 gridColumn: 1,
+                outline:
+                  selectedWellId != null && selectedWellId === w.id
+                    ? `dotted ${selectionColor} 4px`
+                    : 0,
               }}
               className="progress"
               ref={(el) => (wellsRefs.current[w.id] = el)}
@@ -106,7 +113,11 @@ export default function SequenceTable({ wells, selectedWellId }) {
               sx={{ gridRow: gRow, gridColumn: 2 }}
               className="sequence-text-container"
             >
-              <div className={w.oligoIsCompleted ? "completed" : "synthetized"}>
+              <div
+                className={`synthetized ${
+                  w.oligoIsCompleted ? "completed" : ""
+                }`}
+              >
                 {w.synthethizedNucleotides ? w.synthethizedNucleotides : " "}
               </div>
             </Box>
