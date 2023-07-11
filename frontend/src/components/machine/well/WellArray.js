@@ -17,25 +17,11 @@ export default function WellArray({
     CLICK: "CLICK",
   };
 
-  const [selectionMode, setSelectionMode] = useState(SELECTION_MODES.HOVER);
-
-  const handleMouseEnter = (wellId) => {
-    if (selectionMode === SELECTION_MODES.HOVER) {
-      onWellSelection(wellId);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (selectionMode === SELECTION_MODES.HOVER) {
+  const handleMouseClick = (wellId) => {
+    if (selectedWellId === wellId) {
       onWellDeselection();
-    }
-  };
-
-  const handleMouseClick = () => {
-    if (selectionMode === SELECTION_MODES.HOVER) {
-      setSelectionMode(SELECTION_MODES.CLICK);
     } else {
-      setSelectionMode(SELECTION_MODES.HOVER);
+      onWellSelection(wellId);
     }
   };
 
@@ -94,14 +80,11 @@ export default function WellArray({
               lineHeight: "0",
               outline:
                 selectedWellId != null && selectedWellId === w.id
-                  ? selectionMode === SELECTION_MODES.HOVER
-                    ? `dotted ${selectionColor} 4px`
-                    : `solid ${selectionColor} 4px`
+                  ? `dotted ${selectionColor} 4px`
                   : 0,
+              cursor: "pointer",
             }}
-            onMouseEnter={() => handleMouseEnter(w.id)}
-            onMouseLeave={() => handleMouseLeave()}
-            onClick={() => handleMouseClick()}
+            onClick={() => handleMouseClick(w.id)}
           >
             {w.status === "IDLE" ? (
               <Well idle />
