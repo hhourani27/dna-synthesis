@@ -7,7 +7,7 @@ import Card from "../layout/Card";
 import WellArray from "./WellArray";
 import MachineCard from "./MachineCard";
 import MachineProgress from "./MachineProgress";
-import SequenceTable from "./SequenceTable";
+import WellSequencesCard from "./WellSequencesCard";
 
 const PageContainer = styled("div")(({ theme }) => ({
   display: "flex",
@@ -127,7 +127,7 @@ export default function MachinePage() {
           isLoading={isLoading}
         >
           {machine && machine.status !== "IDLE" && (
-            <SequenceTable
+            <WellSequencesCard
               wells={machine.wells}
               selectedWellId={selectedWellId}
             />

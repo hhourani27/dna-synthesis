@@ -53,7 +53,7 @@ const splitOligo = (oligo, completedCycles) => ({
   nonSynthethizedNucleotides: oligo.substring(completedCycles),
 });
 
-export default function SequenceTable({ wells, selectedWellId }) {
+export default function WellSequences({ wells, selectedWellId }) {
   const wellsDisplayObjects = wells.map((w) => {
     const { synthethizedNucleotides, nonSynthethizedNucleotides } = splitOligo(
       w.oligo,
