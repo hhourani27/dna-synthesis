@@ -53,12 +53,7 @@ const splitOligo = (oligo, completedCycles) => ({
   nonSynthethizedNucleotides: oligo.substring(completedCycles),
 });
 
-export default function WellSequenceList({
-  wells,
-  selectedWellId,
-  sorted,
-  filterSequence = null,
-}) {
+export default function WellSequenceList({ wells, selectedWellId, sorted }) {
   let wellsDisplayObjects = wells.map((w) => {
     const { synthethizedNucleotides, nonSynthethizedNucleotides } = splitOligo(
       w.oligo,
@@ -79,19 +74,21 @@ export default function WellSequenceList({
     wellsDisplayObjects.sort((a, b) => a.oligo.length - b.oligo.length);
   }
 
-  if (filterSequence !== null) {
-    wellsDisplayObjects = wellsDisplayObjects.filter((w) =>
-      w.oligo.includes(filterSequence)
-    );
-  }
-
+  // Feature : automatically scroll to well & sequence when selected
   const wellsRefs = useRef({});
   useEffect(() => {
     if (selectedWellId !== null) {
-      wellsRefs.current[selectedWellId].scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+      if (wellsRefs.current[selectedWellId] !== null) {
+        console.info(`Scrolling to well ${selectedWellId}.`);
+        wellsRefs.current[selectedWellId].scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      } else {
+        console.info(
+          `Cannot scroll to well ${selectedWellId}. Couldn't find it in the given well list`
+        );
+      }
     }
   });
 

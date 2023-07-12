@@ -37,15 +37,23 @@ const WellSequencesListContainer = styled("div")(({ theme }) => ({
 
 export default function WellSequencesCard({ wells, selectedWellId }) {
   const [sorted, setSorted] = useState(false);
-  const [searchSequence, setSearchSequence] = useState("");
+  const [filterSequence, setFilterSequence] = useState("");
 
-  const handleSearchInputChange = (value) => {
+  const handleFilterInputChange = (value) => {
     const valueUpperCase = value.toUpperCase();
 
     if ([...valueUpperCase].every((c) => ["A", "T", "C", "G"].includes(c))) {
-      setSearchSequence(valueUpperCase);
+      setFilterSequence(valueUpperCase);
     }
   };
+
+  const filteredWells = wells.filter((w) => w.oligo.includes(filterSequence));
+  const filterError =
+    selectedWellId === null
+      ? false
+      : !filteredWells.map((w) => w.id).includes(selectedWellId);
+  const FILTER_ERROR_MSG =
+    "This filter is preventing you from displaying the selected well. Remove your filter query.";
 
   const theme = useTheme();
 
@@ -53,16 +61,19 @@ export default function WellSequencesCard({ wells, selectedWellId }) {
     <WellSequencesContainer>
       <WellSequencesBar>
         <TextField
-          id="sequence-search"
-          label="Search sequence"
+          id="sequence-filter"
+          label="Filter sequence"
           variant="standard"
-          value={searchSequence}
-          onChange={(e) => handleSearchInputChange(e.target.value)}
+          value={filterSequence}
+          onChange={(e) => handleFilterInputChange(e.target.value)}
           InputLabelProps={{ shrink: true }}
           InputProps={{
             sx: { letterSpacing: theme.typography.sequence.letterSpacing },
           }}
           sx={{ flexGrow: 1 }}
+          {...(filterError === true
+            ? { error: true, helperText: FILTER_ERROR_MSG }
+            : {})}
         />
         <ToggleButton
           value="check"
@@ -84,10 +95,9 @@ export default function WellSequencesCard({ wells, selectedWellId }) {
       </WellSequencesBar>
       <WellSequencesListContainer>
         <WellSequenceList
-          wells={wells}
+          wells={filteredWells}
           selectedWellId={selectedWellId}
           sorted={sorted}
-          filterSequence={searchSequence.length >= 3 ? searchSequence : null}
         />
       </WellSequencesListContainer>
     </WellSequencesContainer>
