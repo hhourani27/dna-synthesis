@@ -20,6 +20,7 @@ const WellSequencesBar = styled("div")(({ theme }) => ({
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
+  gap: theme.spacing(5),
 
   backgroundColor: theme.palette.background.paper,
   zIndex: theme.zIndex.appBar,
@@ -55,12 +56,13 @@ export default function WellSequencesCard({ wells, selectedWellId }) {
           id="sequence-search"
           label="Search sequence"
           variant="standard"
-          InputLabelProps={{ shrink: true }}
           value={searchSequence}
           onChange={(e) => handleSearchInputChange(e.target.value)}
+          InputLabelProps={{ shrink: true }}
           InputProps={{
             sx: { letterSpacing: theme.typography.sequence.letterSpacing },
           }}
+          sx={{ flexGrow: 1 }}
         />
         <ToggleButton
           value="check"
