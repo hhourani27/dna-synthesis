@@ -67,8 +67,7 @@ test("Test that for idle machines, the number of wells is correct", () => {
     WAITING_FOR_DISPATCH: 0,
   });
 
-  expect(data.machines[0].wells.length).toBe(8);
-  data.machines[0].wells.forEach((row) => expect(row.length).toBe(12));
+  expect(data.machines[0].wells.length).toBe(96);
 });
 
 test("Test that IDs are correctly assigned to wells", () => {
@@ -81,10 +80,8 @@ test("Test that IDs are correctly assigned to wells", () => {
 
   const wells = data.machines[0].wells;
   let id = 0;
-  for (let row of wells) {
-    for (let col of row) {
-      expect(col.id).toBe(id);
-      id++;
-    }
+  for (let well of wells) {
+    expect(well.id).toBe(id);
+    id++;
   }
 });
