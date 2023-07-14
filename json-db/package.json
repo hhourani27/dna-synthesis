@@ -4,7 +4,8 @@
   "description": "",
   "main": "db.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "json-server index.js"
   },
   "author": "",
   "license": "ISC",

@@ -1,0 +1,14 @@
+{
+  "name": "dna-synthesis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently --names \"json-db,front\" \"npm run start --prefix json-db\" \"npm run start --prefix frontend\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
