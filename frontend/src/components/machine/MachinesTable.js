@@ -4,7 +4,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import Paper from "@mui/material/Paper";
 
 import { useNavigate } from "react-router-dom";
 
@@ -14,7 +13,7 @@ export default function MachinesTable({ machines }) {
   let navigate = useNavigate();
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component="div">
       <Table sx={{ minWidth: 650 }} aria-label="machines table">
         <TableHead>
           <TableRow>

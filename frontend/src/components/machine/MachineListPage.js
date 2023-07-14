@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
+import Card from "../layout/Card";
 
 import MachinesTable from "./MachinesTable";
 
@@ -22,13 +21,9 @@ export default function MachinesListPage() {
 
   return (
     <div>
-      {isLoading ? (
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <CircularProgress />
-        </Box>
-      ) : (
+      <Card sx={{ flexGrow: "1" }} isLoading={isLoading}>
         <MachinesTable machines={machines} />
-      )}
+      </Card>
     </div>
   );
 }
