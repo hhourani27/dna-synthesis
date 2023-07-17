@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_17_092346) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_17_093751) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,11 +18,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_092346) do
     t.string "model"
     t.string "location"
     t.integer "status"
+    t.bigint "order_id"
     t.integer "order_total_cycles"
     t.integer "order_completed_cycles"
     t.integer "order_current_step"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_machines_on_order_id"
   end
 
   create_table "models", id: false, force: :cascade do |t|
@@ -33,4 +35,25 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_092346) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "orders", force: :cascade do |t|
+    t.text "oligos", default: [], array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "wells", force: :cascade do |t|
+    t.integer "row"
+    t.integer "col"
+    t.string "oligo"
+    t.integer "total_cycles"
+    t.integer "status"
+    t.integer "synthetized_nucleotide_count"
+    t.bigint "machine_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["machine_id"], name: "index_wells_on_machine_id"
+  end
+
+  add_foreign_key "machines", "orders"
+  add_foreign_key "wells", "machines"
 end

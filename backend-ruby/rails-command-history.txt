@@ -1,11 +1,18 @@
+Frequently used commands
+https://jacopretorius.net/2014/02/all-rails-db-rake-tasks-and-what-they-do.html
+
+db:reset            Runs db:drop and db:setup
+db:migrate:reset    Runs db:drop, db:create and db:migrate
+db:seed             Runs the db/seeds.rb file
+db:migrate          Runs migrations for the current environment that have not run yet. By default it will run migrations only in the development environment.
+
 17/07/2023 : Create new ruby application
     rails new backend-ruby --api --database=postgresql --skip-git
 
 17/07/2023 : Add Machine model
     rails generate model machine model:string location:string status:integer order_total_cycles:integer order_completed_cycles:integer order_current_step:integer
     rails db:migrate
-    rails db:seed
-    rails db:reset
+
 
 17/07/2023 : Add Model model
     rails generate model model well_array_rows:integer well_array_cols:integer
