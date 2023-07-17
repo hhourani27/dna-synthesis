@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  model: MyString
+  location: MyString
+  status: 1
+  order_total_cycles: 1
+  order_completed_cycles: 1
+  order_current_step: 1
+
+two:
+  model: MyString
+  location: MyString
+  status: 1
+  order_total_cycles: 1
+  order_completed_cycles: 1
+  order_current_step: 1

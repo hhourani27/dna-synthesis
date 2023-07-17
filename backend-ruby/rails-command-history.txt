@@ -1,2 +1,6 @@
 17/07/2023 : Create new ruby application
     rails new backend-ruby --api --database=postgresql --skip-git
+
+17/07/2023 : Add Machine model
+    rails generate model machine model:string location:string status:integer order_total_cycles:integer order_completed_cycles:integer order_current_step:integer
+    rails db:migrate
