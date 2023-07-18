@@ -15,45 +15,47 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_093751) do
   enable_extension "plpgsql"
 
   create_table "machines", force: :cascade do |t|
-    t.string "model"
-    t.string "location"
-    t.integer "status"
+    t.bigint "model_id", null: false
+    t.string "location", null: false
+    t.integer "status", null: false
     t.bigint "order_id"
     t.integer "order_total_cycles"
     t.integer "order_completed_cycles"
     t.integer "order_current_step"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["model_id"], name: "index_machines_on_model_id"
     t.index ["order_id"], name: "index_machines_on_order_id"
   end
 
-  create_table "models", id: false, force: :cascade do |t|
-    t.string "id"
-    t.integer "well_array_rows"
-    t.integer "well_array_cols"
+  create_table "models", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "well_array_rows", null: false
+    t.integer "well_array_cols", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "orders", force: :cascade do |t|
-    t.text "oligos", default: [], array: true
+    t.text "oligos", default: [], null: false, array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "wells", force: :cascade do |t|
-    t.integer "row"
-    t.integer "col"
+    t.integer "row", null: false
+    t.integer "col", null: false
+    t.integer "status", null: false
+    t.bigint "machine_id", null: false
     t.string "oligo"
     t.integer "total_cycles"
-    t.integer "status"
     t.integer "synthetized_nucleotide_count"
-    t.bigint "machine_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["machine_id"], name: "index_wells_on_machine_id"
   end
 
+  add_foreign_key "machines", "models"
   add_foreign_key "machines", "orders"
   add_foreign_key "wells", "machines"
 end

@@ -5,4 +5,4 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
-model96 = Model.create(id: "DNA-SYNTH-96", well_array_rows: 8, well_array_cols: 12)
+Model.create(name: "DNA-SYNTH-96", well_array_rows: 8, well_array_cols: 12)
