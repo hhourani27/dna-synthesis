@@ -1,3 +1,5 @@
 class Order < ApplicationRecord
-  belongs_to :machine
+  belongs_to :machine, required: false
+
+  validates :oligos, presence: true
 end
