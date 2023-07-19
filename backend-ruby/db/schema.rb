@@ -18,14 +18,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_093751) do
     t.bigint "model_id", null: false
     t.string "location", null: false
     t.integer "status", null: false
-    t.bigint "order_id"
     t.integer "order_total_cycles"
     t.integer "order_completed_cycles"
     t.integer "order_current_step"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["model_id"], name: "index_machines_on_model_id"
-    t.index ["order_id"], name: "index_machines_on_order_id"
   end
 
   create_table "models", force: :cascade do |t|
@@ -38,8 +36,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_093751) do
 
   create_table "orders", force: :cascade do |t|
     t.text "oligos", default: [], null: false, array: true
+    t.bigint "machine_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["machine_id"], name: "index_orders_on_machine_id"
   end
 
   create_table "wells", force: :cascade do |t|
@@ -56,6 +56,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_093751) do
   end
 
   add_foreign_key "machines", "models"
-  add_foreign_key "machines", "orders"
+  add_foreign_key "orders", "machines"
   add_foreign_key "wells", "machines"
 end

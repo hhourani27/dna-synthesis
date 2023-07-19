@@ -1,3 +1,3 @@
 class Order < ApplicationRecord
-    has_one :machine
+  belongs_to :machine
 end

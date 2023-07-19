@@ -1,2 +1,6 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+DNASYNTH96:
+  name: DNA-SYNTH-96
+  well_array_rows: 8
+  well_array_cols: 12
