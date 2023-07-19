@@ -4,9 +4,9 @@ class CreateMachines < ActiveRecord::Migration[7.0]
       t.belongs_to :model, null: false, foreign_key: true
       t.string :location, null: false
       t.integer :status, null: false
-      t.integer :order_total_cycles
-      t.integer :order_completed_cycles
-      t.integer :order_current_step
+      t.integer :synthesis_total_cycles
+      t.integer :synthesis_completed_cycles
+      t.integer :synthesis_current_step
 
       t.timestamps
     end

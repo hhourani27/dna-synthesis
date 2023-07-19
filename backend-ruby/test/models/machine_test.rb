@@ -21,7 +21,7 @@ class MachineTest < ActiveSupport::TestCase
   test 'An Idle machine should not have an order' do
     assert_raises ActiveRecord::RecordInvalid do
       machine = Machine.create!(model: models(:DNASYNTH96), location: 'Nice', status: :idle, order: orders(:order1),
-                                order_total_cycles: 10, order_completed_cycles: 5, order_current_step: :elongation)
+                                synthesis_total_cycles: 10, synthesis_completed_cycles: 5, synthesis_current_step: :elongation)
     end
   end
 
@@ -34,7 +34,7 @@ class MachineTest < ActiveSupport::TestCase
   test "A Machine that didn't start synthetizing should not have a synthetizing step" do
     assert_raises ActiveRecord::RecordInvalid do
       machine = Machine.create!(model: models(:DNASYNTH96), location: 'Nice', status: :idle_assigned_order, order: orders(:order1),
-                                order_total_cycles: 10, order_completed_cycles: 5, order_current_step: :elongation)
+                                synthesis_total_cycles: 10, synthesis_completed_cycles: 5, synthesis_current_step: :elongation)
     end
   end
 end

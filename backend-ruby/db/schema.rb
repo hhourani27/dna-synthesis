@@ -18,9 +18,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_093751) do
     t.bigint "model_id", null: false
     t.string "location", null: false
     t.integer "status", null: false
-    t.integer "order_total_cycles"
-    t.integer "order_completed_cycles"
-    t.integer "order_current_step"
+    t.integer "synthesis_total_cycles"
+    t.integer "synthesis_completed_cycles"
+    t.integer "synthesis_current_step"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["model_id"], name: "index_machines_on_model_id"
