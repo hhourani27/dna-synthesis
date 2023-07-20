@@ -8,7 +8,7 @@ class Machine < ApplicationRecord
   has_one :order, required: false
 
   # == Callback to create Wells before creating a Machine
-  after_create :create_wells
+  before_create :create_wells
 
   # == Validations
   # A machine always has a model, location & status
@@ -34,7 +34,7 @@ class Machine < ApplicationRecord
   def create_wells
     model.well_array_rows.times do |r|
       model.well_array_cols.times do |c|
-        wells.create!(row: r + 1, col: c + 1, status: :idle)
+        wells.build(row: r + 1, col: c + 1, status: :idle)
       end
     end
   end

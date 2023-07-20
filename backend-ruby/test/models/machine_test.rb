@@ -12,6 +12,11 @@ class MachineTest < ActiveSupport::TestCase
     end
   end
 
+  test 'A Machine should always have the correct number of wells' do
+    machine = Machine.create!(model: models(:DNASYNTH96), location: 'Nice', status: :idle)
+    assert_equal(machine.wells.size, machine.model.well_array_rows * machine.model.well_array_cols)
+  end
+
   test 'A Machine should not have an invalid status' do
     assert_raises ArgumentError do
       machine = Machine.create!(model: models(:DNASYNTH96), location: 'Nice', status: 4)
