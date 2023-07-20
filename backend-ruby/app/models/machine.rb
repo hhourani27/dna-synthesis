@@ -2,12 +2,15 @@ class Machine < ApplicationRecord
   enum :status, { idle: 0, idle_assigned_order: 1, synthetizing: 2, waiting_for_dispatch: 3 }
   enum :synthesis_current_step, { elongation: 0, deprotectin: 1, wash: 2 }
 
-  # Associations
+  # == Associations
   belongs_to :model
   has_many :wells, dependent: :destroy
   has_one :order, required: false
 
-  # Validations
+  # == Callback to create Wells before creating a Machine
+  after_create :create_wells
+
+  # == Validations
   # A machine always has a model, location & status
   validates :model, :location, :status, presence: true
 
@@ -25,4 +28,14 @@ class Machine < ApplicationRecord
   validates :synthesis_current_step, absence: true, if: proc { |m|
                                                           %w[idle_assigned_order waiting_for_dispatch].include?(m.status)
                                                         }
+
+  private
+
+  def create_wells
+    model.well_array_rows.times do |r|
+      model.well_array_cols.times do |c|
+        wells.create!(row: r + 1, col: c + 1, status: :idle)
+      end
+    end
+  end
 end
