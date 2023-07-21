@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently --names \"json-db,front\" \"npm run start --prefix json-db\" \"npm run start --prefix frontend\""
+    "front": "cd frontend && npm start",
+    "back:json": "cd json-db && npm start",
+    "back:rails":  "cd backend-ruby/bin && rails server",
+    "start:json": "concurrently --names \"json-db,front\" \"npm run back:json\" \"npm run front\"",
+    "start:rails": "concurrently --names \"rails,front\" \"npm run back:rails\" \"npm run front\""
   },
   "author": "",
   "license": "ISC",
