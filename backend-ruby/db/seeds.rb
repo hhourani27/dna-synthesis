@@ -58,7 +58,7 @@ def generate_db(idle_machines_count:, idle_assigned_order_machines_count:, synth
   # (3) Finish synthetizing for some machines
   machines = machines.take(waiting_for_dispatch_machines_count)
   machines.each do |m|
-    m.update!(status: :waiting_for_dispatch, synthesis_completed_cycles: m.synthesis_completed_cycles,
+    m.update!(status: :waiting_for_dispatch, synthesis_completed_cycles: m.synthesis_total_cycles,
               synthesis_current_step: nil)
     m.wells.each do |w|
       w.update!(status: :completed_oligo, synthetized_nucleotide_count: w.oligo.length)
