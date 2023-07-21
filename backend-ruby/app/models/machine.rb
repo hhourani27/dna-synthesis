@@ -29,6 +29,30 @@ class Machine < ApplicationRecord
                                                           %w[idle_assigned_order waiting_for_dispatch].include?(m.status)
                                                         }
 
+  def render_json
+    output = {
+      id: id,
+      model: model.name,
+      location: location,
+      status: status.upcase
+    }
+
+    if status != 'idle'
+      output[:order] = order.id
+      output[:synthesis] = {
+        totalCycles: synthesis_total_cycles,
+        completedCycles: synthesis_completed_cycles,
+        currentStep: synthesis_current_step.present? ? synthesis_current_step.upcase : nil
+      }
+    end
+
+    output[:wells] = wells.map { |w| render_json_well(w) }
+
+    output
+  end
+
+
+
   private
 
   def create_wells
@@ -37,5 +61,22 @@ class Machine < ApplicationRecord
         wells.build(row: r + 1, col: c + 1, status: :idle)
       end
     end
+  end
+
+  def render_json_well(well)
+    output = {
+      id: well.id,
+      row: well.row,
+      col: well.col,
+      status: well.status.upcase
+    }
+
+    if well.status != 'idle'
+      output[:oligo] = well.oligo
+      output[:totalCycles] = well.total_cycles
+      output[:synthetizedNucleotideCount] = well.synthetized_nucleotide_count
+    end
+
+    output
   end
 end
