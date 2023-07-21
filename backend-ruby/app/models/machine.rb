@@ -58,7 +58,7 @@ class Machine < ApplicationRecord
   def create_wells
     model.well_array_rows.times do |r|
       model.well_array_cols.times do |c|
-        wells.build(row: r + 1, col: c + 1, status: :idle)
+        wells.build(row: r, col: c, status: :idle)
       end
     end
   end
