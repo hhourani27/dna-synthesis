@@ -24,7 +24,10 @@ module BackendRuby
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    config.active_job.queue_adapter = :delayed_job
+
     config.after_initialize do
+      Rails.logger.debug('In application.rb in config.after_initialize')
       ResumeSimulationJob.perform_later
     end
   end
