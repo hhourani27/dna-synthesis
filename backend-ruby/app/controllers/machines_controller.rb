@@ -1,6 +1,6 @@
 class MachinesController < ApplicationController
   def index
-    @machines = Machine.all
+    @machines = params[:status] ? Machine.where(status: params[:status].downcase) : Machine.all
     render json: @machines.map(&:render_json)
   end
 

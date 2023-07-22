@@ -1,6 +1,6 @@
 class Machine < ApplicationRecord
   enum :status, { idle: 0, idle_assigned_order: 1, synthetizing: 2, waiting_for_dispatch: 3 }
-  enum :synthesis_current_step, { elongation: 0, deprotectin: 1, wash: 2 }
+  enum :synthesis_current_step, { elongation: 0, deprotection: 1, wash: 2 }
 
   # == Associations
   belongs_to :model
@@ -24,7 +24,7 @@ class Machine < ApplicationRecord
                                                                                                 %w[idle_assigned_order synthetizing waiting_for_dispatch].include?(m.status)
                                                                                               }
 
-  # If machine didn't start or finished synthetizing, there's no step
+  # If machine didn't start synthetizing or finished synthetizing, there's no step
   validates :synthesis_current_step, absence: true, if: proc { |m|
                                                           %w[idle_assigned_order waiting_for_dispatch].include?(m.status)
                                                         }
