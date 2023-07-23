@@ -1,0 +1,112 @@
+---
+openapi: 3.0.2
+info:
+  title: DNA Synthesis API
+  version: "1.0"
+servers:
+  - url: http://localhost:3001/
+paths:
+  "/machines":
+    get:
+      summary: Return a list of all machines
+      responses:
+        "200":
+          description: A JSON array of machines
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: The machine id
+                    model:
+                      type: string
+                      description: The machine model
+                    location:
+                      type: string
+                      description: The machine location
+                    status:
+                      type: string
+                      enum:
+                        - IDLE
+                        - IDLE_ASSIGNED_ORDER
+                        - SYNTHETIZING
+                        - WAITING_FOR_DISPATCH
+                      description: |
+                        This field represents the current machine state. It can take one of the following values:
+
+                        - IDLE: The machine is idle and not processing any orders.
+                        - IDLE_ASSIGNED_ORDER: The machine has an assigned order, but did not start synthesis yet.
+                        - SYNTHETIZING: The machine is currently synthesizing an order.
+                        - WAITING_FOR_DISPATCH: The order synthesis is completed and it's waiting for the oligos to be dispatched.
+                    order:
+                      type: integer
+                      description: The order id currently assigned to the machine. Only present if there's an assigned order to the machine (i.e. `status != IDLE`)
+                    synthesis:
+                      type: object
+                      description: Synthesis information. Only present if there's an assigned order to the machine (i.e. `status != IDLE`)
+                      properties:
+                        totalCycles:
+                          type: integer
+                          description: The total number of cycles needed to synthetize ALL oligos and fulfill the current order
+                        completedCycles:
+                          type: integer
+                          description: |
+                            The number of completed cycles.
+                            * Is always less than or equal than `totalCycles`
+                            * Should be `0` when `status == IDLE_ASSIGNED_ORDER`
+                            * Should equal to `totalCycles` when `status == COMPLETED_OLIGO`
+                        currentStep:
+                          type: string
+                          enum:
+                            - ELONGATION
+                            - DEPROTECTION
+                            - WASH
+                          description: "The machine's current step within its operational cycle. A cycle consists of 3 steps : ELONGATION -> DEPROTECTION -> WASH"
+                    wells:
+                      type: array
+                      description: A description of each well in the machine
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            description: the well unique id within the machine
+                          row:
+                            type: integer
+                            description: the well row number. row numbers start with 0
+                          col:
+                            type: integer
+                            description: the well column number. column numbers start with 0
+                          status:
+                            type: string
+                            enum:
+                              - IDLE
+                              - IDLE_ASSIGNED_OLIGO
+                              - SYNTHETIZING_OLIGO
+                              - COMPLETED_OLIGO
+                            description: |
+                              This field represents the current well state. It can take one of the following values:
+
+                              - IDLE: takes this value if and only if `status(machine) == IDLE`
+                              - IDLE_ASSIGNED_OLIGO: takes this value if and only if `status(machine) == IDLE_ASSIGNED_ORDER`
+                              - SYNTHETIZING_OLIGO: takes this value if `status(machine) == SYNTHETIZING AND length(oligo) < completedCycles`
+                              - COMPLETED_OLIGO: takes this value if `status(machine) == WAITING_FOR_DISPATCH OR (`status(machine) == SYNTHETIZING AND synthetizedNucleotideCount < totalCycles)`
+                          oligo:
+                            type: string
+                            pattern: ^[ATCG]+$
+                            description: the oligonucleotide that is synthetized in this well. Only present if there's an assigned order to the machine (i.e. `status != IDLE`)
+                          totalCycles:
+                            type: integer
+                            description: |
+                              The total number of cycles needed to synthetize the assigned oligo.
+                              * It is always equal to `oligo`'s length
+                          synthetizedNucleotideCount:
+                            type: integer
+                            description: |
+                              The current nucleotide length, or the number of completed cycles.
+                              * It is always less than or equal than `totalCycles`
+                              * `synthetizedNucleotideCount == totalCycles` if and only if `status == COMPLETED_OLIGO`
