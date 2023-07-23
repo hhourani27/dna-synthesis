@@ -48,18 +48,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      description: The unique model id and name
-                    wellArraySize:
-                      type: array
-                      description: "an array of 2 values : [number of rows, number of columns] of the model's well array."
-                      items:
-                        type: integer
-                      minItems: 2
-                      maxItems: 2
+                  $ref: "#/components/schemas/Model"
 components:
   schemas:
     Machine:
@@ -156,3 +145,16 @@ components:
                   The current nucleotide length, or the number of completed cycles.
                   * It is always less than or equal than `totalCycles`
                   * `synthetizedNucleotideCount == totalCycles` if and only if `status == COMPLETED_OLIGO`
+    Model:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique model id and name
+        wellArraySize:
+          type: array
+          description: "an array of 2 values : [number of rows, number of columns] of the model's well array."
+          items:
+            type: integer
+          minItems: 2
+          maxItems: 2
