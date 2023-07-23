@@ -9,10 +9,16 @@ servers:
 paths:
   /machines:
     get:
-      summary: Return a list of all machines
+      summary: Return a list of all machines; optionally, filtered by status
+      parameters:
+        - in: query
+          name: status
+          schema:
+            $ref: "#/components/schemas/MachineStatus"
+          description: Return only machines with the given status
       responses:
         "200":
-          description: A JSON array of machines
+          description: A JSON array of machines, applying any query filter
           content:
             application/json:
               schema:
@@ -82,19 +88,7 @@ components:
           type: string
           description: The machine location
         status:
-          type: string
-          enum:
-            - IDLE
-            - IDLE_ASSIGNED_ORDER
-            - SYNTHETIZING
-            - WAITING_FOR_DISPATCH
-          description: |
-            This field represents the current machine state. It can take one of the following values:
-
-            - IDLE: The machine is idle and not processing any orders.
-            - IDLE_ASSIGNED_ORDER: The machine has an assigned order, but did not start synthesis yet.
-            - SYNTHETIZING: The machine is currently synthesizing an order.
-            - WAITING_FOR_DISPATCH: The order synthesis is completed and it's waiting for the oligos to be dispatched.
+          $ref: "#/components/schemas/MachineStatus"
         order:
           type: integer
           description: The order id currently assigned to the machine. Only present if there's an assigned order to the machine (i.e. `status != IDLE`)
@@ -176,3 +170,17 @@ components:
             type: integer
           minItems: 2
           maxItems: 2
+    MachineStatus:
+      type: string
+      enum:
+        - IDLE
+        - IDLE_ASSIGNED_ORDER
+        - SYNTHETIZING
+        - WAITING_FOR_DISPATCH
+      description: |
+        This field represents the current machine state. It can take one of the following values:
+
+        - IDLE: The machine is idle and not processing any orders.
+        - IDLE_ASSIGNED_ORDER: The machine has an assigned order, but did not start synthesis yet.
+        - SYNTHETIZING: The machine is currently synthesizing an order.
+        - WAITING_FOR_DISPATCH: The order synthesis is completed and it's waiting for the oligos to be dispatched.
