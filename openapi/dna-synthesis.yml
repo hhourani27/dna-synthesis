@@ -21,7 +21,7 @@ paths:
                   $ref: "#/components/schemas/Machine"
   /machines/{machineId}:
     get:
-      summary: "Returns the detail of the machine identified by its ID"
+      summary: "Returns the description and status of the machine identified by its ID"
       parameters:
         - in: path
           name: machineId
@@ -49,6 +49,24 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Model"
+  /models/{modelId}:
+    get:
+      summary: "Returns the description of the model identified by its ID"
+      parameters:
+        - in: path
+          name: modelId
+          schema:
+            type: string
+          required: true
+          description: ID of the model to get
+      responses:
+        "200":
+          description: The description of the model
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Model"
+
 components:
   schemas:
     Machine:
