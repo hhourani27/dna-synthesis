@@ -6,7 +6,8 @@
   "scripts": {
     "front": "cd frontend && npm start",
     "back:json": "cd json-db && npm start",
-    "back:rails":  "cd backend-ruby/bin && rails server",
+    "back:rails": "cd backend-ruby/bin && rails server",
+    "back:rails:test": "cd backend-ruby/bin && rails server -e test",
     "start:json": "concurrently --names \"json-db,front\" \"npm run back:json\" \"npm run front\"",
     "start:rails": "concurrently --names \"rails,front\" \"npm run back:rails\" \"npm run front\""
   },

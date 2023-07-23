@@ -1,0 +1,5 @@
+Don't forget to recreate db_test_schemas.sql & db_test_data.sql everytime the database schema changes, using these commands
+
+pg_dump -U dna_synthesis_backend_user --schema-only dna_synthesis_test > db_test_schemas.sql
+
+pg_dump -U dna_synthesis_backend_user --data-only dna_synthesis_test > db_test_data.sql
