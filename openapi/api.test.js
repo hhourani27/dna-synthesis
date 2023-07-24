@@ -11,9 +11,14 @@ dns.setDefaultResultOrder("ipv4first");
 const SERVER_URL = "http://localhost:3001/";
 
 describe("GET /machines", () => {
-  test("id, model, location, status & wells are always present", async () => {
+  let machines;
+
+  beforeAll(async () => {
     const response = await fetch(SERVER_URL + "machines");
-    const machines = await response.json();
+    machines = await response.json();
+  });
+
+  test("id, model, location, status & wells are always present", async () => {
     machines.forEach((m) => {
       expect(m).toMatchObject({
         id: expect.any(Number),
