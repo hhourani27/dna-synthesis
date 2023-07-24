@@ -150,11 +150,13 @@ components:
                 type: integer
                 description: |
                   The total number of cycles needed to synthetize the assigned oligo.
+                  * Only present if there's an assigned order to the machine (i.e. `status != IDLE`)
                   * It is always equal to `oligo`'s length
               synthetizedNucleotideCount:
                 type: integer
                 description: |
                   The current nucleotide length, or the number of completed cycles.
+                  * Only present if there's an assigned order to the machine (i.e. `status != IDLE`)
                   * It is always less than or equal than `totalCycles`
                   * `synthetizedNucleotideCount == totalCycles` if and only if `status == COMPLETED_OLIGO`
     Model:

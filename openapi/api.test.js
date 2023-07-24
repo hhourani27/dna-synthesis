@@ -18,7 +18,7 @@ describe("GET /machines", () => {
     machines = await response.json();
   });
 
-  test("id, model, location, status are always present", async () => {
+  test("id, model, location, status are always present", () => {
     machines.forEach((m) => {
       expect(m).toMatchObject({
         id: expect.any(Number),
@@ -29,7 +29,7 @@ describe("GET /machines", () => {
     });
   });
 
-  test("wells is always present with properties id, row, col, status", async () => {
+  test("wells is always present with properties id, row, col, status", () => {
     machines.forEach((m) => {
       expect(m).toHaveProperty("wells");
       expect(m.wells).toEqual(
@@ -42,6 +42,37 @@ describe("GET /machines", () => {
           }),
         ])
       );
+    });
+  });
+
+  test("machine status can only take one of 4 values", () => {
+    machines.forEach((m) => {
+      expect([
+        "IDLE",
+        "IDLE_ASSIGNED_ORDER",
+        "SYNTHETIZING",
+        "WAITING_FOR_DISPATCH",
+      ]).toContain(m.status);
+    });
+  });
+
+  test("idle machines do not have order or synthesis information", () => {
+    idle_machines = machines.filter((m) => m.status === "IDLE");
+    idle_machines.forEach((m) => {
+      expect(m.order).toBeUndefined();
+      expect(m.synthesis).toBeUndefined();
+    });
+  });
+
+  test("idle machines have idle wells", () => {
+    idle_machines = machines.filter((m) => m.status === "IDLE");
+    idle_machines.forEach((m) => {
+      m.wells.forEach((w) => {
+        expect(w.status).toBe("IDLE");
+        expect(w.oligo).toBeUndefined();
+        expect(w.totalCycles).toBeUndefined();
+        expect(w.synthetizedNucleotideCount).toBeUndefined();
+      });
     });
   });
 });
