@@ -1,20 +1,14 @@
 class MachinesController < ApplicationController
   def index
     if params[:status].present?
-      Rails.logger.debug "Read params[:status] #{params[:status]}"
       status_query = params[:status].downcase
-      Rails.logger.debug "Read status_query #{status_query}"
-      Rails.logger.debug "Read Machine.statuses.values #{Machine.statuses.values}"
       if Machine.statuses.key?(status_query)
-        Rails.logger.debug "I'm here 1"
         @machines = Machine.where(status: status_query)
         render json: @machines.map(&:render_json)
       else
-        Rails.logger.debug "I'm here 2"
         render json: { error: 'Invalid query parameter "status"' }, status: :bad_request
       end
     else
-      Rails.logger.debug "I'm here 3"
       @machines = Machine.all
       render json: @machines.map(&:render_json)
     end
@@ -23,6 +17,8 @@ class MachinesController < ApplicationController
   def show
     @machine = Machine.find(params[:id])
     render json: @machine.render_json
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Machine not found' }, status: :not_found
   end
 
   def update

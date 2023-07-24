@@ -265,8 +265,8 @@ describe("GET /machines?status={status}", () => {
   test("Invalid status query parameter value", async () => {
     const response = await fetch(SERVER_URL + "machines?status=INVALID_STATUS");
     expect(response.status).toBe(400);
-    const body = await response.json();
-    expect(body).toHaveProperty("error", expect.any(String));
+    const error = await response.json();
+    expect(error).toHaveProperty("error", expect.any(String));
   });
 
   test("Ignore invalid query parameters", async () => {
@@ -280,10 +280,14 @@ describe("GET /machines?status={status}", () => {
 });
 
 describe("GET /machines/{machineId}", () => {
-  test("Query a single machine", async () => {
-    const responseAllMachines = await fetch(SERVER_URL + "machines");
-    const machines = await responseAllMachines.json();
+  let machines;
 
+  beforeAll(async () => {
+    const response = await fetch(SERVER_URL + "machines");
+    machines = await response.json();
+  });
+
+  test("Query a single machine", async () => {
     const machineId = machines[0].id;
 
     const responseMachine0 = await fetch(SERVER_URL + `machines/${machineId}`);
@@ -291,5 +295,21 @@ describe("GET /machines/{machineId}", () => {
 
     expect(machine0.id).toBe(machineId);
     expect(machine0.status).toBe(machines[0].status);
+  });
+
+  test("Query a non-existing machine", async () => {
+    const machineIds = machines.map((m) => m.id);
+    // Find a non-existing machine ID
+    let machineId = 1;
+    while (machineIds.includes(machineId)) {
+      machineId++;
+    }
+
+    const responseNonExistingMachine = await fetch(
+      SERVER_URL + `machines/${machineId}`
+    );
+    expect(responseNonExistingMachine.status).toBe(404);
+    const error = await responseNonExistingMachine.json();
+    expect(error).toHaveProperty("error", expect.any(String));
   });
 });
