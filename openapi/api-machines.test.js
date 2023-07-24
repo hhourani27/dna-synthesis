@@ -90,6 +90,18 @@ describe("GET /machines", () => {
     });
   });
 
+  test("Machine have the correct number of wells as specified by their model", async () => {
+    const responseModels = await fetch(SERVER_URL + "models");
+    const models = await responseModels.json();
+
+    machines.forEach((m) => {
+      model = models.find((md) => md.id === m.model);
+      expect(m.wells.length).toBe(
+        model.wellArraySize[0] * model.wellArraySize[1]
+      );
+    });
+  });
+
   test("Idle machines do not have order or synthesis information", () => {
     idleMachines.forEach((m) => {
       expect(m.order).toBeUndefined();
