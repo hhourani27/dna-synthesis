@@ -12,10 +12,29 @@ const SERVER_URL = "http://localhost:3001/";
 
 describe("GET /machines", () => {
   let machines;
+  let idleMachines;
+  let nonIdleMachines;
 
   beforeAll(async () => {
     const response = await fetch(SERVER_URL + "machines");
     machines = await response.json();
+    idleMachines = machines.filter((m) => m.status === "IDLE");
+    nonIdleMachines = machines.filter((m) => m.status !== "IDLE");
+  });
+
+  test("First test to make sure that dataset has machines of all statuses", () => {
+    expect(machines.filter((m) => m.status === "IDLE").length).toBeGreaterThan(
+      0
+    );
+    expect(
+      machines.filter((m) => m.status === "IDLE_ASSIGNED_ORDER").length
+    ).toBeGreaterThan(0);
+    expect(
+      machines.filter((m) => m.status === "SYNTHETIZING").length
+    ).toBeGreaterThan(0);
+    expect(
+      machines.filter((m) => m.status === "WAITING_FOR_DISPATCH").length
+    ).toBeGreaterThan(0);
   });
 
   test("id, model, location, status are always present", () => {
@@ -45,7 +64,7 @@ describe("GET /machines", () => {
     });
   });
 
-  test("machine status can only take one of 4 values", () => {
+  test("machine status take one of 4 values", () => {
     machines.forEach((m) => {
       expect([
         "IDLE",
@@ -56,22 +75,97 @@ describe("GET /machines", () => {
     });
   });
 
+  test("wells status take one of 4 values", () => {
+    machines.forEach((m) => {
+      m.wells.forEach((w) => {
+        expect([
+          "IDLE",
+          "IDLE_ASSIGNED_OLIGO",
+          "SYNTHETIZING_OLIGO",
+          "COMPLETED_OLIGO",
+        ]).toContain(w.status);
+      });
+    });
+  });
+
   test("idle machines do not have order or synthesis information", () => {
-    idle_machines = machines.filter((m) => m.status === "IDLE");
-    idle_machines.forEach((m) => {
+    idleMachines.forEach((m) => {
       expect(m.order).toBeUndefined();
       expect(m.synthesis).toBeUndefined();
     });
   });
 
   test("idle machines have idle wells", () => {
-    idle_machines = machines.filter((m) => m.status === "IDLE");
-    idle_machines.forEach((m) => {
+    idleMachines.forEach((m) => {
       m.wells.forEach((w) => {
         expect(w.status).toBe("IDLE");
         expect(w.oligo).toBeUndefined();
         expect(w.totalCycles).toBeUndefined();
         expect(w.synthetizedNucleotideCount).toBeUndefined();
+      });
+    });
+  });
+
+  test("non-idle machines have order, synthesis and oligo information", () => {
+    nonIdleMachines.forEach((m) => {
+      expect(m).toHaveProperty("order", expect.any(Number));
+      expect(m).toHaveProperty("synthesis");
+      expect(m.synthesis).toHaveProperty("totalCycles", expect.any(Number));
+      expect(m.synthesis.totalCycles).toBeGreaterThanOrEqual(0);
+      expect(m.synthesis).toHaveProperty("completedCycles", expect.any(Number));
+      expect(m.synthesis.completedCycles).toBeGreaterThanOrEqual(0);
+
+      m.wells.forEach((w) => {
+        expect(w).toHaveProperty("oligo", expect.any(String));
+        expect(w).toHaveProperty("totalCycles", expect.any(Number));
+        expect(w.totalCycles).toBeGreaterThanOrEqual(0);
+        expect(w).toHaveProperty(
+          "synthetizedNucleotideCount",
+          expect.any(Number)
+        );
+        expect(w.synthetizedNucleotideCount).toBeGreaterThanOrEqual(0);
+      });
+    });
+  });
+
+  test("oligo is always ATCG", () => {
+    nonIdleMachines.forEach((m) => {
+      m.wells.forEach((w) => {
+        expect(w.oligo).toMatch(/^[ATCG]+$/);
+      });
+    });
+  });
+
+  test("machines with assigned order but didn't start synthetizing yet, or finished synthetizing, has no currentStep", () => {
+    nonSynthetizingMachines = machines.filter((m) =>
+      ["IDLE_ASSIGNED_ORDER", "WAITING_FOR_DISPATCH "].includes(m.status)
+    );
+    nonSynthetizingMachines.forEach((m) => {
+      const syn = m.synthesis;
+      if (syn.hasOwnProperty("currentStep")) {
+        expect(syn.currentStep).toBeNull();
+      } else {
+        expect(syn.currentStep).toBeUndefined();
+      }
+    });
+  });
+
+  test("completedCycles or synthetizedNucleotideCount <= totalCycles", () => {
+    nonIdleMachines.forEach((m) => {
+      expect(m.synthesis.completedCycles).toBeLessThanOrEqual(
+        m.synthesis.totalCycles
+      );
+
+      m.wells.forEach((w) => {
+        expect(w.synthetizedNucleotideCount).toBeLessThanOrEqual(w.totalCycles);
+      });
+    });
+  });
+
+  test("well's totalCycles <= machine's totalCycles", () => {
+    nonIdleMachines.forEach((m) => {
+      m.wells.forEach((w) => {
+        expect(w.totalCycles).toBeLessThanOrEqual(m.synthesis.totalCycles);
       });
     });
   });

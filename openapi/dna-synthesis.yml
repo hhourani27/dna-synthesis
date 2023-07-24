@@ -105,14 +105,16 @@ components:
                 The number of completed cycles.
                 * Is always less than or equal than `totalCycles`
                 * Should be `0` when `status == IDLE_ASSIGNED_ORDER`
-                * Should equal to `totalCycles` when `status == COMPLETED_OLIGO`
+                * Should equal to `totalCycles` when `status == WAITING_FOR_DISPATCH`
             currentStep:
               type: string
               enum:
                 - ELONGATION
                 - DEPROTECTION
                 - WASH
-              description: "The machine's current step within its operational cycle. A cycle consists of 3 steps : ELONGATION -> DEPROTECTION -> WASH"
+              description: |
+                The machine's current step within its operational cycle. A cycle consists of 3 steps : ELONGATION -> DEPROTECTION -> WASH
+                * It is present only when machine's `status == SYNTHETIZING`
         wells:
           type: array
           description: A description of each well in the machine
