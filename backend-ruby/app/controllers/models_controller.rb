@@ -6,6 +6,10 @@ class ModelsController < ApplicationController
 
   def show
     @model = Model.find_by(name: params[:id])
-    render json: @model.render_json
+    if @model.nil?
+      render json: { error: 'Model not found' }, status: :not_found
+    else
+      render json: @model.render_json
+    end
   end
 end

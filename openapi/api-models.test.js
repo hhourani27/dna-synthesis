@@ -32,10 +32,17 @@ describe("Get /models/{modelId}", () => {
     const models = await responseAllModels.json();
 
     const modelId = models[0].id;
-    const responseModel0 = await fetch(SERVER_URL + `/models/${modelId}`);
+    const responseModel0 = await fetch(SERVER_URL + `models/${modelId}`);
     const model0 = await responseModel0.json();
 
     expect(model0.id).toBe(modelId);
     expect(model0.wellArraySize).toEqual(models[0].wellArraySize);
+  });
+
+  test("Query a non-existing model", async () => {
+    const response = await fetch(SERVER_URL + "models/NON-EXISTING-MODEL");
+    expect(response.status).toBe(404);
+    const error = await response.json();
+    expect(error).toHaveProperty("error", expect.any(String));
   });
 });
