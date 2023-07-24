@@ -1,7 +1,23 @@
 class MachinesController < ApplicationController
   def index
-    @machines = params[:status] ? Machine.where(status: params[:status].downcase) : Machine.all
-    render json: @machines.map(&:render_json)
+    if params[:status].present?
+      Rails.logger.debug "Read params[:status] #{params[:status]}"
+      status_query = params[:status].downcase
+      Rails.logger.debug "Read status_query #{status_query}"
+      Rails.logger.debug "Read Machine.statuses.values #{Machine.statuses.values}"
+      if Machine.statuses.key?(status_query)
+        Rails.logger.debug "I'm here 1"
+        @machines = Machine.where(status: status_query)
+        render json: @machines.map(&:render_json)
+      else
+        Rails.logger.debug "I'm here 2"
+        render json: { error: 'Invalid query paramater "status"' }, status: :bad_request
+      end
+    else
+      Rails.logger.debug "I'm here 3"
+      @machines = Machine.all
+      render json: @machines.map(&:render_json)
+    end
   end
 
   def show

@@ -261,4 +261,11 @@ describe("GET /machines?query={status}", () => {
       expect(m.status).toBe("WAITING_FOR_DISPATCH");
     });
   });
+
+  test("Invalid query parameter status", async () => {
+    const response = await fetch(SERVER_URL + "machines?status=INVALID_STATUS");
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body).toHaveProperty("error", expect.any(String));
+  });
 });
