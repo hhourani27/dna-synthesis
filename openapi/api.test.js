@@ -37,7 +37,7 @@ describe("GET /machines", () => {
     ).toBeGreaterThan(0);
   });
 
-  test("id, model, location, status are always present", () => {
+  test("Id, model, location, status are always present", () => {
     machines.forEach((m) => {
       expect(m).toMatchObject({
         id: expect.any(Number),
@@ -48,7 +48,7 @@ describe("GET /machines", () => {
     });
   });
 
-  test("wells is always present with properties id, row, col, status", () => {
+  test("Wells is always present with properties id, row, col, status", () => {
     machines.forEach((m) => {
       expect(m).toHaveProperty("wells");
       expect(m.wells).toEqual(
@@ -64,7 +64,7 @@ describe("GET /machines", () => {
     });
   });
 
-  test("machine status take one of 4 values", () => {
+  test("Machine status take one of 4 values", () => {
     machines.forEach((m) => {
       expect([
         "IDLE",
@@ -75,7 +75,7 @@ describe("GET /machines", () => {
     });
   });
 
-  test("wells status take one of 4 values", () => {
+  test("Wells status take one of 4 values", () => {
     machines.forEach((m) => {
       m.wells.forEach((w) => {
         expect([
@@ -88,14 +88,14 @@ describe("GET /machines", () => {
     });
   });
 
-  test("idle machines do not have order or synthesis information", () => {
+  test("Idle machines do not have order or synthesis information", () => {
     idleMachines.forEach((m) => {
       expect(m.order).toBeUndefined();
       expect(m.synthesis).toBeUndefined();
     });
   });
 
-  test("idle machines have idle wells", () => {
+  test("Idle machines have idle wells", () => {
     idleMachines.forEach((m) => {
       m.wells.forEach((w) => {
         expect(w.status).toBe("IDLE");
@@ -106,7 +106,7 @@ describe("GET /machines", () => {
     });
   });
 
-  test("non-idle machines have order, synthesis and oligo information", () => {
+  test("Non-idle machines have order, synthesis and oligo information", () => {
     nonIdleMachines.forEach((m) => {
       expect(m).toHaveProperty("order", expect.any(Number));
       expect(m).toHaveProperty("synthesis");
@@ -128,7 +128,7 @@ describe("GET /machines", () => {
     });
   });
 
-  test("oligo is always ATCG", () => {
+  test("Oligo is always ATCG", () => {
     nonIdleMachines.forEach((m) => {
       m.wells.forEach((w) => {
         expect(w.oligo).toMatch(/^[ATCG]+$/);
@@ -136,7 +136,7 @@ describe("GET /machines", () => {
     });
   });
 
-  test("machines with assigned order but didn't start synthetizing yet, or finished synthetizing, has no currentStep", () => {
+  test("Machines with assigned order but didn't start synthetizing yet, or finished synthetizing, has no currentStep", () => {
     nonSynthetizingMachines = machines.filter((m) =>
       ["IDLE_ASSIGNED_ORDER", "WAITING_FOR_DISPATCH "].includes(m.status)
     );
@@ -162,10 +162,31 @@ describe("GET /machines", () => {
     });
   });
 
-  test("well's totalCycles <= machine's totalCycles", () => {
+  test("Well's totalCycles <= machine's totalCycles", () => {
     nonIdleMachines.forEach((m) => {
       m.wells.forEach((w) => {
         expect(w.totalCycles).toBeLessThanOrEqual(m.synthesis.totalCycles);
+      });
+    });
+  });
+
+  test("Machine's totalCycles == longest oligo", () => {
+    nonIdleMachines.forEach((m) => {
+      expect(m.synthesis.totalCycles).toBe(
+        Math.max(...m.wells.map((w) => w.oligo.length))
+      );
+    });
+  });
+
+  test("Machines that didn't start synthetizing have completecCycles = 0", () => {
+    idleAssignedOrderMachines = machines.filter(
+      (m) => m.status === "IDLE_ASSIGNED_ORDER"
+    );
+    idleAssignedOrderMachines.forEach((m) => {
+      expect(m.synthesis.completedCycles).toBe(0);
+
+      m.wells.forEach((w) => {
+        expect(w.synthetizedNucleotideCount).toBe(0);
       });
     });
   });
