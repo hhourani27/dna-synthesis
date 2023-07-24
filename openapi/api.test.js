@@ -18,7 +18,7 @@ describe("GET /machines", () => {
     machines = await response.json();
   });
 
-  test("id, model, location, status & wells are always present", async () => {
+  test("id, model, location, status are always present", async () => {
     machines.forEach((m) => {
       expect(m).toMatchObject({
         id: expect.any(Number),
@@ -26,6 +26,22 @@ describe("GET /machines", () => {
         location: expect.any(String),
         status: expect.any(String),
       });
+    });
+  });
+
+  test("wells is always present with properties id, row, col, status", async () => {
+    machines.forEach((m) => {
+      expect(m).toHaveProperty("wells");
+      expect(m.wells).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: expect.any(Number),
+            row: expect.any(Number),
+            col: expect.any(Number),
+            status: expect.any(String),
+          }),
+        ])
+      );
     });
   });
 });
