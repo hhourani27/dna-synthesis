@@ -280,5 +280,16 @@ describe("GET /machines?status={status}", () => {
 });
 
 describe("GET /machines/{machineId}", () => {
-  test("Query a single machine", async () => {});
+  test("Query a single machine", async () => {
+    const responseAllMachines = await fetch(SERVER_URL + "machines");
+    const machines = await responseAllMachines.json();
+
+    const machineId = machines[0].id;
+
+    const responseMachine0 = await fetch(SERVER_URL + `machines/${machineId}`);
+    const machine0 = await responseMachine0.json();
+
+    expect(machine0.id).toBe(machineId);
+    expect(machine0.status).toBe(machines[0].status);
+  });
 });
