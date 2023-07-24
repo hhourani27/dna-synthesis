@@ -262,10 +262,23 @@ describe("GET /machines?status={status}", () => {
     });
   });
 
-  test("Invalid query parameter status", async () => {
+  test("Invalid status query parameter value", async () => {
     const response = await fetch(SERVER_URL + "machines?status=INVALID_STATUS");
     expect(response.status).toBe(400);
     const body = await response.json();
     expect(body).toHaveProperty("error", expect.any(String));
   });
+
+  test("Ignore invalid query parameters", async () => {
+    const responseAll = await fetch(SERVER_URL + "machines");
+    const machines = await responseAll.json();
+
+    const responseQuery = await fetch(SERVER_URL + "machines?invalid=IDLE");
+    const machinesQuery = await responseQuery.json();
+    expect(machinesQuery.length).toBe(machines.length);
+  });
+});
+
+describe("GET /machines/{machineId}", () => {
+  test("Query a single machine", async () => {});
 });
