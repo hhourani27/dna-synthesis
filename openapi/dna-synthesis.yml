@@ -25,6 +25,16 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Machine"
+        "400":
+          description: Returns an error if given a `status` query filter with an invalid status value
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid query parameter "status"
   /machines/{machineId}:
     get:
       summary: "Returns the description and status of the machine identified by its ID"

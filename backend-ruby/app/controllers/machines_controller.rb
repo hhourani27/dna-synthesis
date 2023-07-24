@@ -11,7 +11,7 @@ class MachinesController < ApplicationController
         render json: @machines.map(&:render_json)
       else
         Rails.logger.debug "I'm here 2"
-        render json: { error: 'Invalid query paramater "status"' }, status: :bad_request
+        render json: { error: 'Invalid query parameter "status"' }, status: :bad_request
       end
     else
       Rails.logger.debug "I'm here 3"
