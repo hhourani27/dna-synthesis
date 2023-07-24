@@ -139,7 +139,7 @@ describe("GET /machines", () => {
   });
 
   test("Machines with assigned order but didn't start synthetizing yet, or finished synthetizing, has no currentStep", () => {
-    nonSynthetizingMachines = machines.filter((m) =>
+    const nonSynthetizingMachines = machines.filter((m) =>
       ["IDLE_ASSIGNED_ORDER", "WAITING_FOR_DISPATCH "].includes(m.status)
     );
     nonSynthetizingMachines.forEach((m) => {
@@ -181,7 +181,7 @@ describe("GET /machines", () => {
   });
 
   test("Machines that didn't start synthetizing have completedCycles = 0", () => {
-    idleAssignedOrderMachines = machines.filter(
+    const idleAssignedOrderMachines = machines.filter(
       (m) => m.status === "IDLE_ASSIGNED_ORDER"
     );
     idleAssignedOrderMachines.forEach((m) => {
@@ -214,7 +214,7 @@ describe("GET /machines", () => {
   });
 
   test("Machines that completed orders have synthetized all nucleotides", () => {
-    completedMachines = machines.filter(
+    const completedMachines = machines.filter(
       (m) => m.status === "WAITING_FOR_DISPATCH"
     );
     completedMachines.forEach((m) => {
@@ -225,10 +225,10 @@ describe("GET /machines", () => {
   });
 });
 
-describe("GET /machines?query={status}", () => {
+describe("GET /machines?status={status}", () => {
   test("Query IDLE machines", async () => {
     const response = await fetch(SERVER_URL + "machines?status=IDLE");
-    machines = await response.json();
+    const machines = await response.json();
     machines.forEach((m) => {
       expect(m.status).toBe("IDLE");
     });
@@ -238,7 +238,7 @@ describe("GET /machines?query={status}", () => {
     const response = await fetch(
       SERVER_URL + "machines?status=IDLE_ASSIGNED_ORDER"
     );
-    machines = await response.json();
+    const machines = await response.json();
     machines.forEach((m) => {
       expect(m.status).toBe("IDLE_ASSIGNED_ORDER");
     });
@@ -246,7 +246,7 @@ describe("GET /machines?query={status}", () => {
 
   test("Query SYNTHETIZING machines", async () => {
     const response = await fetch(SERVER_URL + "machines?status=SYNTHETIZING");
-    machines = await response.json();
+    const machines = await response.json();
     machines.forEach((m) => {
       expect(m.status).toBe("SYNTHETIZING");
     });
@@ -256,7 +256,7 @@ describe("GET /machines?query={status}", () => {
     const response = await fetch(
       SERVER_URL + "machines?status=WAITING_FOR_DISPATCH"
     );
-    machines = await response.json();
+    const machines = await response.json();
     machines.forEach((m) => {
       expect(m.status).toBe("WAITING_FOR_DISPATCH");
     });
