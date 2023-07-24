@@ -14,12 +14,14 @@ describe("GET /machines", () => {
   let machines;
   let idleMachines;
   let nonIdleMachines;
+  let synthetizingMachines;
 
   beforeAll(async () => {
     const response = await fetch(SERVER_URL + "machines");
     machines = await response.json();
     idleMachines = machines.filter((m) => m.status === "IDLE");
     nonIdleMachines = machines.filter((m) => m.status !== "IDLE");
+    synthetizingMachines = machines.filter((m) => m.status === "SYNTHETIZING");
   });
 
   test("First test to make sure that dataset has machines of all statuses", () => {
@@ -178,7 +180,7 @@ describe("GET /machines", () => {
     });
   });
 
-  test("Machines that didn't start synthetizing have completecCycles = 0", () => {
+  test("Machines that didn't start synthetizing have completedCycles = 0", () => {
     idleAssignedOrderMachines = machines.filter(
       (m) => m.status === "IDLE_ASSIGNED_ORDER"
     );
@@ -187,6 +189,37 @@ describe("GET /machines", () => {
 
       m.wells.forEach((w) => {
         expect(w.synthetizedNucleotideCount).toBe(0);
+      });
+    });
+  });
+
+  test("Synthetizing machines have the currentStep information", () => {
+    synthetizingMachines.forEach((m) => {
+      expect(["ELONGATION", "DEPROTECTION", "WASH"]).toContain(
+        m.synthesis.currentStep
+      );
+    });
+  });
+
+  test("Synthetizing machines have the correct well status", () => {
+    synthetizingMachines.forEach((m) => {
+      m.wells.forEach((w) => {
+        if (m.synthesis.completedCycles >= w.totalCycles) {
+          expect(w.status).toBe("COMPLETED_OLIGO");
+        } else {
+          expect(w.status).toBe("SYNTHETIZING_OLIGO");
+        }
+      });
+    });
+  });
+
+  test("Machines that completed orders have synthetized all nucleotides", () => {
+    completedMachines = machines.filter(
+      (m) => m.status === "WAITING_FOR_DISPATCH"
+    );
+    completedMachines.forEach((m) => {
+      m.wells.forEach((w) => {
+        expect(w.synthetizedNucleotideCount).toBe(w.totalCycles);
       });
     });
   });
