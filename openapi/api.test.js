@@ -224,3 +224,41 @@ describe("GET /machines", () => {
     });
   });
 });
+
+describe("GET /machines?query={status}", () => {
+  test("Query IDLE machines", async () => {
+    const response = await fetch(SERVER_URL + "machines?status=IDLE");
+    machines = await response.json();
+    machines.forEach((m) => {
+      expect(m.status).toBe("IDLE");
+    });
+  });
+
+  test("Query IDLE_ASSIGNED_ORDER machines", async () => {
+    const response = await fetch(
+      SERVER_URL + "machines?status=IDLE_ASSIGNED_ORDER"
+    );
+    machines = await response.json();
+    machines.forEach((m) => {
+      expect(m.status).toBe("IDLE_ASSIGNED_ORDER");
+    });
+  });
+
+  test("Query SYNTHETIZING machines", async () => {
+    const response = await fetch(SERVER_URL + "machines?status=SYNTHETIZING");
+    machines = await response.json();
+    machines.forEach((m) => {
+      expect(m.status).toBe("SYNTHETIZING");
+    });
+  });
+
+  test("Query WAITING_FOR_DISPATCH machines", async () => {
+    const response = await fetch(
+      SERVER_URL + "machines?status=WAITING_FOR_DISPATCH"
+    );
+    machines = await response.json();
+    machines.forEach((m) => {
+      expect(m.status).toBe("WAITING_FOR_DISPATCH");
+    });
+  });
+});
