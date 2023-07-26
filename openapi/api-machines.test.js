@@ -377,7 +377,7 @@ describe.only("PATCH /machines/{machineId}", () => {
     expect(modifiedMachine.wells[0].status).toBe("SYNTHETIZING_OLIGO");
   });
 
-  test.only("Complete the machine's synthesis operation", async () => {
+  test("Complete the machine's synthesis operation", async () => {
     // 1. Check that there are machines waiting to start synthesis
     let response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
     const synthetizing_machines = await response.json();
@@ -431,5 +431,36 @@ describe.only("PATCH /machines/{machineId}", () => {
     );
     expect(modifiedMachine.synthesis.currentStep).toBe(null);
     expect(modifiedMachine.wells[0].status).toBe("COMPLETED_OLIGO");
+  });
+
+  test("Patch a non-existing machine", async () => {
+    // 1. Query all machines
+    let response = await fetch(SERVER_URL + `machines`);
+    const machines = await response.json();
+    const machineIds = machines.map((m) => m.id);
+
+    // 2. Find a non-existing machine ID
+    let machineId = 1;
+    while (machineIds.includes(machineId)) {
+      machineId++;
+    }
+
+    // 3. Create the payload
+    const payload = {
+      status: "SYNTHETIZING",
+    };
+
+    // 4. Send the PATCH request
+    response = await fetch(SERVER_URL + `machines/${machineId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    expect(response.status).toBe(404);
+    const error = await response.json();
+    expect(error).toHaveProperty("error", expect.any(String));
   });
 });

@@ -88,7 +88,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Machine"
-
+        "404":
+          description: Returns an error if no machine exists with `machineId`
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Machine not found
   /models:
     get:
       summary: "Returns a list of all machine models"
