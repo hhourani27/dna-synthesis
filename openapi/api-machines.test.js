@@ -325,3 +325,56 @@ describe("GET /machines/{machineId}", () => {
     expect(error).toHaveProperty("error", expect.any(String));
   });
 });
+
+describe.only("PATCH /machines/{machineId}", () => {
+  test("Start the machine's synthesis operation", async () => {
+    // 1. Check that there are machines waiting to start synthesis
+    let response = await fetch(
+      SERVER_URL + `machines/?status=IDLE_ASSIGNED_ORDER`
+    );
+    const idle_assigned_orders_machines = await response.json();
+    expect(idle_assigned_orders_machines.length).toBeGreaterThan(0);
+
+    // 2. Pick a machine to start synthetizing
+    const machine = idle_assigned_orders_machines[0];
+    const machineId = machine.id;
+
+    // 3. Create the payload
+    const payload = {
+      status: "SYNTHETIZING",
+      synthesis: {
+        totalCycles: 0,
+        completedCycles: 0,
+        currentStep: "ELONGATION",
+      },
+      wells: machine.wells.map((w) => ({
+        id: w.id,
+        status: "SYNTHETIZING_OLIGO",
+        synthetizedNucleotideCount: 0,
+      })),
+    };
+
+    // 4. Send the PATCH request
+    response = await fetch(SERVER_URL + `machines/${machineId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    // 5. Test that the response is correct
+    expect(response.status).toBe(200);
+    let modifiedMachine = await response.json();
+    expect(modifiedMachine.id).toBe(machineId);
+    expect(modifiedMachine.status).toBe("SYNTHETIZING");
+    expect(modifiedMachine.wells[0].status).toBe("SYNTHETIZING_OLIGO");
+
+    // 6. Re-request the same machine and verify that the state is correct
+    response = await fetch(SERVER_URL + `machines/${machineId}`);
+    modifiedMachine = await response.json();
+    expect(modifiedMachine.id).toBe(machineId);
+    expect(modifiedMachine.status).toBe("SYNTHETIZING");
+    expect(modifiedMachine.wells[0].status).toBe("SYNTHETIZING_OLIGO");
+  });
+});

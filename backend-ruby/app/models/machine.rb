@@ -6,6 +6,7 @@ class Machine < ApplicationRecord
   belongs_to :model
 
   has_many :wells, dependent: :destroy
+  # Added accepts_nested_attributes_for in order to update wells in a single PATCH or POST /machines operation. see https://api.rubyonrails.org/classes/ActiveRecord/NestedAttributes/ClassMethods.html
   accepts_nested_attributes_for :wells
 
   has_one :order, required: false

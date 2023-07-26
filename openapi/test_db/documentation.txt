@@ -1,5 +1,9 @@
-Don't forget to recreate db_test_schemas.sql & db_test_data.sql everytime the database schema changes, using these commands
+Don't forget to update db_test_schemas.sql & db_test_data.sql everytime the database schema changes, 
 
-pg_dump -U dna_synthesis_backend_user --schema-only dna_synthesis_test > db_test_schemas.sql
+1. Use these commands to extract the schema and data from postgres
 
-pg_dump -U dna_synthesis_backend_user --data-only dna_synthesis_test > db_test_data.sql
+    pg_dump -U dna_synthesis_backend_user --schema-only dna_synthesis_development > db_test_schemas.sql
+
+    pg_dump -U dna_synthesis_backend_user --data-only dna_synthesis_development> db_test_data.sql
+
+2. Run reset_test_db.bat to modify the test database

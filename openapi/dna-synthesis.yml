@@ -62,6 +62,32 @@ paths:
                   error:
                     type: string
                     example: Machine not found
+    patch:
+      summary: "Update the machine's status and its wells"
+      description: |
+        * Only include the fields that you want to modify
+        * Only non-read-only fields will be modified. If other fields are included, they will be IDLE_ASSIGNED_ORDER
+        * You need to include the well ID in order to correctly modify the well's status
+      parameters:
+        - in: path
+          name: machineId
+          schema:
+            type: integer
+          required: true
+          description: ID of the machine to modify
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Machine"
+      responses:
+        "200":
+          description: The modified decription and status of the machine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Machine"
 
   /models:
     get:
@@ -119,11 +145,13 @@ components:
         location:
           type: string
           description: The machine location
+          readOnly: true
         status:
           $ref: "#/components/schemas/MachineStatus"
         order:
           type: integer
           description: The order id currently assigned to the machine. Only present if there's an assigned order to the machine (i.e. `status != IDLE`)
+          readOnly: true
         synthesis:
           type: object
           description: Synthesis information. Only present if there's an assigned order to the machine (i.e. `status != IDLE`)
@@ -159,9 +187,11 @@ components:
               row:
                 type: integer
                 description: the well row number. row numbers start with 0
+                readOnly: true
               col:
                 type: integer
                 description: the well column number. column numbers start with 0
+                readOnly: true
               status:
                 type: string
                 enum:

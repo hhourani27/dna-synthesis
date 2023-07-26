@@ -9,16 +9,16 @@ REM Set the password environment variable
 set PGPASSWORD=%DB_PASS%
 
 echo Connect to PostgreSQL and drop the database
-psql -U %DB_USER% -d postgres -c "DROP DATABASE IF EXISTS %DB_NAME%;"
+psql -U %DB_USER% -d postgres --echo-errors -c "DROP DATABASE IF EXISTS %DB_NAME%;"
 
 echo Create the database
-psql -U %DB_USER% -d postgres -c "CREATE DATABASE %DB_NAME%;"
+psql -U %DB_USER% -d postgres --echo-errors -c "CREATE DATABASE %DB_NAME%;"
 
 echo Import the schema
-psql -U %DB_USER% -d %DB_NAME% -f %SCHEMA_FILE%
+psql -U %DB_USER% -d %DB_NAME% -f %SCHEMA_FILE% --echo-errors
 
-RechoEM Populate the database with data
-psql -U %DB_USER% -d %DB_NAME% -f %DATA_FILE%
+echo Populate the database with data
+psql -U %DB_USER% -d %DB_NAME% -f %DATA_FILE% --echo-errors
 
 echo Database has been successfully reset.
 
