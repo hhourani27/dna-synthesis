@@ -68,7 +68,7 @@ class MachinesController < ApplicationController
       transformed['wells_attributes'].each do |well|
         well.transform_keys! { |key| key == 'totalCycles' ? 'total_cycles' : key }
         well.transform_keys! { |key| key == 'synthetizedNucleotideCount' ? 'synthetized_nucleotide_count' : key }
-        well['status'] = well['status'].downcase
+        well['status'] = well['status'].downcase if well.has_key?('status')
       end
       Rails.logger.debug("HABIB: transformed: #{transformed}")
     end

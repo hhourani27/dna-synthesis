@@ -326,7 +326,7 @@ describe("GET /machines/{machineId}", () => {
   });
 });
 
-describe.only("PATCH /machines/{machineId}", () => {
+describe("PATCH /machines/{machineId}", () => {
   test("Start the machine's synthesis operation", async () => {
     // 1. Check that there are machines waiting to start synthesis
     let response = await fetch(
@@ -378,7 +378,7 @@ describe.only("PATCH /machines/{machineId}", () => {
   });
 
   test("Complete the machine's synthesis operation", async () => {
-    // 1. Check that there are machines waiting to start synthesis
+    // 1. Check that there are synthetizing machines
     let response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
     const synthetizing_machines = await response.json();
     expect(synthetizing_machines.length).toBeGreaterThan(0);
@@ -462,5 +462,63 @@ describe.only("PATCH /machines/{machineId}", () => {
     expect(response.status).toBe(404);
     const error = await response.json();
     expect(error).toHaveProperty("error", expect.any(String));
+  });
+
+  test("Patch read-only fields that should not be modified", async () => {
+    // 1. Check that there are synthetizing machines
+    let response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
+    const synthetizing_machines = await response.json();
+    expect(synthetizing_machines.length).toBeGreaterThan(0);
+
+    // 2. Pick a machine to update synthetizing
+    const machine = synthetizing_machines[0];
+    const machineId = machine.id;
+
+    // 3. Create the payload
+    const payload = {
+      model: "NEW_MODEL", //read-only field
+      status: "SYNTHETIZING",
+      synthesis: {
+        completedCycles: machine.synthesis.completedCycles + 1,
+      },
+      wells: machine.wells.map((w) => ({
+        id: w.id,
+        row: 100, //read-only field
+        col: 100, //read-only field
+      })),
+    };
+
+    // 4. Send the PATCH request
+    response = await fetch(SERVER_URL + `machines/${machineId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    // 5. Test that the response is correct
+    expect(response.status).toBe(200);
+    let modifiedMachine = await response.json();
+    expect(modifiedMachine.id).toBe(machineId);
+    expect(modifiedMachine.status).toBe("SYNTHETIZING");
+    expect(modifiedMachine.model).toBe(machine.model);
+    expect(modifiedMachine.synthesis.completedCycles).toBe(
+      machine.synthesis.completedCycles + 1
+    );
+    expect(modifiedMachine.wells[0].row).toBeLessThan(100);
+    expect(modifiedMachine.wells[0].col).toBeLessThan(100);
+
+    // 6. Re-request the same machine and verify that the state is correct
+    response = await fetch(SERVER_URL + `machines/${machineId}`);
+    modifiedMachine = await response.json();
+    expect(modifiedMachine.id).toBe(machineId);
+    expect(modifiedMachine.status).toBe("SYNTHETIZING");
+    expect(modifiedMachine.model).toBe(machine.model);
+    expect(modifiedMachine.synthesis.completedCycles).toBe(
+      machine.synthesis.completedCycles + 1
+    );
+    expect(modifiedMachine.wells[0].row).toBeLessThan(100);
+    expect(modifiedMachine.wells[0].col).toBeLessThan(100);
   });
 });
