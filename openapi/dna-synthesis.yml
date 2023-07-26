@@ -111,9 +111,11 @@ components:
         id:
           type: integer
           description: The machine id
+          readOnly: true
         model:
           type: string
           description: The machine model
+          readOnly: true
         location:
           type: string
           description: The machine location

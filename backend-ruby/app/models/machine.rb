@@ -4,7 +4,10 @@ class Machine < ApplicationRecord
 
   # == Associations
   belongs_to :model
+
   has_many :wells, dependent: :destroy
+  accepts_nested_attributes_for :wells
+
   has_one :order, required: false
 
   # == Callback to create Wells before creating a Machine
@@ -29,6 +32,9 @@ class Machine < ApplicationRecord
                                                           %w[idle_assigned_order waiting_for_dispatch].include?(m.status)
                                                         }
 
+  # If machine is synthetizing, there's always a current step
+  validates :synthesis_current_step, presence: true, if: proc { |m| m.status == 'synthetizing' }
+
   def render_json
     output = {
       id: id,
@@ -50,8 +56,6 @@ class Machine < ApplicationRecord
 
     output
   end
-
-
 
   private
 
