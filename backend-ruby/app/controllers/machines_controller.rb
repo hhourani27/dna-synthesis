@@ -39,11 +39,8 @@ class MachinesController < ApplicationController
   # Only allow permitted fields to be modified
   # Transform payload from the API JSON schema to the rails model
   def machine_params
-    Rails.logger.debug('HABIB: Inside machine_params')
-    Rails.logger.debug("HABIB: params: #{p}")
     transformed = params.permit(:status, synthesis: %i[totalCycles completedCycles currentStep],
                                          wells: %i[id status totalCycles synthetizedNucleotideCount])
-    Rails.logger.debug("HABIB: permitted: #{transformed}")
 
     # Translate "status" values to Machine's enum
     transformed[:status] = transformed['status'].downcase if transformed.has_key?('status')
@@ -52,7 +49,6 @@ class MachinesController < ApplicationController
     if transformed.has_key?('synthesis')
       # Careful : extract!('synthesis') returns {synthesis:{}}, you should add ['synthesis'] to get the content
       p_s = transformed.extract!('synthesis')['synthesis']
-      Rails.logger.debug("HABIB: p_s: #{p_s}")
       transformed[:synthesis_total_cycles] = p_s['totalCycles'] if p_s.has_key?('totalCycles')
       transformed[:synthesis_completed_cycles] = p_s['completedCycles'] if p_s.has_key?('completedCycles')
       if p_s.has_key?('currentStep')
@@ -70,7 +66,6 @@ class MachinesController < ApplicationController
         well.transform_keys! { |key| key == 'synthetizedNucleotideCount' ? 'synthetized_nucleotide_count' : key }
         well['status'] = well['status'].downcase if well.has_key?('status')
       end
-      Rails.logger.debug("HABIB: transformed: #{transformed}")
     end
     transformed
   end
