@@ -2,15 +2,17 @@ import fetch from "node-fetch";
 import cron from "node-cron";
 
 const SERVER_URL = "http://localhost:3001/";
-const STEP_DURATION = 1; //Duration of a synthetizing step in seconds
+const STEP_DURATION = 10; //Duration of a synthetizing step in seconds
 
 async function updateMachines() {
   try {
     console.log("Fetching synthetizing machines");
     const response = await fetch(SERVER_URL + "machines?status=SYNTHETIZING");
-    const data = await response.json();
-    console.log(`There are ${data.length} synthetizing machines to update`);
-    updateSynthetizingMachines(data);
+    const machines = await response.json();
+    console.log(`There are ${machines.length} synthetizing machines to update`);
+    updateSynthetizingMachines(machines);
+    sendPatchRequests(machines);
+    return machines;
   } catch (error) {
     console.error(error);
   }
@@ -53,9 +55,30 @@ function updateSynthetizingMachine(m) {
   }
 }
 
+async function sendPatchRequests(machines) {
+  for (const m of machines) {
+    try {
+      console.log(`Sending PATCH request for machine ${m.id}`);
+      const response = await fetch(SERVER_URL + `machines/${m.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(m),
+      });
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      console.log(`Successfully patched machine ${m.id}`);
+    } catch (error) {
+      console.error(`Failed to patch machine ${m.id}:`, error);
+    }
+  }
+}
+
 cron.schedule(`*/${STEP_DURATION} * * * * *`, async () => {
   console.log("Start update cycle");
-  const result = await updateMachines();
+  const machines = await updateMachines();
   // if (result) {
   //   postRequest(result);
   // }
