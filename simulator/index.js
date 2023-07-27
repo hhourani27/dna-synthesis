@@ -1,20 +1,35 @@
 import fetch from "node-fetch";
 import cron from "node-cron";
+import winston from "winston";
+
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.printf(
+    ({ level, message, label, timestamp }) => `${label}: ${message}`
+  ),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: "simulator.log" }),
+  ],
+});
 
 const SERVER_URL = "http://localhost:3001/";
 const STEP_DURATION = 10; //Duration of a synthetizing step in seconds
 
 async function updateMachines() {
   try {
-    console.log("Fetching synthetizing machines");
+    logger.info("Fetching synthetizing machines", { label: "Query" });
     const response = await fetch(SERVER_URL + "machines?status=SYNTHETIZING");
     const machines = await response.json();
-    console.log(`There are ${machines.length} synthetizing machines to update`);
+    logger.info(
+      `There are ${machines.length} synthetizing machines to update`,
+      { label: "Query" }
+    );
     updateSynthetizingMachines(machines);
     sendPatchRequests(machines);
     return machines;
   } catch (error) {
-    console.error(error);
+    logger.error(error, { label: "Query" });
   }
 }
 
@@ -27,15 +42,22 @@ function updateSynthetizingMachines(machines) {
 function updateSynthetizingMachine(m) {
   if (m.synthesis.currentStep === "ELONGATION") {
     m.synthesis.currentStep = "DEPROTECTION";
-    console.log(`Machine ${m.id} : ELONGATION → DEPROTECTION`);
+    logger.info(`Machine ${m.id} : ELONGATION → DEPROTECTION`, {
+      label: "Update",
+    });
   } else if (m.synthesis.currentStep === "DEPROTECTION") {
     m.synthesis.currentStep = "WASH";
-    console.log(`Machine ${m.id} : DEPROTECTION → WASH`);
+    logger.info(`Machine ${m.id} : DEPROTECTION → WASH`, {
+      label: "Update",
+    });
   } else if (m.synthesis.currentStep === "WASH") {
     m.synthesis.completedCycles += 1;
     m.synthesis.currentStep = "ELONGATION";
-    console.log(
-      `Machine ${m.id} : Completed ${m.synthesis.completedCycles} cycles: WASH → ELONGATION`
+    logger.info(
+      `Machine ${m.id} : Completed ${m.synthesis.completedCycles} cycles: WASH → ELONGATION`,
+      {
+        label: "Update",
+      }
     );
 
     m.wells.forEach((w) => {
@@ -51,14 +73,18 @@ function updateSynthetizingMachine(m) {
   if (m.synthesis.completedCycles === m.synthesis.totalCycles) {
     m.status = "WAITING_FOR_DISPATCH";
     m.synthesis.currentStep = null;
-    console.log(`Machine ${m.id} : Completed Synthesis`);
+    logger.info(`Machine ${m.id} : Completed Synthesis`, {
+      label: "Update",
+    });
   }
 }
 
 async function sendPatchRequests(machines) {
   for (const m of machines) {
     try {
-      console.log(`Sending PATCH request for machine ${m.id}`);
+      logger.info(`Sending PATCH request for machine ${m.id}`, {
+        label: "Patch",
+      });
       const response = await fetch(SERVER_URL + `machines/${m.id}`, {
         method: "PATCH",
         headers: {
@@ -69,17 +95,20 @@ async function sendPatchRequests(machines) {
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
       }
-      console.log(`Successfully patched machine ${m.id}`);
+      logger.info(`Successfully patched machine ${m.id}`, {
+        label: "Patch",
+      });
     } catch (error) {
-      console.error(`Failed to patch machine ${m.id}:`, error);
+      logger.error(`Failed to patch machine ${m.id}: ${error}`, {
+        label: "Patch",
+      });
     }
   }
 }
 
 cron.schedule(`*/${STEP_DURATION} * * * * *`, async () => {
-  console.log("Start update cycle");
+  logger.info("Start update cycle", {
+    label: "Cycle",
+  });
   const machines = await updateMachines();
-  // if (result) {
-  //   postRequest(result);
-  // }
 });
