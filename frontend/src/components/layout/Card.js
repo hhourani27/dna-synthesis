@@ -8,7 +8,7 @@ const Paper = styled(PaperMUI)(({ theme }) => ({
   padding: theme.spacing(1),
 }));
 
-export default function Card({ children, isLoading, ...otherProps }) {
+export default function Card({ children, isLoading = false, ...otherProps }) {
   return (
     <Paper elevation={1} {...otherProps}>
       {isLoading ? (

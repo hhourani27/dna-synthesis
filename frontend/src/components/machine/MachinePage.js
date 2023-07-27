@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { styled } from "@mui/material/styles";
@@ -23,34 +23,17 @@ const FlexRow = styled("div")(({ theme }) => ({
   width: "100%",
 }));
 
-export default function MachinePage() {
+export default function MachinePage({ machines, models }) {
   const { id } = useParams();
-  const [isLoading, setIsLoading] = useState(true);
-  const [machine, setMachine] = useState(null);
-  const [model, setModel] = useState(null);
   const [selectedWellId, setSelectedWellId] = useState(null);
 
-  useEffect(() => {
-    async function getData() {
-      const machineResp = await fetch(`http://localhost:3001/machines/${id}`);
-      const machine = await machineResp.json();
-      const modelResp = await fetch(
-        `http://localhost:3001/models/${machine.model}`
-      );
-      const model = await modelResp.json();
-
-      setMachine(machine);
-      setModel(model);
-      setIsLoading(false);
-    }
-
-    getData();
-  }, []);
+  const machine = machines.find((m) => m.id === parseInt(id, 10));
+  const model = models.find((mod) => mod.id === machine.model);
 
   return (
     <PageContainer>
       <FlexRow>
-        <Card sx={{ flexGrow: "1" }} isLoading={isLoading}>
+        <Card sx={{ flexGrow: "1" }}>
           <MachineCard machine={machine} />
         </Card>
         <Card
@@ -59,7 +42,6 @@ export default function MachinePage() {
             justifyContent: "center",
             alignItems: "center",
           }}
-          isLoading={isLoading}
         >
           {machine &&
             model &&
@@ -104,7 +86,7 @@ export default function MachinePage() {
         </Card>
       </FlexRow>
       <FlexRow>
-        <Card sx={{ flexGrow: "1", flexBasis: "0" }} isLoading={isLoading}>
+        <Card sx={{ flexGrow: "1", flexBasis: "0" }}>
           {machine && model && (
             <WellArray
               wellArraySize={model.wellArraySize}
@@ -128,7 +110,6 @@ export default function MachinePage() {
             */
             contain: "size", //
           }}
-          isLoading={isLoading}
         >
           {machine && machine.status !== "IDLE" && (
             <WellSequencesCard
