@@ -28,6 +28,8 @@ class MachinesController < ApplicationController
   else
     update_result = @machine.update(machine_params)
     if update_result == true
+      ActionCable.server.broadcast('MachinesChannel',
+                                   { type: 'Machine updated', id: @machine.id, payload: @machine.render_json })
       render json: @machine.render_json, status:	:ok
     elsif update_result == false
       render json: { error: @machine.errors.messages.inspect }, status: :internal_server_error
