@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 
 import Layout from "./layout/Layout";
 import MachinesListPage from "./machine/MachineListPage";
@@ -8,19 +9,23 @@ import MachinePage from "./machine/MachinePage";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 
-const ws = new WebSocket("ws://localhost:3001/cable");
+const WEBSOCKET_URL = "ws://localhost:3001/cable";
 
 export default function App() {
   const [machines, setMachines] = useState([]);
   const [models, setModels] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [guid, setGuid] = useState("");
+  const [guid, setGuid] = useState(Math.random().toString(36).substring(2, 15));
 
-  ws.onopen = () => {
-    console.log("Connected to websocket server");
-    setGuid(Math.random().toString(36).substring(2, 15));
+  const { sendMessage, lastJsonMessage, readyState } = useWebSocket(
+    WEBSOCKET_URL,
+    {
+      onOpen: subscribeToChannel,
+    }
+  );
 
-    ws.send(
+  function subscribeToChannel() {
+    sendMessage(
       JSON.stringify({
         command: "subscribe",
         identifier: JSON.stringify({
@@ -29,48 +34,29 @@ export default function App() {
         }),
       })
     );
-  };
+  }
 
-  ws.onmessage = (e) => {
-    const data = JSON.parse(e.data);
-    // console.dir(data);
-    if (data.type === "ping") {
-      // console.log("Received ping message");
-      return;
-    }
-    if (data.type === "welcome") {
-      // console.log("Received welcome message");
-      return;
-    }
-    if (data.type === "confirm_subscription") {
-      // console.log("Received confirm_subscription message");
-      return;
-    }
-
-    const message = data.message;
-    console.log(`Received another message : type: ${message.type}`);
+  function handleWebSocketMessage(message) {
     if (message.type === "Machine updated") {
       const updatedMachine = message.payload;
-      setMachines((machines) => {
-        const updatedMachineIdx = machines.findIndex(
-          (m) => m.id === message.id
-        );
+      const updatedMachineIdx = machines.findIndex((m) => m.id === message.id);
 
-        if (updatedMachineIdx !== -1) {
+      if (updatedMachineIdx !== -1) {
+        setMachines((machines) => {
           console.log(`[WebSocket] Update state of Machine ${message.id}`);
           return machines.map((m, idx) =>
             idx === updatedMachineIdx ? updatedMachine : m
           );
-        } else {
-          console.error(
-            `[Websocket] Received a "Machine update" message, but couldn't find Machine with id ${message.id}`
-          );
-          return machines;
-        }
-      });
+        });
+      } else {
+        console.error(
+          `[Websocket] Received a "Machine update" message, but couldn't find Machine with id ${message.id}`
+        );
+      }
     }
-  };
+  }
 
+  // At initial render, retrieve all data and set global state
   useEffect(() => {
     async function getData() {
       let response = await fetch(`http://localhost:3001/machines`);
@@ -84,6 +70,25 @@ export default function App() {
     }
     getData();
   }, []);
+
+  // Update global state for every new websocket message
+  useEffect(() => {
+    if (lastJsonMessage !== null) {
+      // Rails periodically sends messages of the format data: {type: "ping|welcome|confirm_subscription"} <= Ignore them
+      if (
+        "type" in lastJsonMessage &&
+        ["ping", "welcome", "confirm_subscription"].includes(
+          lastJsonMessage.type
+        )
+      ) {
+        return;
+      }
+
+      const message = lastJsonMessage.message;
+      console.log(`Received message : type: ${message.type}`);
+      handleWebSocketMessage(message);
+    }
+  }, [lastJsonMessage]);
 
   return (
     <BrowserRouter>
