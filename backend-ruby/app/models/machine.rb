@@ -58,7 +58,14 @@ class Machine < ApplicationRecord
     output
   end
 
+  # Log validation error
+  after_validation :log_validation_errors, if: proc { |m| m.errors }
+
   private
+
+  def log_validation_errors
+    Rails.logger.debug errors.full_messages.join("\n")
+  end
 
   def create_wells
     model.well_array_rows.times do |r|

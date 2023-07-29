@@ -64,7 +64,7 @@ function updateSynthetizingMachine(m) {
       if (w.status === "SYNTHETIZING_OLIGO") {
         w.synthetizedNucleotideCount += 1;
         if (w.synthetizedNucleotideCount === w.totalCycles) {
-          w.status === "COMPLETED_OLIGO";
+          w.status = "COMPLETED_OLIGO";
         }
       }
     });

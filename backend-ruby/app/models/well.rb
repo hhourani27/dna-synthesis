@@ -16,4 +16,13 @@ class Well < ApplicationRecord
 
   # A Well's synthetized_nucleotide_count is always less than or equal to total_cycles
   validates :synthetized_nucleotide_count, comparison: { less_than_or_equal_to: :total_cycles }, allow_nil: true
+
+  # Log validation error
+  after_validation :log_validation_errors, if: proc { |m| m.errors }
+
+  private
+
+  def log_validation_errors
+    Rails.logger.debug errors.full_messages.join("\n")
+  end
 end
