@@ -13,4 +13,7 @@ class Well < ApplicationRecord
   validates :total_cycles, comparison: { equal_to: lambda { |well|
                                                      well.oligo.length
                                                    } }, allow_nil: true
+
+  # A Well's synthetized_nucleotide_count is always less than or equal to total_cycles
+  validates :synthetized_nucleotide_count, comparison: { less_than_or_equal_to: :total_cycles }, allow_nil: true
 end
