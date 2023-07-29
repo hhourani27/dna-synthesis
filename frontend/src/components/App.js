@@ -75,13 +75,26 @@ export default function App() {
   useEffect(() => {
     if (lastJsonMessage !== null) {
       // Rails periodically sends messages of the format data: {type: "ping|welcome|confirm_subscription"} <= Ignore them
-      if (
-        "type" in lastJsonMessage &&
-        ["ping", "welcome", "confirm_subscription"].includes(
-          lastJsonMessage.type
-        )
-      ) {
-        return;
+      if ("type" in lastJsonMessage) {
+        switch (lastJsonMessage.type) {
+          case "ping":
+            return;
+          case "welcome":
+            return;
+          case "confirm_subscription":
+            console.log(
+              `Received message to confirm subscription to channel ${
+                JSON.parse(lastJsonMessage.identifier).channel
+              }`
+            );
+            console.dir(lastJsonMessage);
+            return;
+          default:
+            console.error(
+              `Received message un unknown type from Rails: ${lastJsonMessage.type}`
+            );
+            return;
+        }
       }
 
       const message = lastJsonMessage.message;
