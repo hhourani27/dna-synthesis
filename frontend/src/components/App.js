@@ -15,7 +15,6 @@ export default function App() {
   const [machines, setMachines] = useState([]);
   const [models, setModels] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [guid, setGuid] = useState(Math.random().toString(36).substring(2, 15));
 
   const { sendMessage, lastJsonMessage, readyState } = useWebSocket(
     WEBSOCKET_URL,
@@ -29,7 +28,6 @@ export default function App() {
       JSON.stringify({
         command: "subscribe",
         identifier: JSON.stringify({
-          id: guid,
           channel: "MachinesChannel",
         }),
       })
