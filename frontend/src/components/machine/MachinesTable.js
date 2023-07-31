@@ -41,7 +41,7 @@ export default function MachinesTable({ machines }) {
               <TableCell>{m.model}</TableCell>
               <TableCell>{m.location}</TableCell>
               <TableCell>
-                <MachineStatus status={m.status} />
+                <MachineStatus machine={m} />
               </TableCell>
             </TableRow>
           ))}

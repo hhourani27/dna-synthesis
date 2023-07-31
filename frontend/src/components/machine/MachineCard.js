@@ -38,7 +38,7 @@ export default function MachineCard({ machine }) {
           </Typography>
         </Box>
         <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
-          <MachineStatus status={machine.status} />
+          <MachineStatus machine={machine} />
           {machine.status !== "IDLE" && (
             <Typography component="div" color="text.secondary">
               Order {machine.order}

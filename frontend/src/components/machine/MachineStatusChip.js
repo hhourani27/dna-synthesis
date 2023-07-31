@@ -1,6 +1,7 @@
 import Chip from "@mui/material/Chip";
+import Badge from "@mui/material/Badge";
 
-export default function MachineStatus({ status }) {
+export default function MachineStatus({ machine }) {
   const statusDisplay = {
     IDLE: {
       label: "Idle",
@@ -21,9 +22,21 @@ export default function MachineStatus({ status }) {
   };
 
   return (
-    <Chip
-      label={statusDisplay[status].label}
-      color={statusDisplay[status].color}
-    />
+    <Badge
+      color="primary"
+      {...(machine.status === "SYNTHETIZING"
+        ? {
+            badgeContent: `${Math.round(
+              (100 * machine.synthesis.completedCycles) /
+                machine.synthesis.totalCycles
+            ).toString()}%`,
+          }
+        : {})}
+    >
+      <Chip
+        label={statusDisplay[machine.status].label}
+        color={statusDisplay[machine.status].color}
+      />
+    </Badge>
   );
 }
