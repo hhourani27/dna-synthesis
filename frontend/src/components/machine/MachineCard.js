@@ -16,8 +16,8 @@ export default function MachineCard({ machine }) {
         p: 2,
       }}
     >
-      <img src={MachineImage} alt="image" width="200" />
-      <Box>
+      <img src={MachineImage} alt={machine.model} width="200" />
+      <Box display="flex" flexDirection="column" gap={1}>
         <Typography variant="h4" component="div">
           {machine.model}
         </Typography>
@@ -38,12 +38,12 @@ export default function MachineCard({ machine }) {
           </Typography>
         </Box>
         <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
-          <MachineStatus machine={machine} />
           {machine.status !== "IDLE" && (
             <Typography component="div" color="text.secondary">
               Order {machine.order}
             </Typography>
           )}
+          <MachineStatus machine={machine} />
         </Box>
       </Box>
     </Box>
