@@ -27,14 +27,14 @@ const MainContent = styled("main")(({ theme }) => ({
   padding: theme.spacing(3),
 }));
 
-export default function Layout2() {
+export default function Layout({ webSocketConnectionStatus }) {
   return (
     <ThemeProvider theme={theme}>
       <RootContainer>
         <CssBaseline />
         <Drawer />
         <MainContainer>
-          <TopBar />
+          <TopBar webSocketConnectionStatus={webSocketConnectionStatus} />
           <MainContent>
             <Outlet />
           </MainContent>

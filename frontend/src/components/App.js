@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import useWebSocket, { ReadyState } from "react-use-websocket";
+import useWebSocket from "react-use-websocket";
 
 import Layout from "./layout/Layout";
 import MachinesListPage from "./machine/MachineListPage";
@@ -20,6 +20,7 @@ export default function App() {
     WEBSOCKET_URL,
     {
       onOpen: subscribeToChannel,
+      shouldReconnect: (closeEvent) => true,
     }
   );
 
@@ -109,7 +110,10 @@ export default function App() {
         </Box>
       ) : (
         <Routes>
-          <Route path="/" element={<Layout />}>
+          <Route
+            path="/"
+            element={<Layout webSocketConnectionStatus={readyState} />}
+          >
             <Route
               path="machines"
               element={<MachinesListPage machines={machines} />}

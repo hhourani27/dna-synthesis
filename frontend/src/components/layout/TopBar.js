@@ -3,6 +3,8 @@ import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 
+import ConnectionStatus from "../ConnectionStatus";
+
 const Header = styled("header")(({ theme }) => ({
   position: "sticky",
   top: 0,
@@ -19,9 +21,10 @@ const Header = styled("header")(({ theme }) => ({
   zIndex: theme.zIndex.appBar,
 }));
 
-export default function TopBar() {
+export default function TopBar({ webSocketConnectionStatus }) {
   return (
     <Header>
+      <ConnectionStatus webSocketConnectionStatus={webSocketConnectionStatus} />
       <IconButton size="large" aria-label="notifications">
         <NotificationsNoneOutlinedIcon />
       </IconButton>
