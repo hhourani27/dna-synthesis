@@ -39,12 +39,7 @@ paths:
     get:
       summary: "Returns the description and status of the machine identified by its ID"
       parameters:
-        - in: path
-          name: machineId
-          schema:
-            type: integer
-          required: true
-          description: ID of the machine to get
+        - $ref: "#components/parameters/MachineIdPathParameter"
       responses:
         "200":
           description: The description and status of the machine
@@ -53,15 +48,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Machine"
         "404":
-          description: Returns an error if no machine exists with `machineId`
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Machine not found
+          $ref: "#/components/responses/MachineNotFoundResponse"
     patch:
       summary: "Update the machine's status and its wells"
       description: |
@@ -89,7 +76,27 @@ paths:
               schema:
                 $ref: "#/components/schemas/Machine"
         "404":
-          description: Returns an error if no machine exists with `machineId`
+          $ref: "#/components/responses/MachineNotFoundResponse"
+  /machines/{machineId}/actions/synthetize:
+    post:
+      summary: "Trigger the machine to start synthetizing"
+      description: "This method only applies to machines with `status == IDLE_ASSIGNED_ORDER`, otherwise, it raises an error"
+      parameters:
+        - in: path
+          name: machineId
+          schema:
+            type: integer
+          required: true
+          description: ID of the machine
+      responses:
+        "200":
+          description: The new description and status of the machine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Machine"
+        "400":
+          description: Returns an error if the machine has `status != IDLE_ASSIGNED_ORDER`
           content:
             application/json:
               schema:
@@ -97,7 +104,10 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: Machine not found
+                    example: Machine cannot be started
+        "404":
+          $ref: "#/components/responses/MachineNotFoundResponse"
+
   /models:
     get:
       summary: "Returns a list of all machine models"
@@ -259,3 +269,22 @@ components:
         - IDLE_ASSIGNED_ORDER: The machine has an assigned order, but did not start synthesis yet.
         - SYNTHETIZING: The machine is currently synthesizing an order.
         - WAITING_FOR_DISPATCH: The order synthesis is completed and it's waiting for the oligos to be dispatched.
+  responses:
+    MachineNotFoundResponse:
+      description: Returns an error if no machine exists with `ID == machineId`
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Machine not found
+  parameters:
+    MachineIdPathParameter:
+      in: path
+      name: machineId
+      required: true
+      schema:
+        type: integer
+      description: ID of the machine
