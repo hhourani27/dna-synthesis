@@ -62,4 +62,26 @@ class WellTest < ActiveSupport::TestCase
       machine.save!
     end
   end
+
+  test "Well's status should be synthetizing_oligo or completed_oligo if machine's status is synthetizing" do
+    machine = Machine.create!(model: models(:DNASYNTH96), location: 'Nice', status: :idle)
+
+    machine.status = :synthetizing
+    machine.order = orders(:order1)
+    machine.synthesis_current_step = :elongation
+    machine.synthesis_total_cycles = 22 # Just an arbitrary number
+    machine.synthesis_completed_cycles = 0
+    machine.wells.each do |w|
+      w.status = :synthetizing_oligo
+      w.oligo = 'GAAATCCAAGCTGTGGAAGTAC'
+      w.total_cycles = 22 # Just an arbitrary number
+      w.synthetized_nucleotide_count = 0
+    end
+
+    machine.wells[0].status = :idle
+
+    assert_raises ActiveRecord::RecordInvalid do
+      machine.save!
+    end
+  end
 end

@@ -468,10 +468,13 @@ describe("PATCH /machines/{machineId}", () => {
     // 1. Check that there are synthetizing machines
     let response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
     const synthetizing_machines = await response.json();
-    expect(synthetizing_machines.length).toBeGreaterThan(0);
+    const synthetizing_machines_elongation_step = synthetizing_machines.filter(
+      (m) => m.synthesis.currentStep == "ELONGATION"
+    );
+    expect(synthetizing_machines_elongation_step.length).toBeGreaterThan(0);
 
     // 2. Pick a machine to update synthetizing
-    const machine = synthetizing_machines[0];
+    const machine = synthetizing_machines_elongation_step[0];
     const machineId = machine.id;
 
     // 3. Create the payload
@@ -479,7 +482,7 @@ describe("PATCH /machines/{machineId}", () => {
       model: "NEW_MODEL", //read-only field
       status: "SYNTHETIZING",
       synthesis: {
-        completedCycles: machine.synthesis.completedCycles + 1,
+        currentStep: "DEPROTECTION",
       },
       wells: machine.wells.map((w) => ({
         id: w.id,
@@ -503,9 +506,7 @@ describe("PATCH /machines/{machineId}", () => {
     expect(modifiedMachine.id).toBe(machineId);
     expect(modifiedMachine.status).toBe("SYNTHETIZING");
     expect(modifiedMachine.model).toBe(machine.model);
-    expect(modifiedMachine.synthesis.completedCycles).toBe(
-      machine.synthesis.completedCycles + 1
-    );
+    expect(modifiedMachine.synthesis.currentStep).toBe("DEPROTECTION");
     expect(modifiedMachine.wells[0].row).toBeLessThan(100);
     expect(modifiedMachine.wells[0].col).toBeLessThan(100);
 
@@ -515,10 +516,100 @@ describe("PATCH /machines/{machineId}", () => {
     expect(modifiedMachine.id).toBe(machineId);
     expect(modifiedMachine.status).toBe("SYNTHETIZING");
     expect(modifiedMachine.model).toBe(machine.model);
-    expect(modifiedMachine.synthesis.completedCycles).toBe(
-      machine.synthesis.completedCycles + 1
-    );
+    expect(modifiedMachine.synthesis.currentStep).toBe("DEPROTECTION");
     expect(modifiedMachine.wells[0].row).toBeLessThan(100);
     expect(modifiedMachine.wells[0].col).toBeLessThan(100);
+  });
+});
+
+describe("POST /machines/{machineId}/actions/synthetize", () => {
+  test("Start Synthetizing : Nominal case", async () => {
+    // 1. Check that there are machines waiting to start synthesis
+    let response = await fetch(
+      SERVER_URL + `machines/?status=IDLE_ASSIGNED_ORDER`
+    );
+    const idle_assigned_orders_machines = await response.json();
+    const idle_assigned_orders_machines_count =
+      idle_assigned_orders_machines.length; // To be used in a later test
+    expect(idle_assigned_orders_machines_count).toBeGreaterThan(0);
+
+    // 1.1 Get the number of Synthetizing machines to use it for a later test
+    response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
+    const synthetizing_machines = await response.json();
+    const synthetizing_machines_count = synthetizing_machines.length; // To be used in a later test
+
+    // 2. Pick a machine to start synthetizing
+    const machine = idle_assigned_orders_machines[0];
+    const machineId = machine.id;
+
+    // 3. Send the POST request
+    response = await fetch(
+      SERVER_URL + `machines/${machineId}/actions/synthetize`,
+      { method: "POST" }
+    );
+
+    // 4. Test that the response is correct
+    expect(response.status).toBe(200);
+    let modifiedMachine = await response.json();
+    expect(modifiedMachine.id).toBe(machineId);
+    expect(modifiedMachine.status).toBe("SYNTHETIZING");
+    expect(modifiedMachine.synthesis.completedCycles).toBe(0);
+    expect(modifiedMachine.synthesis.currentStep).toBe("ELONGATION");
+
+    modifiedMachine.wells.forEach((w) => {
+      expect(w.status).toBe("SYNTHETIZING_OLIGO");
+      expect(w.synthetizedNucleotideCount).toBe(0);
+    });
+
+    expect(modifiedMachine.wells[0].synthetizedNucleotideCount).toBe(0);
+
+    // 5. Re-request the same machine and verify that the state is correct
+    response = await fetch(SERVER_URL + `machines/${machineId}`);
+    modifiedMachine = await response.json();
+    expect(modifiedMachine.id).toBe(machineId);
+    expect(modifiedMachine.status).toBe("SYNTHETIZING");
+    expect(modifiedMachine.synthesis.completedCycles).toBe(0);
+    expect(modifiedMachine.synthesis.currentStep).toBe("ELONGATION");
+
+    modifiedMachine.wells.forEach((w) => {
+      expect(w.status).toBe("SYNTHETIZING_OLIGO");
+      expect(w.synthetizedNucleotideCount).toBe(0);
+    });
+
+    expect(modifiedMachine.wells[0].synthetizedNucleotideCount).toBe(0);
+
+    // 6. Check that we only impacted a single machine
+    response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
+    const synthetizing_machines_2 = await response.json();
+    expect(synthetizing_machines_2.length).toBe(
+      synthetizing_machines_count + 1
+    );
+
+    response = await fetch(SERVER_URL + `machines/?status=IDLE_ASSIGNED_ORDER`);
+    const idle_assigned_orders_machines_2 = await response.json();
+    expect(idle_assigned_orders_machines_2.length).toBe(
+      idle_assigned_orders_machines_count - 1
+    );
+  });
+
+  test("Start Synthetizing an idle machine", async () => {
+    // 1. Check that there are idle machines
+    let response = await fetch(SERVER_URL + `machines/?status=IDLE`);
+    const idle_machines = await response.json();
+    expect(idle_machines.length).toBeGreaterThan(0);
+
+    // 2. Pick a an idle machine to start synthetizing
+    let machineId = idle_machines[0].id;
+
+    // 3. Send the POST request
+    response = await fetch(
+      SERVER_URL + `machines/${machineId}/actions/synthetize`,
+      { method: "POST" }
+    );
+
+    // 4. Test that the response is correct
+    expect(response.status).toBe(400);
+    const error = await response.json();
+    expect(error).toHaveProperty("error", expect.any(String));
   });
 });

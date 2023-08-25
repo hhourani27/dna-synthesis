@@ -1,5 +1,5 @@
 SEED = 27
-srand(27)
+srand(SEED)
 
 def generate_oligo(min_size, max_size)
   oligo_size = rand min_size..max_size

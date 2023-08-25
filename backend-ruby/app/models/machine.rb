@@ -36,6 +36,24 @@ class Machine < ApplicationRecord
   # If machine is synthetizing, there's always a current step
   validates :synthesis_current_step, presence: true, if: proc { |m| m.status == 'synthetizing' }
 
+  # == Methods
+
+  # Change the status from idle_assigned_order to synthetizing
+  def synthesize
+    unless status == 'idle_assigned_order'
+      raise StandardError, "Machine must have a status of 'idle_assigned_order' to synthetize"
+    end
+
+    self.status = 'synthetizing'
+    self.synthesis_current_step = :elongation
+    wells.each do |w|
+      w.status = :synthetizing_oligo
+      w.synthetized_nucleotide_count = 0
+    end
+
+    save!
+  end
+
   def render_json
     output = {
       id: id,

@@ -17,6 +17,11 @@ class Well < ApplicationRecord
   # A Well's synthetized_nucleotide_count is always less than or equal to total_cycles
   validates :synthetized_nucleotide_count, comparison: { less_than_or_equal_to: :total_cycles }, allow_nil: true
 
+  # If the machine has status synthetizing, the well's status should be synthetizing_oligo or completed_oligo
+  validates :status, inclusion: { in: %w[synthetizing_oligo completed_oligo] }, if: proc { |well|
+                                                                                      well.machine.status == 'synthetizing'
+                                                                                    }
+
   # Log validation error
   after_validation :log_validation_errors, if: proc { |m| m.errors }
 

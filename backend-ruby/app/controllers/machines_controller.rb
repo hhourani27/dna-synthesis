@@ -36,6 +36,26 @@ class MachinesController < ApplicationController
     end
   end
 
+  def synthetize
+    @machine = Machine.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Machine not found' }, status: :not_found
+  else
+    if @machine.status != 'idle_assigned_order'
+      render json: { error: 'Machine cannot be started' }, status: :bad_request
+    else
+      begin
+        @machine.synthesize
+      rescue StandardError
+        render json: { error: @machine.errors.messages.inspect }, status: :internal_server_error
+      else
+        ActionCable.server.broadcast('MachinesChannel',
+                                     { type: 'Machine updated', id: @machine.id, payload: @machine.render_json })
+        render json: @machine.render_json, status:	:ok
+      end
+    end
+  end
+
   private
 
   # Only allow permitted fields to be modified
