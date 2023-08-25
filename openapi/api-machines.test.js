@@ -612,4 +612,28 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
     const error = await response.json();
     expect(error).toHaveProperty("error", expect.any(String));
   });
+
+  test("Start Synthetizing a non-existent machine", async () => {
+    // 1. Check that there are idle machines
+    let response = await fetch(SERVER_URL + `machines`);
+    const machines = await response.json();
+    const machineIds = machines.map((m) => m.id);
+
+    // 2. Find a non-existing machine ID
+    let machineId = 1;
+    while (machineIds.includes(machineId)) {
+      machineId++;
+    }
+
+    // 3. Send the POST request
+    response = await fetch(
+      SERVER_URL + `machines/${machineId}/actions/synthetize`,
+      { method: "POST" }
+    );
+
+    // 4. Test that the response is correct
+    expect(response.status).toBe(404);
+    const error = await response.json();
+    expect(error).toHaveProperty("error", expect.any(String));
+  });
 });
