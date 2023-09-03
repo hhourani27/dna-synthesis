@@ -24,6 +24,27 @@ export default function App() {
     }
   );
 
+  /* Update a specific machine in the global machines state.
+   Throws an error if no machine with the id is found in the global state, else true
+   */
+  function updateMachine(machine) {
+    const updatedMachineIdx = machines.findIndex((m) => m.id === machine.id);
+
+    if (updatedMachineIdx !== -1) {
+      setMachines((machines) => {
+        return machines.map((m, idx) =>
+          idx === updatedMachineIdx ? machine : m
+        );
+      });
+    } else {
+      throw new Error(
+        `There's no machine with id ${machine.id} in the global state`
+      );
+    }
+
+    return true;
+  }
+
   function subscribeToChannel() {
     sendMessage(
       JSON.stringify({
@@ -38,18 +59,12 @@ export default function App() {
   function handleWebSocketMessage(message) {
     if (message.type === "Machine updated") {
       const updatedMachine = message.payload;
-      const updatedMachineIdx = machines.findIndex((m) => m.id === message.id);
-
-      if (updatedMachineIdx !== -1) {
-        setMachines((machines) => {
-          console.log(`[WebSocket] Update state of Machine ${message.id}`);
-          return machines.map((m, idx) =>
-            idx === updatedMachineIdx ? updatedMachine : m
-          );
-        });
-      } else {
+      try {
+        updateMachine(updatedMachine);
+        console.log(`[WebSocket] Updated state of Machine ${message.id}`);
+      } catch (e) {
         console.error(
-          `[Websocket] Received a "Machine update" message, but couldn't find Machine with id ${message.id}`
+          `[Websocket] Received a "Machine update" message, but couldn't update machine: ${e}`
         );
       }
     }
