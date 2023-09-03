@@ -26,7 +26,9 @@ export default function MachineCard({ machine, updateMachine }) {
           p: 2,
         }}
       >
-        <img src={MachineImage} alt={machine.model} width="200" />
+        <Box margin={1}>
+          <img src={MachineImage} alt={machine.model} width="225" />
+        </Box>
         <Box display="flex" flexDirection="column" gap={1}>
           <Typography variant="h4" component="div">
             {machine.model}
