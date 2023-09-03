@@ -68,8 +68,8 @@ end
 
 # DATA GENERATORS
 # Use this to generate data for the dev database/environment
-generate_db(idle_machines_count: 2, idle_assigned_order_machines_count: 2, synthethizing_machines_count: 10,
-            waiting_for_dispatch_machines_count: 2)
+generate_db(idle_machines_count: 5, idle_assigned_order_machines_count: 5, synthethizing_machines_count: 10,
+            waiting_for_dispatch_machines_count: 5)
 
 # Use this to generate data for the test database/environment
 # generate_db(idle_machines_count: 20, idle_assigned_order_machines_count: 20, synthethizing_machines_count: 60,

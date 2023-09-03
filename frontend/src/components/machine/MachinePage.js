@@ -23,7 +23,7 @@ const FlexRow = styled("div")(({ theme }) => ({
   width: "100%",
 }));
 
-export default function MachinePage({ machines, models }) {
+export default function MachinePage({ machines, models, updateMachine }) {
   const { id } = useParams();
   const [selectedWellId, setSelectedWellId] = useState(null);
 
@@ -34,7 +34,7 @@ export default function MachinePage({ machines, models }) {
     <PageContainer>
       <FlexRow>
         <Card sx={{ flexGrow: "1" }}>
-          <MachineCard machine={machine} />
+          <MachineCard machine={machine} updateMachine={updateMachine} />
         </Card>
         <Card
           sx={{

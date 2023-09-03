@@ -6,7 +6,7 @@ import MachineImage from "./models/DNA-SYNTH-96.svg";
 import MachineStatus from "./MachineStatusChip";
 import TriggerMachineButton from "./TriggerMachineButton";
 
-export default function MachineCard({ machine }) {
+export default function MachineCard({ machine, updateMachine }) {
   return (
     <Box
       display="flex"
@@ -58,10 +58,13 @@ export default function MachineCard({ machine }) {
         </Box>
       </Box>
       <Box display="flex" flexDirection="row" alignItems="flex-start">
-        <TriggerMachineButton
-          machineId={machine.id}
-          machineStatus={machine.status}
-        />
+        {machine.status === "IDLE_ASSIGNED_ORDER" ? (
+          <TriggerMachineButton
+            machineId={machine.id}
+            machineStatus={machine.status}
+            updateMachine={updateMachine}
+          />
+        ) : null}
       </Box>
     </Box>
   );

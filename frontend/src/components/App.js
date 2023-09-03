@@ -135,7 +135,13 @@ export default function App() {
             />
             <Route
               path="machines/:id"
-              element={<MachinePage machines={machines} models={models} />}
+              element={
+                <MachinePage
+                  machines={machines}
+                  models={models}
+                  updateMachine={updateMachine}
+                />
+              }
             />
             <Route index element={<Navigate to="/machines" />} />
           </Route>
