@@ -30,10 +30,10 @@ def generate_db(idle_machines_count:, idle_assigned_order_machines_count:, synth
   machines = machines.take(idle_assigned_order_machines_count + synthethizing_machines_count + waiting_for_dispatch_machines_count)
   machines.each do |_m|
     ordered_oligos = well_count.times.map { generate_oligo(15, 120) }
-    order = Order.create!(oligos: ordered_oligos)
-    _m.update!(status: :idle_assigned_order, order: order, synthesis_total_cycles: ordered_oligos.map do |o|
-                                                                                     o.length
-                                                                                   end.max, synthesis_completed_cycles: 0)
+    order = Order.create!(oligos: ordered_oligos, status: :assigned_to_machine, machine: _m)
+    _m.update!(status: :idle_assigned_order, current_order: order, synthesis_total_cycles: ordered_oligos.map do |o|
+                                                                                             o.length
+                                                                                           end.max, synthesis_completed_cycles: 0)
     _m.wells.each_with_index do |w, idx|
       w.update!(status: :idle_assigned_oligo, oligo: ordered_oligos[idx], total_cycles: ordered_oligos[idx].length,
                 synthetized_nucleotide_count: 0)

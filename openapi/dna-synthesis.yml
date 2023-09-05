@@ -107,7 +107,36 @@ paths:
                     example: Machine cannot be started
         "404":
           $ref: "#/components/responses/MachineNotFoundResponse"
-
+  /machines/{machineId}/actions/dispatch:
+    post:
+      summary: "Trigger the machine to dispatch its synthetized oligos"
+      description: "This method only applies to machines with `status == WAITING_FOR_DISPATCH`, otherwise, it raises an error"
+      parameters:
+        - in: path
+          name: machineId
+          schema:
+            type: integer
+          required: true
+          description: ID of the machine
+      responses:
+        "200":
+          description: The new description and status of the machine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Machine"
+        "400":
+          description: Returns an error if the machine has `status != WAITING_FOR_DISPATCH`
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Machine cannot dispatch
+        "404":
+          $ref: "#/components/responses/MachineNotFoundResponse"
   /models:
     get:
       summary: "Returns a list of all machine models"

@@ -9,7 +9,7 @@ class Machine < ApplicationRecord
   # Added accepts_nested_attributes_for in order to update wells in a single PATCH or POST /machines operation. see https://api.rubyonrails.org/classes/ActiveRecord/NestedAttributes/ClassMethods.html
   accepts_nested_attributes_for :wells
 
-  has_one :order, required: false
+  belongs_to :current_order, class_name: 'Order', foreign_key: 'current_order_id', required: false
 
   # == Callback to create Wells before creating a Machine
   before_create :create_wells
@@ -19,14 +19,14 @@ class Machine < ApplicationRecord
   validates :model, :location, :status, presence: true
 
   # If machine is idle, there's no associated order
-  validates :order, :synthesis_total_cycles, :synthesis_completed_cycles, :synthesis_current_step, absence: true, if: proc { |m|
-                                                                                                                        m.status == 'idle'
-                                                                                                                      }
+  validates :current_order, :synthesis_total_cycles, :synthesis_completed_cycles, :synthesis_current_step, absence: true, if: proc { |m|
+                                                                                                                                m.status == 'idle'
+                                                                                                                              }
 
   # If machine is not idle, there's an associated order
-  validates :order, :synthesis_total_cycles, :synthesis_completed_cycles, presence: true, if: proc { |m|
-                                                                                                %w[idle_assigned_order synthetizing waiting_for_dispatch].include?(m.status)
-                                                                                              }
+  validates :current_order, :synthesis_total_cycles, :synthesis_completed_cycles, presence: true, if: proc { |m|
+                                                                                                        %w[idle_assigned_order synthetizing waiting_for_dispatch].include?(m.status)
+                                                                                                      }
 
   # If machine didn't start synthetizing or finished synthetizing, there's no step
   validates :synthesis_current_step, absence: true, if: proc { |m|
@@ -54,6 +54,26 @@ class Machine < ApplicationRecord
     save!
   end
 
+  # Change the status from waiting_for_dispatch to idle
+  def dispatch_order
+    unless status == 'waiting_for_dispatch'
+      raise StandardError, "Machine must have a status of 'waiting_for_dispatch' to dispatch"
+    end
+
+    self.status = 'idle'
+    current_order.status = 'completed'
+    self.synthesis_total_cycles = nil
+    self.synthesis_completed_cycles = nil
+    self.synthesis_current_step = nil
+    wells.each do |w|
+      w.status = :idle
+      w.oligo = nil
+      w.synthetized_nucleotide_count = nil
+    end
+
+    save!
+  end
+
   def render_json
     output = {
       id: id,
@@ -63,7 +83,7 @@ class Machine < ApplicationRecord
     }
 
     if status != 'idle'
-      output[:order] = order.id
+      output[:order] = current_order.id
       output[:synthesis] = {
         totalCycles: synthesis_total_cycles,
         completedCycles: synthesis_completed_cycles,

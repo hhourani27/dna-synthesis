@@ -47,7 +47,8 @@ CREATE TABLE public.machines (
     synthesis_completed_cycles integer,
     synthesis_current_step integer,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    current_order_id bigint
 );
 
 
@@ -118,6 +119,7 @@ ALTER SEQUENCE public.models_id_seq OWNED BY public.models.id;
 CREATE TABLE public.orders (
     id bigint NOT NULL,
     oligos text[] DEFAULT '{}'::text[] NOT NULL,
+    status integer NOT NULL,
     machine_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
@@ -276,6 +278,13 @@ ALTER TABLE ONLY public.wells
 
 
 --
+-- Name: index_machines_on_current_order_id; Type: INDEX; Schema: public; Owner: dna_synthesis_backend_user
+--
+
+CREATE INDEX index_machines_on_current_order_id ON public.machines USING btree (current_order_id);
+
+
+--
 -- Name: index_machines_on_model_id; Type: INDEX; Schema: public; Owner: dna_synthesis_backend_user
 --
 
@@ -294,6 +303,14 @@ CREATE INDEX index_orders_on_machine_id ON public.orders USING btree (machine_id
 --
 
 CREATE INDEX index_wells_on_machine_id ON public.wells USING btree (machine_id);
+
+
+--
+-- Name: machines fk_rails_1b7060dbc6; Type: FK CONSTRAINT; Schema: public; Owner: dna_synthesis_backend_user
+--
+
+ALTER TABLE ONLY public.machines
+    ADD CONSTRAINT fk_rails_1b7060dbc6 FOREIGN KEY (current_order_id) REFERENCES public.orders(id);
 
 
 --

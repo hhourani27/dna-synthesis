@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_17_093751) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_04_051455) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,6 +23,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_093751) do
     t.integer "synthesis_current_step"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "current_order_id"
+    t.index ["current_order_id"], name: "index_machines_on_current_order_id"
     t.index ["model_id"], name: "index_machines_on_model_id"
   end
 
@@ -36,6 +38,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_093751) do
 
   create_table "orders", force: :cascade do |t|
     t.text "oligos", default: [], null: false, array: true
+    t.integer "status", null: false
     t.bigint "machine_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -56,6 +59,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_093751) do
   end
 
   add_foreign_key "machines", "models"
+  add_foreign_key "machines", "orders", column: "current_order_id"
   add_foreign_key "orders", "machines"
   add_foreign_key "wells", "machines"
 end

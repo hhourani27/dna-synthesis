@@ -1,9 +1,10 @@
 Don't forget to update db_test_schemas.sql & db_test_data.sql everytime the database schema changes, 
 
-1. Use these commands to extract the schema and data from postgres
+1. Use these commands to extract the schema and data from postgres.
+Note : use the windows command line, so that you can copy-paste the password "dna_synthesis_backend_password"
 
     pg_dump -U dna_synthesis_backend_user --schema-only dna_synthesis_development > db_test_schemas.sql
 
-    pg_dump -U dna_synthesis_backend_user --data-only dna_synthesis_development> db_test_data.sql
+    pg_dump -U dna_synthesis_backend_user --data-only --disable-triggers dna_synthesis_development> db_test_data.sql
 
-2. Run reset_test_db.bat to modify the test database
+2. In vscode terminal, cd to "test_db" and run "./reset_test_db.bat" to modify the test database
