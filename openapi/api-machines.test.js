@@ -561,8 +561,6 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
       expect(w.synthetizedNucleotideCount).toBe(0);
     });
 
-    expect(modifiedMachine.wells[0].synthetizedNucleotideCount).toBe(0);
-
     // 5. Re-request the same machine and verify that the state is correct
     response = await fetch(SERVER_URL + `machines/${machineId}`);
     modifiedMachine = await response.json();
@@ -575,8 +573,6 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
       expect(w.status).toBe("SYNTHETIZING_OLIGO");
       expect(w.synthetizedNucleotideCount).toBe(0);
     });
-
-    expect(modifiedMachine.wells[0].synthetizedNucleotideCount).toBe(0);
 
     // 6. Check that we only impacted a single machine
     response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
@@ -628,6 +624,122 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
     // 3. Send the POST request
     response = await fetch(
       SERVER_URL + `machines/${machineId}/actions/synthetize`,
+      { method: "POST" }
+    );
+
+    // 4. Test that the response is correct
+    expect(response.status).toBe(404);
+    const error = await response.json();
+    expect(error).toHaveProperty("error", expect.any(String));
+  });
+});
+
+describe("POST /machines/{machineId}/actions/dispatch", () => {
+  test("Dispatch order : Nominal case", async () => {
+    // 1. Check that there are machines which orders is waiting to be dispatched
+    let response = await fetch(
+      SERVER_URL + `machines/?status=WAITING_FOR_DISPATCH`
+    );
+    const waiting_for_dipatch_machines = await response.json();
+    const waiting_for_dipatch_machines_count =
+      waiting_for_dipatch_machines.length; // To be used in a later test
+    expect(waiting_for_dipatch_machines_count).toBeGreaterThan(0);
+
+    // 1.1 Get the number of Idle machines to use it for a later test
+    response = await fetch(SERVER_URL + `machines/?status=IDLE`);
+    const idle_machines = await response.json();
+    const idle_machines_count = idle_machines.length; // To be used in a later test
+
+    // 2. Pick a machine to dispatch
+    const machine = waiting_for_dipatch_machines[0];
+    const machineId = machine.id;
+
+    // 3. Send the POST request
+    response = await fetch(
+      SERVER_URL + `machines/${machineId}/actions/dispatch`,
+      { method: "POST" }
+    );
+
+    // 4. Test that the response is correct
+    expect(response.status).toBe(200);
+    let modifiedMachine = await response.json();
+    expect(modifiedMachine.id).toBe(machineId);
+    expect(modifiedMachine.status).toBe("IDLE");
+    expect(modifiedMachine.order).toBeUndefined();
+    expect(modifiedMachine.synthesis).toBeUndefined();
+
+    modifiedMachine.wells.forEach((w) => {
+      expect(w.status).toBe("IDLE");
+      expect(w.oligo).toBeUndefined();
+      expect(w.totalCycles).toBeUndefined();
+      expect(w.synthetizedNucleotideCount).toBeUndefined();
+    });
+
+    // 5. Re-request the same machine and verify that the state is correct
+    response = await fetch(SERVER_URL + `machines/${machineId}`);
+    modifiedMachine = await response.json();
+    expect(modifiedMachine.id).toBe(machineId);
+    expect(modifiedMachine.status).toBe("IDLE");
+    expect(modifiedMachine.order).toBeUndefined();
+    expect(modifiedMachine.synthesis).toBeUndefined();
+
+    modifiedMachine.wells.forEach((w) => {
+      expect(w.status).toBe("IDLE");
+      expect(w.oligo).toBeUndefined();
+      expect(w.totalCycles).toBeUndefined();
+      expect(w.synthetizedNucleotideCount).toBeUndefined();
+    });
+
+    // 6. Check that we only impacted a single machine
+    response = await fetch(SERVER_URL + `machines/?status=IDLE`);
+    const idle_machines_2 = await response.json();
+    expect(idle_machines_2.length).toBe(idle_machines_count + 1);
+
+    response = await fetch(
+      SERVER_URL + `machines/?status=WAITING_FOR_DISPATCH`
+    );
+    const waiting_for_dipatch_machines_2 = await response.json();
+    expect(waiting_for_dipatch_machines_2.length).toBe(
+      waiting_for_dipatch_machines_count - 1
+    );
+  });
+
+  test("Dispatch a synthetizing machine", async () => {
+    // 1. Check that there are idle machines
+    let response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
+    const synthetizing_machines = await response.json();
+    expect(synthetizing_machines.length).toBeGreaterThan(0);
+
+    // 2. Pick a synthetizing machine to dispatch
+    let machineId = synthetizing_machines[0].id;
+
+    // 3. Send the POST request
+    response = await fetch(
+      SERVER_URL + `machines/${machineId}/actions/dispatch`,
+      { method: "POST" }
+    );
+
+    // 4. Test that the response is correct
+    expect(response.status).toBe(400);
+    const error = await response.json();
+    expect(error).toHaveProperty("error", expect.any(String));
+  });
+
+  test("Dispatch a non-existent machine", async () => {
+    // 1. Check that there are idle machines
+    let response = await fetch(SERVER_URL + `machines`);
+    const machines = await response.json();
+    const machineIds = machines.map((m) => m.id);
+
+    // 2. Find a non-existing machine ID
+    let machineId = 1;
+    while (machineIds.includes(machineId)) {
+      machineId++;
+    }
+
+    // 3. Send the POST request
+    response = await fetch(
+      SERVER_URL + `machines/${machineId}/actions/dispatch`,
       { method: "POST" }
     );
 

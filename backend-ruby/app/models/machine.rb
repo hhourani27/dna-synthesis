@@ -62,12 +62,14 @@ class Machine < ApplicationRecord
 
     self.status = 'idle'
     current_order.status = 'completed'
+    self.current_order = nil
     self.synthesis_total_cycles = nil
     self.synthesis_completed_cycles = nil
     self.synthesis_current_step = nil
     wells.each do |w|
       w.status = :idle
       w.oligo = nil
+      w.total_cycles = nil
       w.synthetized_nucleotide_count = nil
     end
 
