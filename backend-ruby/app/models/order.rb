@@ -7,6 +7,10 @@ class Order < ApplicationRecord
   # == Validations
   validates :status, :oligos, presence: true
 
+  validates :machine, presence: true, if: proc { |o|
+                                            o.status != 'new_order'
+                                          }
+
   # Log validation error
   after_validation :log_validation_errors, if: proc { |m| m.errors }
 

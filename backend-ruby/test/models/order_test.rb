@@ -6,7 +6,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal(order.oligos.length, 8 * 12)
   end
 
-  test 'Create Order' do
+  test 'Create New Order' do
     order = Order.create!(oligos: %w[A AA AAA AAAA], status: :new_order)
     assert_equal(order.oligos.length, 4)
   end
@@ -16,7 +16,6 @@ class OrderTest < ActiveSupport::TestCase
       order = Order.create!(oligos: %w[A AA AAA AAAA])
     end
   end
-
 
   test 'An Order should always have oligos (edge case: empty array)' do
     assert_raises ActiveRecord::RecordInvalid do
@@ -33,6 +32,12 @@ class OrderTest < ActiveSupport::TestCase
   test 'An Order should always have oligos (edge case: no oligos)' do
     assert_raises ActiveRecord::RecordInvalid do
       order = Order.create!
+    end
+  end
+
+  test 'A non-new Order should always be linked to a machine' do
+    assert_raises ActiveRecord::RecordInvalid do
+      order = Order.create!(oligos: %w[A AA AAA AAAA], status: :assigned_to_machine)
     end
   end
 end
