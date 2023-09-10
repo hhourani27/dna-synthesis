@@ -60,8 +60,10 @@ class Machine < ApplicationRecord
       raise StandardError, "Machine must have a status of 'waiting_for_dispatch' to dispatch"
     end
 
-    self.status = 'idle'
     current_order.status = 'completed'
+    current_order.save!
+
+    self.status = 'idle'
     self.current_order = nil
     self.synthesis_total_cycles = nil
     self.synthesis_completed_cycles = nil

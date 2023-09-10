@@ -14,6 +14,22 @@ class Order < ApplicationRecord
   # Log validation error
   after_validation :log_validation_errors, if: proc { |m| m.errors }
 
+  def render_json
+    output = {
+      id: id,
+      oligos: oligos
+    }
+
+    if status == 'new_order'
+      output[:status] = 'NEW'
+    else
+      output[:status] = status.upcase
+      output[:machine_id] = machine.id
+    end
+
+    output
+  end
+
   private
 
   def log_validation_errors

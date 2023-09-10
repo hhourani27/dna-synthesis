@@ -653,6 +653,7 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
     // 2. Pick a machine to dispatch
     const machine = waiting_for_dipatch_machines[0];
     const machineId = machine.id;
+    const orderId = machine.order;
 
     // 3. Send the POST request
     response = await fetch(
@@ -690,7 +691,14 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
       expect(w.synthetizedNucleotideCount).toBeUndefined();
     });
 
-    // 6. Check that we only impacted a single machine
+    // 6. Check that the Order's status was correctly changed to COMPLETED
+    response = await fetch(SERVER_URL + `orders/${orderId}`);
+    modifiedOrder = await response.json();
+    expect(modifiedOrder.id).toBe(orderId);
+    expect(modifiedOrder.status).toBe("COMPLETED");
+    expect(modifiedOrder.machine_id).toBe(machineId);
+
+    // 7. Check that we only impacted a single machine
     response = await fetch(SERVER_URL + `machines/?status=IDLE`);
     const idle_machines_2 = await response.json();
     expect(idle_machines_2.length).toBe(idle_machines_count + 1);

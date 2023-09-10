@@ -177,6 +177,45 @@ paths:
                   error:
                     type: string
                     example: Model not found
+  /orders:
+    get:
+      summary: Return a list of all orders.
+      responses:
+        "200":
+          description: a JSON array of orders.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Order"
+  /orders/{orderId}:
+    get:
+      summary: Return the description of the order identified by its ID
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: integer
+          required: true
+          description: ID of the order to get
+      responses:
+        "200":
+          description: The description of the order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Returns an error if no order exists with `orderId`
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Order not found
 components:
   schemas:
     Machine:
@@ -271,19 +310,6 @@ components:
                   * Only present if there's an assigned order to the machine (i.e. `status != IDLE`)
                   * It is always less than or equal than `totalCycles`
                   * `synthetizedNucleotideCount == totalCycles` if and only if `status == COMPLETED_OLIGO`
-    Model:
-      type: object
-      properties:
-        id:
-          type: string
-          description: The unique model id and name
-        wellArraySize:
-          type: array
-          description: "an array of 2 values : [number of rows, number of columns] of the model's well array."
-          items:
-            type: integer
-          minItems: 2
-          maxItems: 2
     MachineStatus:
       type: string
       enum:
@@ -298,6 +324,47 @@ components:
         - IDLE_ASSIGNED_ORDER: The machine has an assigned order, but did not start synthesis yet.
         - SYNTHETIZING: The machine is currently synthesizing an order.
         - WAITING_FOR_DISPATCH: The order synthesis is completed and it's waiting for the oligos to be dispatched.
+    Model:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique model id and name
+        wellArraySize:
+          type: array
+          description: "an array of 2 values : [number of rows, number of columns] of the model's well array."
+          items:
+            type: integer
+          minItems: 2
+          maxItems: 2
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The Order id
+          readOnly: true
+        status:
+          type: string
+          enum:
+            - NEW
+            - ASSIGNED_TO_MACHINE
+            - COMPLETED
+          description: |
+            This field represents the current order state. It can take one of the following values:
+
+            - NEW: A newly created order which has not yet been assigned to a machine
+            - ASSIGNED_TO_MACHINE: The order is assigned to a machine, and is waiting or currently is or completed synthetizing
+            - COMPLETED: The order was dispatched
+        machine_id:
+          type: integer
+          description: The id of the assigned machine. Only present if `status(order) != NEW`
+        oligos:
+          type: array
+          description: The list of of oligos to be synthetized
+          items:
+            type: string
+            pattern: ^[ATCG]+$
   responses:
     MachineNotFoundResponse:
       description: Returns an error if no machine exists with `ID == machineId`

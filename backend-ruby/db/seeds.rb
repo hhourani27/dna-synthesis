@@ -8,7 +8,7 @@ def generate_oligo(min_size, max_size)
 end
 
 def generate_db(idle_machines_count:, idle_assigned_order_machines_count:, synthethizing_machines_count:,
-                waiting_for_dispatch_machines_count:)
+                waiting_for_dispatch_machines_count:, new_order_count: 0, completed_order_count: 0)
 
   locations = %w[Paris Nice]
 
@@ -64,16 +64,28 @@ def generate_db(idle_machines_count:, idle_assigned_order_machines_count:, synth
       w.update!(status: :completed_oligo, synthetized_nucleotide_count: w.oligo.length)
     end
   end
+
+  # (4) Create additional new orders
+  new_order_count.times.map do
+    ordered_oligos = well_count.times.map { generate_oligo(15, 120) }
+    Order.create!(oligos: ordered_oligos, status: :new_order)
+  end
+
+  # (5) Create additional orders that were completed in the past
+  completed_order_count.times.map do
+    ordered_oligos = well_count.times.map { generate_oligo(15, 120) }
+    Order.create!(oligos: ordered_oligos, status: :completed, machine: machines.sample)
+  end
 end
 
 # DATA GENERATORS
 # Use this to generate data for the dev database/environment
 generate_db(idle_machines_count: 5, idle_assigned_order_machines_count: 5, synthethizing_machines_count: 10,
-            waiting_for_dispatch_machines_count: 5)
+            waiting_for_dispatch_machines_count: 5, new_order_count: 3, completed_order_count: 3)
 
 # Use this to generate data for the test database/environment
 # generate_db(idle_machines_count: 20, idle_assigned_order_machines_count: 20, synthethizing_machines_count: 60,
-#             waiting_for_dispatch_machines_count: 20)
+#             waiting_for_dispatch_machines_count: 20, new_order_count: 10, completed_order_count: 5)
 
 # Use this to generate a single Synthetizing machine to debug simulator
 # generate_db(idle_machines_count: 0, idle_assigned_order_machines_count: 0, synthethizing_machines_count: 1,

@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     end
   end
   resources :models, only: %i[index show]
+  resources :orders, only: %i[index show]
 
   # Setup websocket route
   mount ActionCable.server => '/cable'
