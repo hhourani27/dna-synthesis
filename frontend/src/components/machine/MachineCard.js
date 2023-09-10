@@ -60,7 +60,9 @@ export default function MachineCard({ machine, updateMachine }) {
         </Box>
       </Box>
       <Box display="flex" flexDirection="row" alignItems="flex-start">
-        {machine.status === "IDLE_ASSIGNED_ORDER" ? (
+        {["IDLE_ASSIGNED_ORDER", "WAITING_FOR_DISPATCH"].includes(
+          machine.status
+        ) ? (
           <TriggerMachineButton
             machineId={machine.id}
             machineStatus={machine.status}
