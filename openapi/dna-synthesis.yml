@@ -235,7 +235,7 @@ components:
           readOnly: true
         status:
           $ref: "#/components/schemas/MachineStatus"
-        order:
+        orderId:
           type: integer
           description: The order id currently assigned to the machine. Only present if there's an assigned order to the machine (i.e. `status != IDLE`)
           readOnly: true
@@ -356,7 +356,7 @@ components:
             - NEW: A newly created order which has not yet been assigned to a machine
             - ASSIGNED_TO_MACHINE: The order is assigned to a machine, and is waiting or currently is or completed synthetizing
             - COMPLETED: The order was dispatched
-        machine_id:
+        machineId:
           type: integer
           description: The id of the assigned machine. Only present if `status(order) != NEW`
         oligos:

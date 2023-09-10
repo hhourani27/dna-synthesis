@@ -24,7 +24,7 @@ class Order < ApplicationRecord
       output[:status] = 'NEW'
     else
       output[:status] = status.upcase
-      output[:machine_id] = machine.id
+      output[:machineId] = machine.id
     end
 
     output

@@ -104,7 +104,7 @@ describe("GET /machines", () => {
 
   test("Idle machines do not have order or synthesis information", () => {
     idleMachines.forEach((m) => {
-      expect(m.order).toBeUndefined();
+      expect(m.orderId).toBeUndefined();
       expect(m.synthesis).toBeUndefined();
     });
   });
@@ -122,7 +122,7 @@ describe("GET /machines", () => {
 
   test("Non-idle machines have order, synthesis and oligo information", () => {
     nonIdleMachines.forEach((m) => {
-      expect(m).toHaveProperty("order", expect.any(Number));
+      expect(m).toHaveProperty("orderId", expect.any(Number));
       expect(m).toHaveProperty("synthesis");
       expect(m.synthesis).toHaveProperty("totalCycles", expect.any(Number));
       expect(m.synthesis.totalCycles).toBeGreaterThanOrEqual(0);
@@ -653,7 +653,7 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
     // 2. Pick a machine to dispatch
     const machine = waiting_for_dipatch_machines[0];
     const machineId = machine.id;
-    const orderId = machine.order;
+    const orderId = machine.orderId;
 
     // 3. Send the POST request
     response = await fetch(
@@ -666,7 +666,7 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
     let modifiedMachine = await response.json();
     expect(modifiedMachine.id).toBe(machineId);
     expect(modifiedMachine.status).toBe("IDLE");
-    expect(modifiedMachine.order).toBeUndefined();
+    expect(modifiedMachine.orderId).toBeUndefined();
     expect(modifiedMachine.synthesis).toBeUndefined();
 
     modifiedMachine.wells.forEach((w) => {
@@ -681,7 +681,7 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
     modifiedMachine = await response.json();
     expect(modifiedMachine.id).toBe(machineId);
     expect(modifiedMachine.status).toBe("IDLE");
-    expect(modifiedMachine.order).toBeUndefined();
+    expect(modifiedMachine.orderId).toBeUndefined();
     expect(modifiedMachine.synthesis).toBeUndefined();
 
     modifiedMachine.wells.forEach((w) => {
@@ -696,7 +696,7 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
     modifiedOrder = await response.json();
     expect(modifiedOrder.id).toBe(orderId);
     expect(modifiedOrder.status).toBe("COMPLETED");
-    expect(modifiedOrder.machine_id).toBe(machineId);
+    expect(modifiedOrder.machineId).toBe(machineId);
 
     // 7. Check that we only impacted a single machine
     response = await fetch(SERVER_URL + `machines/?status=IDLE`);

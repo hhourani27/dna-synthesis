@@ -52,7 +52,7 @@ export default function MachineCard({ machine, updateMachine }) {
           <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
             {machine.status !== "IDLE" && (
               <Typography component="div" color="text.secondary">
-                Order {machine.order}
+                Order {machine.orderId}
               </Typography>
             )}
             <MachineStatus machine={machine} />

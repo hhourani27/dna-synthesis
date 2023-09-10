@@ -50,7 +50,7 @@ describe("GET /orders", () => {
 
   test("New orders are not assigned to machines", () => {
     newOrders.forEach((o) => {
-      expect(o.machine_id).toBeUndefined();
+      expect(o.machineId).toBeUndefined();
     });
   });
 
@@ -59,9 +59,9 @@ describe("GET /orders", () => {
     const machines = await response.json();
 
     assignedOrders.forEach((o) => {
-      expect(o).toHaveProperty("machine_id");
-      const assigned_machine = machines.find((m) => m.id === o.machine_id);
-      expect(assigned_machine.order).toBe(o.id);
+      expect(o).toHaveProperty("machineId");
+      const assigned_machine = machines.find((m) => m.id === o.machineId);
+      expect(assigned_machine.orderId).toBe(o.id);
     });
   });
 
@@ -70,8 +70,8 @@ describe("GET /orders", () => {
     const machines = await response.json();
 
     completedOrders.forEach((o_c) => {
-      expect(o_c).toHaveProperty("machine_id");
-      expect(machines.some((m) => m.order === o_c.id)).toBe(false);
+      expect(o_c).toHaveProperty("machineId");
+      expect(machines.some((m) => m.orderId === o_c.id)).toBe(false);
     });
   });
 });

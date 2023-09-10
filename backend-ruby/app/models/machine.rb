@@ -87,7 +87,7 @@ class Machine < ApplicationRecord
     }
 
     if status != 'idle'
-      output[:order] = current_order.id
+      output[:orderId] = current_order.id
       output[:synthesis] = {
         totalCycles: synthesis_total_cycles,
         completedCycles: synthesis_completed_cycles,
