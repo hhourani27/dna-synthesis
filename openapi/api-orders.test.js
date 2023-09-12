@@ -8,7 +8,14 @@
 const dns = require("node:dns");
 dns.setDefaultResultOrder("ipv4first");
 
+const { requestJwtToken } = require("./utils");
+
 const SERVER_URL = "http://localhost:3001/";
+let jwtToken = null;
+
+beforeAll(async () => {
+  jwtToken = await requestJwtToken(SERVER_URL + "auth/login");
+});
 
 describe("GET /orders", () => {
   let orders;
@@ -17,9 +24,11 @@ describe("GET /orders", () => {
   let completedOrders;
 
   beforeAll(async () => {
-    const response = await fetch(SERVER_URL + "orders");
-    orders = await response.json();
+    const response = await fetch(SERVER_URL + "orders", {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
 
+    orders = await response.json();
     newOrders = orders.filter((o) => o.status === "NEW");
     assignedOrders = orders.filter((o) => o.status === "ASSIGNED_TO_MACHINE");
     completedOrders = orders.filter((o) => o.status === "COMPLETED");
@@ -55,7 +64,9 @@ describe("GET /orders", () => {
   });
 
   test("Orders that are assigned to machines should be linked to a machine, and that machine linked to that order", async () => {
-    const response = await fetch(SERVER_URL + `machines`);
+    const response = await fetch(SERVER_URL + `machines`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const machines = await response.json();
 
     assignedOrders.forEach((o) => {
@@ -66,7 +77,9 @@ describe("GET /orders", () => {
   });
 
   test("Completed orders should be assigned to a machine, but that machine should not be assigned to that order", async () => {
-    const response = await fetch(SERVER_URL + `machines`);
+    const response = await fetch(SERVER_URL + `machines`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const machines = await response.json();
 
     completedOrders.forEach((o_c) => {
@@ -80,16 +93,21 @@ describe("GET /orders/{orderId}", () => {
   let orders;
 
   beforeAll(async () => {
-    const response = await fetch(SERVER_URL + "orders");
+    const response = await fetch(SERVER_URL + "orders", {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     orders = await response.json();
   });
 
   test("Query a single order", async () => {
     const orderId = orders[0].id;
 
-    const responseOrder0 = await fetch(SERVER_URL + `orders/${orderId}`);
-    const order0 = await responseOrder0.json();
+    const responseOrder0 = await fetch(SERVER_URL + `orders/${orderId}`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
+    expect(responseOrder0.status).toBe(200);
 
+    const order0 = await responseOrder0.json();
     expect(order0.id).toBe(orderId);
     expect(order0.status).toBe(orders[0].status);
   });
@@ -103,7 +121,10 @@ describe("GET /orders/{orderId}", () => {
     }
 
     const responseNonExistingOrder = await fetch(
-      SERVER_URL + `orders/${orderId}`
+      SERVER_URL + `orders/${orderId}`,
+      {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      }
     );
     expect(responseNonExistingOrder.status).toBe(404);
     const error = await responseNonExistingOrder.json();
