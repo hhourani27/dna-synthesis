@@ -5,8 +5,47 @@ info:
   version: "1.0"
 servers:
   - url: http://localhost:3001/
-
+security:
+  - jwtAuth: []
 paths:
+  /auth/login:
+    post:
+      security: []
+      summary: "Login to the application and retrieve a JWT for further requests"
+      parameters:
+        - in: header
+          name: login
+          schema:
+            type: string
+          required: true
+          description: User login
+        - in: header
+          name: password
+          schema:
+            type: string
+          required: true
+          description: User password
+      responses:
+        "200":
+          description: "If authentication is successfull, returns a JWT that can be used for further requests"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: bQIfqmVmhnstRTkPyp6CJ.cPG4RIjUOACSUfSzxBuEfuSmjZA9DEUaTxHaiiZKrW7THpXJV.3MpgqEBr5gB5gLSDZs7uh1XCxD6T9VrC3g1FZALigZwK
+        "401":
+          description: "Returns an error if login or password are not provided or authentication is unsuccessfull"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized
   /machines:
     get:
       summary: Return a list of all machines; optionally, filtered by status
@@ -35,6 +74,8 @@ paths:
                   error:
                     type: string
                     example: Invalid query parameter "status"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
   /machines/{machineId}:
     get:
       summary: "Returns the description and status of the machine identified by its ID"
@@ -47,6 +88,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Machine"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
         "404":
           $ref: "#/components/responses/MachineNotFoundResponse"
     patch:
@@ -75,6 +118,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Machine"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
         "404":
           $ref: "#/components/responses/MachineNotFoundResponse"
   /machines/{machineId}/actions/synthetize:
@@ -105,6 +150,8 @@ paths:
                   error:
                     type: string
                     example: Machine cannot be started
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
         "404":
           $ref: "#/components/responses/MachineNotFoundResponse"
   /machines/{machineId}/actions/dispatch:
@@ -135,6 +182,8 @@ paths:
                   error:
                     type: string
                     example: Machine cannot dispatch
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
         "404":
           $ref: "#/components/responses/MachineNotFoundResponse"
   /models:
@@ -150,6 +199,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Model"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
   /models/{modelId}:
     get:
       summary: "Returns the description of the model identified by its ID"
@@ -167,6 +218,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Model"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
         "404":
           description: Returns an error if no model exists with `machineId`
           content:
@@ -189,6 +242,8 @@ paths:
                 type: array
                 items:
                   $ref: "#components/schemas/Order"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
   /orders/{orderId}:
     get:
       summary: Return the description of the order identified by its ID
@@ -206,6 +261,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Order"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
         "404":
           description: Returns an error if no order exists with `orderId`
           content:
@@ -376,6 +433,17 @@ components:
               error:
                 type: string
                 example: Machine not found
+    UnauthorizedResponse:
+      description: Returns an error if Authorization token was not sent or is invalid
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Unauthorized
+
   parameters:
     MachineIdPathParameter:
       in: path
@@ -384,3 +452,8 @@ components:
       schema:
         type: integer
       description: ID of the machine
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

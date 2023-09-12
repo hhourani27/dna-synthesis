@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  post '/auth/login', to: 'authentication#login'
   resources :machines, only: %i[index show update] do
     member do
       post 'actions/synthetize', to: 'machines#synthetize'
