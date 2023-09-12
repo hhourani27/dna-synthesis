@@ -8,21 +8,13 @@
 const dns = require("node:dns");
 dns.setDefaultResultOrder("ipv4first");
 
+const { requestJwtToken } = require("./utils");
+
 const SERVER_URL = "http://localhost:3001/";
 let jwtToken = null;
 
 beforeAll(async () => {
-  const formData = new FormData();
-  formData.append("login", "admin");
-  formData.append("password", "any_password");
-
-  const response = await fetch(SERVER_URL + "auth/login", {
-    method: "POST",
-    body: formData,
-  });
-
-  const jsonBody = await response.json();
-  jwtToken = jsonBody.token;
+  jwtToken = await requestJwtToken(SERVER_URL + "auth/login");
 });
 
 describe("GET /models", () => {
@@ -30,8 +22,9 @@ describe("GET /models", () => {
     const response = await fetch(SERVER_URL + "models", {
       headers: { Authorization: `Bearer ${jwtToken}` },
     });
-    models = await response.json();
+    expect(response.status).toBe(200);
 
+    models = await response.json();
     models.forEach((m) => {
       expect(m).toHaveProperty("id", expect.any(String));
       expect(m).toHaveProperty("wellArraySize");
@@ -48,8 +41,9 @@ describe("Get /models/{modelId}", () => {
     const responseAllModels = await fetch(SERVER_URL + "models", {
       headers: { Authorization: `Bearer ${jwtToken}` },
     });
-    const models = await responseAllModels.json();
+    expect(responseAllModels.status).toBe(200);
 
+    const models = await responseAllModels.json();
     const modelId = models[0].id;
     const responseModel0 = await fetch(SERVER_URL + `models/${modelId}`, {
       headers: { Authorization: `Bearer ${jwtToken}` },
