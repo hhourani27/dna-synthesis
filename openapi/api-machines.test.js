@@ -8,7 +8,14 @@
 const dns = require("node:dns");
 dns.setDefaultResultOrder("ipv4first");
 
+const { requestJwtToken } = require("./utils");
+
 const SERVER_URL = "http://localhost:3001/";
+let jwtToken = null;
+
+beforeAll(async () => {
+  jwtToken = await requestJwtToken(SERVER_URL + "auth/login");
+});
 
 describe("GET /machines", () => {
   let machines;
@@ -17,7 +24,9 @@ describe("GET /machines", () => {
   let synthetizingMachines;
 
   beforeAll(async () => {
-    const response = await fetch(SERVER_URL + "machines");
+    const response = await fetch(SERVER_URL + "machines", {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     machines = await response.json();
     idleMachines = machines.filter((m) => m.status === "IDLE");
     nonIdleMachines = machines.filter((m) => m.status !== "IDLE");
@@ -91,7 +100,9 @@ describe("GET /machines", () => {
   });
 
   test("Machine have the correct number of wells as specified by their model", async () => {
-    const responseModels = await fetch(SERVER_URL + "models");
+    const responseModels = await fetch(SERVER_URL + "models", {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const models = await responseModels.json();
 
     machines.forEach((m) => {
@@ -239,7 +250,9 @@ describe("GET /machines", () => {
 
 describe("GET /machines?status={status}", () => {
   test("Query IDLE machines", async () => {
-    const response = await fetch(SERVER_URL + "machines?status=IDLE");
+    const response = await fetch(SERVER_URL + "machines?status=IDLE", {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const machines = await response.json();
     machines.forEach((m) => {
       expect(m.status).toBe("IDLE");
@@ -248,7 +261,10 @@ describe("GET /machines?status={status}", () => {
 
   test("Query IDLE_ASSIGNED_ORDER machines", async () => {
     const response = await fetch(
-      SERVER_URL + "machines?status=IDLE_ASSIGNED_ORDER"
+      SERVER_URL + "machines?status=IDLE_ASSIGNED_ORDER",
+      {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      }
     );
     const machines = await response.json();
     machines.forEach((m) => {
@@ -257,7 +273,9 @@ describe("GET /machines?status={status}", () => {
   });
 
   test("Query SYNTHETIZING machines", async () => {
-    const response = await fetch(SERVER_URL + "machines?status=SYNTHETIZING");
+    const response = await fetch(SERVER_URL + "machines?status=SYNTHETIZING", {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const machines = await response.json();
     machines.forEach((m) => {
       expect(m.status).toBe("SYNTHETIZING");
@@ -266,7 +284,10 @@ describe("GET /machines?status={status}", () => {
 
   test("Query WAITING_FOR_DISPATCH machines", async () => {
     const response = await fetch(
-      SERVER_URL + "machines?status=WAITING_FOR_DISPATCH"
+      SERVER_URL + "machines?status=WAITING_FOR_DISPATCH",
+      {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      }
     );
     const machines = await response.json();
     machines.forEach((m) => {
@@ -275,17 +296,26 @@ describe("GET /machines?status={status}", () => {
   });
 
   test("Invalid status query parameter value", async () => {
-    const response = await fetch(SERVER_URL + "machines?status=INVALID_STATUS");
+    const response = await fetch(
+      SERVER_URL + "machines?status=INVALID_STATUS",
+      {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      }
+    );
     expect(response.status).toBe(400);
     const error = await response.json();
     expect(error).toHaveProperty("error", expect.any(String));
   });
 
   test("Ignore invalid query parameters", async () => {
-    const responseAll = await fetch(SERVER_URL + "machines");
+    const responseAll = await fetch(SERVER_URL + "machines", {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const machines = await responseAll.json();
 
-    const responseQuery = await fetch(SERVER_URL + "machines?invalid=IDLE");
+    const responseQuery = await fetch(SERVER_URL + "machines?invalid=IDLE", {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const machinesQuery = await responseQuery.json();
     expect(machinesQuery.length).toBe(machines.length);
   });
@@ -295,14 +325,18 @@ describe("GET /machines/{machineId}", () => {
   let machines;
 
   beforeAll(async () => {
-    const response = await fetch(SERVER_URL + "machines");
+    const response = await fetch(SERVER_URL + "machines", {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     machines = await response.json();
   });
 
   test("Query a single machine", async () => {
     const machineId = machines[0].id;
 
-    const responseMachine0 = await fetch(SERVER_URL + `machines/${machineId}`);
+    const responseMachine0 = await fetch(SERVER_URL + `machines/${machineId}`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const machine0 = await responseMachine0.json();
 
     expect(machine0.id).toBe(machineId);
@@ -318,7 +352,10 @@ describe("GET /machines/{machineId}", () => {
     }
 
     const responseNonExistingMachine = await fetch(
-      SERVER_URL + `machines/${machineId}`
+      SERVER_URL + `machines/${machineId}`,
+      {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      }
     );
     expect(responseNonExistingMachine.status).toBe(404);
     const error = await responseNonExistingMachine.json();
@@ -330,7 +367,10 @@ describe("PATCH /machines/{machineId}", () => {
   test("Start the machine's synthesis operation", async () => {
     // 1. Check that there are machines waiting to start synthesis
     let response = await fetch(
-      SERVER_URL + `machines/?status=IDLE_ASSIGNED_ORDER`
+      SERVER_URL + `machines/?status=IDLE_ASSIGNED_ORDER`,
+      {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      }
     );
     const idle_assigned_orders_machines = await response.json();
     expect(idle_assigned_orders_machines.length).toBeGreaterThan(0);
@@ -358,6 +398,7 @@ describe("PATCH /machines/{machineId}", () => {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
       },
       body: JSON.stringify(payload),
     });
@@ -370,7 +411,9 @@ describe("PATCH /machines/{machineId}", () => {
     expect(modifiedMachine.wells[0].status).toBe("SYNTHETIZING_OLIGO");
 
     // 6. Re-request the same machine and verify that the state is correct
-    response = await fetch(SERVER_URL + `machines/${machineId}`);
+    response = await fetch(SERVER_URL + `machines/${machineId}`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     modifiedMachine = await response.json();
     expect(modifiedMachine.id).toBe(machineId);
     expect(modifiedMachine.status).toBe("SYNTHETIZING");
@@ -379,7 +422,9 @@ describe("PATCH /machines/{machineId}", () => {
 
   test("Complete the machine's synthesis operation", async () => {
     // 1. Check that there are synthetizing machines
-    let response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
+    let response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const synthetizing_machines = await response.json();
     expect(synthetizing_machines.length).toBeGreaterThan(0);
 
@@ -406,6 +451,7 @@ describe("PATCH /machines/{machineId}", () => {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
       },
       body: JSON.stringify(payload),
     });
@@ -422,7 +468,9 @@ describe("PATCH /machines/{machineId}", () => {
     expect(modifiedMachine.wells[0].status).toBe("COMPLETED_OLIGO");
 
     // 6. Re-request the same machine and verify that the state is correct
-    response = await fetch(SERVER_URL + `machines/${machineId}`);
+    response = await fetch(SERVER_URL + `machines/${machineId}`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     modifiedMachine = await response.json();
     expect(modifiedMachine.id).toBe(machineId);
     expect(modifiedMachine.status).toBe("WAITING_FOR_DISPATCH");
@@ -435,7 +483,9 @@ describe("PATCH /machines/{machineId}", () => {
 
   test("Patch a non-existing machine", async () => {
     // 1. Query all machines
-    let response = await fetch(SERVER_URL + `machines`);
+    let response = await fetch(SERVER_URL + `machines`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const machines = await response.json();
     const machineIds = machines.map((m) => m.id);
 
@@ -455,6 +505,7 @@ describe("PATCH /machines/{machineId}", () => {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
       },
       body: JSON.stringify(payload),
     });
@@ -466,7 +517,9 @@ describe("PATCH /machines/{machineId}", () => {
 
   test("Patch read-only fields that should not be modified", async () => {
     // 1. Check that there are synthetizing machines
-    let response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
+    let response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const synthetizing_machines = await response.json();
     const synthetizing_machines_elongation_step = synthetizing_machines.filter(
       (m) => m.synthesis.currentStep == "ELONGATION"
@@ -496,6 +549,7 @@ describe("PATCH /machines/{machineId}", () => {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${jwtToken}`,
       },
       body: JSON.stringify(payload),
     });
@@ -511,7 +565,9 @@ describe("PATCH /machines/{machineId}", () => {
     expect(modifiedMachine.wells[0].col).toBeLessThan(100);
 
     // 6. Re-request the same machine and verify that the state is correct
-    response = await fetch(SERVER_URL + `machines/${machineId}`);
+    response = await fetch(SERVER_URL + `machines/${machineId}`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     modifiedMachine = await response.json();
     expect(modifiedMachine.id).toBe(machineId);
     expect(modifiedMachine.status).toBe("SYNTHETIZING");
@@ -526,7 +582,10 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
   test("Start Synthetizing : Nominal case", async () => {
     // 1. Check that there are machines waiting to start synthesis
     let response = await fetch(
-      SERVER_URL + `machines/?status=IDLE_ASSIGNED_ORDER`
+      SERVER_URL + `machines/?status=IDLE_ASSIGNED_ORDER`,
+      {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      }
     );
     const idle_assigned_orders_machines = await response.json();
     const idle_assigned_orders_machines_count =
@@ -534,7 +593,9 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
     expect(idle_assigned_orders_machines_count).toBeGreaterThan(0);
 
     // 1.1 Get the number of Synthetizing machines to use it for a later test
-    response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
+    response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const synthetizing_machines = await response.json();
     const synthetizing_machines_count = synthetizing_machines.length; // To be used in a later test
 
@@ -545,7 +606,7 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
     // 3. Send the POST request
     response = await fetch(
       SERVER_URL + `machines/${machineId}/actions/synthetize`,
-      { method: "POST" }
+      { method: "POST", headers: { Authorization: `Bearer ${jwtToken}` } }
     );
 
     // 4. Test that the response is correct
@@ -562,7 +623,9 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
     });
 
     // 5. Re-request the same machine and verify that the state is correct
-    response = await fetch(SERVER_URL + `machines/${machineId}`);
+    response = await fetch(SERVER_URL + `machines/${machineId}`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     modifiedMachine = await response.json();
     expect(modifiedMachine.id).toBe(machineId);
     expect(modifiedMachine.status).toBe("SYNTHETIZING");
@@ -575,13 +638,20 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
     });
 
     // 6. Check that we only impacted a single machine
-    response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
+    response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const synthetizing_machines_2 = await response.json();
     expect(synthetizing_machines_2.length).toBe(
       synthetizing_machines_count + 1
     );
 
-    response = await fetch(SERVER_URL + `machines/?status=IDLE_ASSIGNED_ORDER`);
+    response = await fetch(
+      SERVER_URL + `machines/?status=IDLE_ASSIGNED_ORDER`,
+      {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      }
+    );
     const idle_assigned_orders_machines_2 = await response.json();
     expect(idle_assigned_orders_machines_2.length).toBe(
       idle_assigned_orders_machines_count - 1
@@ -590,7 +660,9 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
 
   test("Start Synthetizing an idle machine", async () => {
     // 1. Check that there are idle machines
-    let response = await fetch(SERVER_URL + `machines/?status=IDLE`);
+    let response = await fetch(SERVER_URL + `machines/?status=IDLE`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const idle_machines = await response.json();
     expect(idle_machines.length).toBeGreaterThan(0);
 
@@ -600,7 +672,7 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
     // 3. Send the POST request
     response = await fetch(
       SERVER_URL + `machines/${machineId}/actions/synthetize`,
-      { method: "POST" }
+      { method: "POST", headers: { Authorization: `Bearer ${jwtToken}` } }
     );
 
     // 4. Test that the response is correct
@@ -611,7 +683,9 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
 
   test("Start Synthetizing a non-existent machine", async () => {
     // 1. Check that there are idle machines
-    let response = await fetch(SERVER_URL + `machines`);
+    let response = await fetch(SERVER_URL + `machines`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const machines = await response.json();
     const machineIds = machines.map((m) => m.id);
 
@@ -624,7 +698,7 @@ describe("POST /machines/{machineId}/actions/synthetize", () => {
     // 3. Send the POST request
     response = await fetch(
       SERVER_URL + `machines/${machineId}/actions/synthetize`,
-      { method: "POST" }
+      { method: "POST", headers: { Authorization: `Bearer ${jwtToken}` } }
     );
 
     // 4. Test that the response is correct
@@ -638,7 +712,10 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
   test("Dispatch order : Nominal case", async () => {
     // 1. Check that there are machines which orders is waiting to be dispatched
     let response = await fetch(
-      SERVER_URL + `machines/?status=WAITING_FOR_DISPATCH`
+      SERVER_URL + `machines/?status=WAITING_FOR_DISPATCH`,
+      {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      }
     );
     const waiting_for_dipatch_machines = await response.json();
     const waiting_for_dipatch_machines_count =
@@ -646,7 +723,9 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
     expect(waiting_for_dipatch_machines_count).toBeGreaterThan(0);
 
     // 1.1 Get the number of Idle machines to use it for a later test
-    response = await fetch(SERVER_URL + `machines/?status=IDLE`);
+    response = await fetch(SERVER_URL + `machines/?status=IDLE`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const idle_machines = await response.json();
     const idle_machines_count = idle_machines.length; // To be used in a later test
 
@@ -658,7 +737,7 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
     // 3. Send the POST request
     response = await fetch(
       SERVER_URL + `machines/${machineId}/actions/dispatch`,
-      { method: "POST" }
+      { method: "POST", headers: { Authorization: `Bearer ${jwtToken}` } }
     );
 
     // 4. Test that the response is correct
@@ -677,7 +756,9 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
     });
 
     // 5. Re-request the same machine and verify that the state is correct
-    response = await fetch(SERVER_URL + `machines/${machineId}`);
+    response = await fetch(SERVER_URL + `machines/${machineId}`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     modifiedMachine = await response.json();
     expect(modifiedMachine.id).toBe(machineId);
     expect(modifiedMachine.status).toBe("IDLE");
@@ -692,19 +773,26 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
     });
 
     // 6. Check that the Order's status was correctly changed to COMPLETED
-    response = await fetch(SERVER_URL + `orders/${orderId}`);
+    response = await fetch(SERVER_URL + `orders/${orderId}`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     modifiedOrder = await response.json();
     expect(modifiedOrder.id).toBe(orderId);
     expect(modifiedOrder.status).toBe("COMPLETED");
     expect(modifiedOrder.machineId).toBe(machineId);
 
     // 7. Check that we only impacted a single machine
-    response = await fetch(SERVER_URL + `machines/?status=IDLE`);
+    response = await fetch(SERVER_URL + `machines/?status=IDLE`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const idle_machines_2 = await response.json();
     expect(idle_machines_2.length).toBe(idle_machines_count + 1);
 
     response = await fetch(
-      SERVER_URL + `machines/?status=WAITING_FOR_DISPATCH`
+      SERVER_URL + `machines/?status=WAITING_FOR_DISPATCH`,
+      {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      }
     );
     const waiting_for_dipatch_machines_2 = await response.json();
     expect(waiting_for_dipatch_machines_2.length).toBe(
@@ -714,7 +802,9 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
 
   test("Dispatch a synthetizing machine", async () => {
     // 1. Check that there are idle machines
-    let response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`);
+    let response = await fetch(SERVER_URL + `machines/?status=SYNTHETIZING`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const synthetizing_machines = await response.json();
     expect(synthetizing_machines.length).toBeGreaterThan(0);
 
@@ -724,7 +814,7 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
     // 3. Send the POST request
     response = await fetch(
       SERVER_URL + `machines/${machineId}/actions/dispatch`,
-      { method: "POST" }
+      { method: "POST", headers: { Authorization: `Bearer ${jwtToken}` } }
     );
 
     // 4. Test that the response is correct
@@ -735,7 +825,9 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
 
   test("Dispatch a non-existent machine", async () => {
     // 1. Check that there are idle machines
-    let response = await fetch(SERVER_URL + `machines`);
+    let response = await fetch(SERVER_URL + `machines`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
     const machines = await response.json();
     const machineIds = machines.map((m) => m.id);
 
@@ -748,7 +840,7 @@ describe("POST /machines/{machineId}/actions/dispatch", () => {
     // 3. Send the POST request
     response = await fetch(
       SERVER_URL + `machines/${machineId}/actions/dispatch`,
-      { method: "POST" }
+      { method: "POST", headers: { Authorization: `Bearer ${jwtToken}` } }
     );
 
     // 4. Test that the response is correct
